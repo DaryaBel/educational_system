@@ -1,19 +1,22 @@
-Pora
-====
+## Технологии
 
-My diploma
+- Vue
+- Webpack
+- Django
+- Sentry
+- Docker
+- Docker-Compose
+- Nginx
+- Git (Github)
+- Mailhog
+- Graphql
 
-<a href="https://github.com/vchaptsev/cookiecutter-django-vue">
-    <img src="https://img.shields.io/badge/built%20with-Cookiecutter%20Django%20Vue-blue.svg" />
-</a>
+## Использование
 
+Установите [Docker](https://docs.docker.com/install/) и [Docker-Compose](https://docs.docker.com/compose/). Запустите виртуальные контейнеры с помощью следующей команды:
 
-## Development
+docker-compose up --build
 
-Install [Docker](https://docs.docker.com/install/) and [Docker-Compose](https://docs.docker.com/compose/). Start your virtual machines with the following shell command:
+Если всё работает отлично, вам необходимо создать суперпользователя для админпанели с помощью следующей команды:
 
-`docker-compose up --build`
-
-If all works well, you should be able to create an admin account with:
-
-`docker-compose run backend python manage.py createsuperuser`
+docker-compose run backend python manage.py createsuperuser
