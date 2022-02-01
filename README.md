@@ -3,12 +3,10 @@
 - Vue
 - Webpack
 - Django
-- Sentry
 - Docker
 - Docker-Compose
 - Nginx
 - Git (Github)
-- Mailhog
 - Graphql
 
 ## Использование
