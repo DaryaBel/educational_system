@@ -1,14 +1,14 @@
 import graphene
 from graphene_django.debug import DjangoDebug
 
-import apps.users.schema
+import users.schema
 
 
-class Query(apps.users.schema.Query, graphene.ObjectType):
+class Query(users.schema.Query, graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
 
-class Mutation(apps.users.schema.Mutation, graphene.ObjectType):
+class Mutation(users.schema.Mutation, graphene.ObjectType):
     ...
 
 

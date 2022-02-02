@@ -15,3 +15,7 @@ urlpatterns = [
     path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=settings.DEBUG))),
 
 ]
+
+admin.site.site_header = "Пора. Админпанель"
+admin.site.site_title = "Пора. Админпанель"
+admin.site.index_title = "Добро пожаловать в Админпанель Пора"

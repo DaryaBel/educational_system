@@ -28,17 +28,16 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-
     'graphene_django',
-
     'django_extensions',
 ]
 
 LOCAL_APPS = [
-    'apps.users',
+    'users',
+    'courses',
+    'olympiads',
 ]
 
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # MIDDLEWARE CONFIGURATION
@@ -101,7 +100,7 @@ DATABASES = {
 TIME_ZONE = 'UTC'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
