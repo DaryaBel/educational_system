@@ -2,10 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from courses.models import UniversityStaff
-from olympiads.models import Employer
-
-from users.models import User, City, Student, Subject
+from users.models import Employee, Organization, User, City, Student, Subject
 from users.forms import UserChangeForm, UserCreationForm
 
 
@@ -32,21 +29,22 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = ['last_login', 'registered_at']
 
 
+class OrganizationAdmin(admin.ModelAdmin):
+    """Организации"""
+    list_display = ('__str__', 'is_university',)
+    list_filter = ('is_university',)
+    search_fields = ('fullname', 'shortname', 'description',)
+    
 class CityAdmin(admin.ModelAdmin):
     """Города"""
     list_display = ('__str__',)
     search_fields = ('name',)
     
-class EmployerAdmin(admin.ModelAdmin):
-    """Работодатели"""
-    list_display = ('__str__', 'company', 'position',)
-    search_fields = ('user', 'company', 'position',)
+class EmployeeAdmin(admin.ModelAdmin):
+    """Сотрудники"""
+    list_display = ('__str__', 'organization', 'position',)
+    search_fields = ('user', 'organization', 'position',)
     
-class UniversityStaffAdmin(admin.ModelAdmin):
-    """Cотрудники вуза"""
-    list_display = ('__str__', 'university', 'position',)
-    search_fields = ('user', 'university', 'position',)
-
 class StudentAdmin(admin.ModelAdmin):
     """Школьники"""
     list_display = ('__str__', 'birthdate', 'city',)
@@ -59,8 +57,8 @@ class SubjectAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description',)
 
 admin.site.register(City, CityAdmin)
-admin.site.register(Employer, EmployerAdmin)
-admin.site.register(UniversityStaff, UniversityStaffAdmin)
+admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Subject, SubjectAdmin)
 

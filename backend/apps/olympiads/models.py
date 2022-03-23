@@ -1,37 +1,10 @@
 from django.db import models
 
-from users.models import User, Student, Subject, City
-
-# Компании
-class Company(models.Model):
-    name = models.CharField("Название", max_length=150)
-    description = models.TextField("Описание", null=True, blank=True)
-    logo = models.ImageField("Логотип", upload_to='logo', null=True, blank=True)
-    
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Компания"
-        verbose_name_plural = "Компании"
-
-# Работодатели
-class Employer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", related_name="userEmployer")
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Компания", related_name="companyEmployer")
-    position = models.CharField("Должность", max_length=150, null=True, blank=True)
-    
-    def __str__(self):
-        return f"{self.user}"
-
-    class Meta:
-        verbose_name = "Работодатель"
-        verbose_name_plural = "Работодатели"
-
+from users.models import Organization, User, Student, Subject, City
 
 # Олимпиады
 class Olympiad(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Компания", related_name="companyOlympiad")
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationOlympiad")
     name = models.CharField("Название", max_length=150)
     description = models.TextField("Описание", null=True, blank=True)
     percent_to_win = models.PositiveIntegerField("Необходимое количество % для победы")   
@@ -90,17 +63,6 @@ class Result(models.Model):
         verbose_name = "Результат"
         verbose_name_plural = "Результаты"
 
-# Города компании
-class CompanyCity(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name="Компания", related_name="companyCity")
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город", related_name="cityCompany")
-    
-    def __str__(self):
-        return f"{self.company}. {self.city}"
-
-    class Meta:
-        verbose_name = "Город компании"
-        verbose_name_plural = "Города компаний"
 
 # Предметы олимпиад
 class StudentSubject(models.Model):

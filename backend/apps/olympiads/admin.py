@@ -1,16 +1,11 @@
 from django.contrib import admin
 
-from olympiads.models import Answer, Company, Olympiad, Result, Task
+from olympiads.models import Answer, Olympiad, Result, Task
 
-class CompanyAdmin(admin.ModelAdmin):
-    """Компании"""
-    list_display = ('__str__',)
-    search_fields = ('name', 'description',)
-    
 class OlympiadAdmin(admin.ModelAdmin):
     """Олимпиады"""
-    list_display = ('__str__', 'company', 'is_draft',)
-    search_fields = ('name', 'company', 'description',)
+    list_display = ('__str__', 'organization', 'is_draft',)
+    search_fields = ('name', 'organization', 'description',)
     
 class TaskAdmin(admin.ModelAdmin):
     """Задания"""
@@ -30,6 +25,5 @@ class ResultAdmin(admin.ModelAdmin):
 
 admin.site.register(Result, ResultAdmin)
 admin.site.register(Task, TaskAdmin)
-admin.site.register(Answer, AnswerAdmin)    
-admin.site.register(Company, CompanyAdmin)
+admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Olympiad, OlympiadAdmin)
