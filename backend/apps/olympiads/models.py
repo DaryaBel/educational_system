@@ -1,6 +1,7 @@
+from unittest import result
 from django.db import models
 
-from users.models import Organization, User, Student, Subject, City
+from users.models import Organization, Student, Subject
 
 # Олимпиады
 class Olympiad(models.Model):
@@ -34,20 +35,6 @@ class Task(models.Model):
         verbose_name = "Задание"
         verbose_name_plural = "Задания"
 
-# Ответы
-class Answer(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, verbose_name="Задание", related_name="taskAnswer")
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Школьник", related_name="studentAnswer")
-    answer = models.TextField("Ответ на задание")
-    score = models.PositiveIntegerField("Выставленное количество баллов", null=True, blank=True)   
-    
-    def __str__(self):
-        return f"{self.student}. {self.task}"
-
-    class Meta:
-        verbose_name = "Ответ"
-        verbose_name_plural = "Ответы"
-
 # Результаты
 class Result(models.Model):
     olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, verbose_name="Олимпиада", related_name="olympiadResult")
@@ -64,8 +51,24 @@ class Result(models.Model):
         verbose_name_plural = "Результаты"
 
 
+# Ответы
+class Answer(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, verbose_name="Задание", related_name="taskAnswer")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Школьник", related_name="studentAnswer")
+    result = models.ForeignKey(Result, on_delete=models.CASCADE, verbose_name="Результат", related_name="resultAnswer")
+    answer = models.TextField("Ответ на задание")
+    score = models.PositiveIntegerField("Выставленное количество баллов", null=True, blank=True)   
+    
+    def __str__(self):
+        return f"{self.student}. {self.task}"
+
+    class Meta:
+        verbose_name = "Ответ"
+        verbose_name_plural = "Ответы"
+
+
 # Предметы олимпиад
-class StudentSubject(models.Model):
+class OlympiadSubject(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, verbose_name="Предмет", related_name="subjectOlympiad", null=True)
     olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, verbose_name="Олимпиада", related_name="olympiadSubject")
     

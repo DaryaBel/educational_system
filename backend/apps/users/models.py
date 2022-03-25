@@ -99,6 +99,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.full_name
 
+ORGANIZATION_TYPE = [
+    ('UNIVERSITY', 'Высшее учебное заведение'),
+    ('COMPANY', 'Компания'),
+]
+
 # Города
 class City(models.Model):
     name = models.CharField("Название", max_length=150)
@@ -115,7 +120,7 @@ class Organization(models.Model):
     fullname = models.CharField("Полное название", max_length=150)
     shortname = models.CharField("Краткое название", max_length=150, null=True, blank=True)
     description = models.TextField("Описание", null=True, blank=True)
-    is_university = models.BooleanField("Высшее учебное заведение", default=False)
+    type = models.CharField(verbose_name="Вид организации", max_length=12, choices=ORGANIZATION_TYPE)
     logo = models.ImageField("Логотип", upload_to='logo', null=True, blank=True)
     
     def __str__(self):

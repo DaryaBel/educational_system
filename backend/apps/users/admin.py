@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from users.models import Employee, Organization, User, City, Student, Subject
+from users.models import Employee, Organization, OrganizationCity, StudentSubject, User, City, Student, Subject
 from users.forms import UserChangeForm, UserCreationForm
 
 
@@ -28,13 +28,21 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['email']
     readonly_fields = ['last_login', 'registered_at']
 
+class OrganizationCityInline(admin.StackedInline):
+    model = OrganizationCity
+    extra = 0
+
+class StudentSubjectInline(admin.StackedInline):
+    model = StudentSubject
+    extra = 0
 
 class OrganizationAdmin(admin.ModelAdmin):
     """Организации"""
-    list_display = ('__str__', 'is_university',)
-    list_filter = ('is_university',)
+    list_display = ('__str__', 'type',)
+    list_filter = ('type',)
     search_fields = ('fullname', 'shortname', 'description',)
-    
+    inlines = [OrganizationCityInline]
+
 class CityAdmin(admin.ModelAdmin):
     """Города"""
     list_display = ('__str__',)
@@ -50,6 +58,8 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'birthdate', 'city',)
     list_filter = ('city',)
     search_fields = ('user', 'patronymic',)
+    inlines = [StudentSubjectInline]
+
 
 class SubjectAdmin(admin.ModelAdmin):
     """Предметы"""

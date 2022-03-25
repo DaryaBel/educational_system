@@ -1,11 +1,16 @@
 from django.contrib import admin
 
-from olympiads.models import Answer, Olympiad, Result, Task
+from olympiads.models import Answer, Olympiad, OlympiadSubject, Result, Task
+
+class OlympiadSubjectInline(admin.StackedInline):
+    model = OlympiadSubject
+    extra = 0
 
 class OlympiadAdmin(admin.ModelAdmin):
     """Олимпиады"""
     list_display = ('__str__', 'organization', 'is_draft',)
     search_fields = ('name', 'organization', 'description',)
+    inlines = [OlympiadSubjectInline]
     
 class TaskAdmin(admin.ModelAdmin):
     """Задания"""
