@@ -8,8 +8,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from users.models import User
-
+from users.models import Organization, User
+from users.types import OrganizationsType
 
 class UserType(DjangoObjectType):
     """ User type object """
@@ -29,6 +29,10 @@ class Query(object):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
     users = graphene.List(UserType)
     profile = graphene.Field(UserType)
+    organizations = graphene.List(OrganizationsType)
+
+    def resolve_organizations(cls, info, **kwargs):
+        return Organization.objects.all()
 
     @staticmethod
     def resolve_user(cls, info, **kwargs):

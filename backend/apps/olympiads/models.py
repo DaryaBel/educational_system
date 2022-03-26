@@ -1,7 +1,8 @@
 from unittest import result
 from django.db import models
 
-from users.models import Organization, Student, Subject
+from organizations.models import Organization
+from users.models import Student, Subject
 
 # Олимпиады
 class Olympiad(models.Model):

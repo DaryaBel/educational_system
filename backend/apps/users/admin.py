@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from users.models import Employee, Organization, OrganizationCity, StudentSubject, User, City, Student, Subject
+from users.models import Employee, StudentSubject, User, Student, Subject
 from users.forms import UserChangeForm, UserCreationForm
 
 
@@ -28,25 +28,10 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['email']
     readonly_fields = ['last_login', 'registered_at']
 
-class OrganizationCityInline(admin.StackedInline):
-    model = OrganizationCity
-    extra = 0
 
 class StudentSubjectInline(admin.StackedInline):
     model = StudentSubject
     extra = 0
-
-class OrganizationAdmin(admin.ModelAdmin):
-    """Организации"""
-    list_display = ('__str__', 'type',)
-    list_filter = ('type',)
-    search_fields = ('fullname', 'shortname', 'description',)
-    inlines = [OrganizationCityInline]
-
-class CityAdmin(admin.ModelAdmin):
-    """Города"""
-    list_display = ('__str__',)
-    search_fields = ('name',)
     
 class EmployeeAdmin(admin.ModelAdmin):
     """Сотрудники"""
@@ -60,14 +45,11 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ('user', 'patronymic',)
     inlines = [StudentSubjectInline]
 
-
 class SubjectAdmin(admin.ModelAdmin):
     """Предметы"""
     list_display = ('__str__',)
     search_fields = ('name', 'description',)
 
-admin.site.register(City, CityAdmin)
-admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Subject, SubjectAdmin)
