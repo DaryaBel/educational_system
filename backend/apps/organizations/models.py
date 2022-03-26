@@ -1,6 +1,6 @@
 from django.db import models
 
-ORGANIZATION_TYPE = [
+ORGANIZATION_KIND_CHOICES = [
     ('UNIVERSITY', 'Высшее учебное заведение'),
     ('COMPANY', 'Компания'),
 ]
@@ -21,7 +21,7 @@ class Organization(models.Model):
     fullname = models.CharField("Полное название", max_length=150)
     shortname = models.CharField("Краткое название", max_length=150, null=True, blank=True)
     description = models.TextField("Описание", null=True, blank=True)
-    type = models.CharField(verbose_name="Вид организации", max_length=12, choices=ORGANIZATION_TYPE)
+    kind = models.CharField(verbose_name="Вид организации", max_length=12, choices=ORGANIZATION_KIND_CHOICES)
     logo = models.ImageField("Логотип", upload_to='logo', null=True, blank=True)
     
     def __str__(self):

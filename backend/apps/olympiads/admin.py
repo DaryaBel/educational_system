@@ -8,7 +8,7 @@ class OlympiadSubjectInline(admin.StackedInline):
 
 class OlympiadAdmin(admin.ModelAdmin):
     """Олимпиады"""
-    list_display = ('__str__', 'organization', 'is_draft',)
+    list_display = ('__str__', 'organization', 'published',)
     search_fields = ('name', 'organization', 'description',)
     inlines = [OlympiadSubjectInline]
     
@@ -24,7 +24,7 @@ class AnswerAdmin(admin.ModelAdmin):
     
 class ResultAdmin(admin.ModelAdmin):
     """Результаты"""
-    list_display = ('__str__', 'score', 'is_draft',)
+    list_display = ('__str__', 'score', 'published',)
     search_fields = ('olympiad', 'student',)
     
 

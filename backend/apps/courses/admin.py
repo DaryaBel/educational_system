@@ -12,7 +12,7 @@ class CourseSubjectInline(admin.StackedInline):
 
 class CourseAdmin(admin.ModelAdmin):
     """Курсы"""
-    list_display = ('__str__', 'organization', 'form', 'duration', 'is_draft',)
+    list_display = ('__str__', 'organization', 'form', 'published',)
     list_filter = ('form', 'duration')
     search_fields = ('name', 'organization', 'description',)
     inlines = [CourseSubjectInline, StudentCourseInline]

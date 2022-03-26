@@ -8,8 +8,8 @@ class OrganizationCityInline(admin.StackedInline):
 
 class OrganizationAdmin(admin.ModelAdmin):
     """Организации"""
-    list_display = ('__str__', 'type',)
-    list_filter = ('type',)
+    # list_display = ('__str__', 'type',)
+    # list_filter = ('type',)
     search_fields = ('fullname', 'shortname', 'description',)
     inlines = [OrganizationCityInline]
 

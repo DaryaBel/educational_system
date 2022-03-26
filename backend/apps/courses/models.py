@@ -10,7 +10,7 @@ STUDYING_FORM = [
     ('BOTH', 'Смешанная'),
 ]
 
-DURATION_TYPE = [
+DURATION_CHOICES = [
     ('LESSMONTH', 'Меньше месяца'),
     ('MONTH', '1-2 месяца'),
     ('FEWMONTH', 'От двух месяцев до полугода'),
@@ -22,13 +22,13 @@ DURATION_TYPE = [
 class Course(models.Model):
     name = models.CharField("Название", max_length=150)
     description = models.TextField("Описание", null=True, blank=True)
-    duration = models.CharField(verbose_name="Длительность", max_length=20, choices=DURATION_TYPE)
+    duration = models.CharField(verbose_name="Длительность", max_length=20, choices=DURATION_CHOICES, null=True, blank=True)
     form = models.CharField(verbose_name="Формат проведения", max_length=20, choices=STUDYING_FORM)
     date_start = models.DateField("Дата начала", null=True, blank=True)
     date_end = models.DateField("Дата окончания", null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationCourse")
     max_number_member = models.PositiveIntegerField("Максимальное количество слушателей", null=True, blank=True)
-    is_draft = models.BooleanField("Черновик", default=False)
+    published = models.BooleanField("Опубликовано", default=False)
     
     def __str__(self):
         return self.name

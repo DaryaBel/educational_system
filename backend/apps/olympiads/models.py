@@ -13,7 +13,7 @@ class Olympiad(models.Model):
     time_to_pass = models.DurationField(null=True, blank=True, verbose_name='Ограничение времени для решения')
     date_result = models.DateField("Дата оглашения результатов", null=True, blank=True)
     date_end = models.DateField("Дата окончания приема ответов", null=True, blank=True)
-    is_draft = models.BooleanField("Черновик", default=False)
+    published = models.BooleanField("Опубликовано", default=False)
     
     def __str__(self):
         return self.name
@@ -42,7 +42,7 @@ class Result(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Школьник", related_name="studentResult")
     score = models.PositiveIntegerField("Балл", null=True, blank=True)   
     certificate = models.FileField(verbose_name="Сертификат", upload_to='certificates/', null=True, blank=True)
-    is_draft = models.BooleanField("Черновик", default=False)    
+    published = models.BooleanField("Опубликовано", default=False)    
 
     def __str__(self):
         return f"{self.student}. {self.olympiad}"
