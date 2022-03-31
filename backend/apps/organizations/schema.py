@@ -1,5 +1,6 @@
 import graphene
 from organizations.models import City, Organization, OrganizationCity
+from organizations.mutation import CreateCity, CreateOrganization, CreateOrganizationCity, DeleteCity, DeleteOrganization, DeleteOrganizationCity, UpdateCity, UpdateOrganization
 from organizations.types import CityType, OrganizationType
 
 class Query(graphene.ObjectType):
@@ -64,4 +65,14 @@ class Query(graphene.ObjectType):
     def resolve_city(root, info, city_id):
         return City.objects.get(pk=city_id)
 
-schema = graphene.Schema(query=Query)    
+class Mutation(graphene.ObjectType):
+    create_organization = CreateOrganization.Field()
+    create_city = CreateCity.Field()
+    create_organization_city = CreateOrganizationCity.Field()
+    delete_organization = DeleteOrganization.Field()
+    delete_city = DeleteCity.Field()
+    delete_organization_city = DeleteOrganizationCity.Field()
+    update_organization = UpdateOrganization.Field()
+    update_city = UpdateCity.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation)    

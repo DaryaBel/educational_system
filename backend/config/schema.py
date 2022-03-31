@@ -11,7 +11,7 @@ class Query(users.schema.Query, organizations.schema.Query, courses.schema.Query
     debug = graphene.Field(DjangoDebug, name='__debug')
 
 
-class Mutation(users.schema.Mutation,  graphene.ObjectType):
+class Mutation(users.schema.Mutation, organizations.schema.Mutation,  graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name='__debug')
 
 
