@@ -44,8 +44,10 @@ class CreateOrganizationCity(graphene.Mutation):
 
     @classmethod
     def mutate(cls, root, info, city_id, organization_id):
+        organization = Organization.objects.get(pk=organization_id)
+        city = City.objects.get(pk=city_id)
         organizationCity = OrganizationCity.objects.create(
-            city_id=city_id, organization_id=organization_id)
+            city=city, organization=organization)
 
         return cls(ok=True, organizationCity=organizationCity)
 
