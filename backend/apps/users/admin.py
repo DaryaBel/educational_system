@@ -35,8 +35,9 @@ class StudentSubjectInline(admin.StackedInline):
     
 class EmployeeAdmin(admin.ModelAdmin):
     """Сотрудники"""
-    list_display = ('__str__', 'organization', 'position',)
+    list_display = ('__str__', 'organization', 'moderated',)
     search_fields = ('user', 'organization', 'position',)
+    list_filter = ('moderated',)
     
 class StudentAdmin(admin.ModelAdmin):
     """Школьники"""

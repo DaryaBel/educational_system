@@ -4,6 +4,14 @@ from django.db import models
 from organizations.models import Organization
 from users.models import Student, Subject
 
+RESULT_STATUS = [
+    ('TAKEPART', 'Записался'),
+    ('BEGIN', 'Начал выполнение'),
+    ('SENT', 'Отправил на проверку'),
+    ('CHECKED', 'Проверено'),
+]
+
+
 # Олимпиады
 class Olympiad(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationOlympiad")
@@ -40,10 +48,16 @@ class Task(models.Model):
 class Result(models.Model):
     olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, verbose_name="Олимпиада", related_name="olympiadResult")
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Школьник", related_name="studentResult")
-    score = models.PositiveIntegerField("Балл", null=True, blank=True)   
-    certificate = models.FileField(verbose_name="Сертификат", upload_to='certificates/', null=True, blank=True)
+    # НЕ ВНЕСЕНО 
+    start_try_time = models.DateTimeField("Дата начала выполнения", null=True, blank=True) 
+    finish_try_time = models.DateTimeField("Дата окончания выполнения", null=True, blank=True) 
+    # НЕ ВНЕСЕНО
+    score = models.PositiveIntegerField("Балл", null=True, blank=True)
+    # НЕ ВНЕСЕНО
+    status = models.CharField(verbose_name="Статус", max_length=20, choices=RESULT_STATUS, null=True, blank=True)
+    won = models.BooleanField("Победил", null=True, blank=True) 
+    # НЕ ВНЕСЕНО
     published = models.BooleanField("Опубликовано", default=False)    
-
     def __str__(self):
         return f"{self.student}. {self.olympiad}"
 

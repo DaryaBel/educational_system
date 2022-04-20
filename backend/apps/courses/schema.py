@@ -1,3 +1,4 @@
+from courses.mutation import CreateCourse, CreateCourseSubject, CreateStudentCourse, DeleteCourse, DeleteCourseSubject, DeleteStudentCourse, UpdateCourse
 import graphene
 from courses.models import Course, StudentCourse
 from courses.types import CourseType
@@ -38,4 +39,13 @@ class Query(graphene.ObjectType):
         except Exception as e:
             return None  
 
-schema = graphene.Schema(query=Query)    
+class Mutation(graphene.ObjectType):
+    create_course = CreateCourse.Field()
+    create_student_course = CreateStudentCourse.Field()
+    create_course_subject = CreateCourseSubject.Field()
+    delete_course = DeleteCourse.Field()
+    delete_student_course = DeleteStudentCourse.Field()
+    delete_course_subject = DeleteCourseSubject.Field()
+    update_course = UpdateCourse.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation)    

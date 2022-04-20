@@ -242,19 +242,19 @@ class UpdateStudent(graphene.Mutation):
         student_id = graphene.ID(required=True)
         patronymic = graphene.String()
         birthdate = graphene.Date()
-        city = graphene.ID()
+        city_id = graphene.ID()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, student_id, patronymic=None, birthdate=None, city=None):
+    def mutate(cls, root, info, student_id, patronymic=None, birthdate=None, city_id=None):
         student = Student.objects.get(pk=student_id)
         if patronymic != None:
             student.patronymic = patronymic
         if birthdate != None:
             student.birthdate = birthdate
-        if city != None:
-            city = City.objects.get(pk=city)
+        if city_id != None:
+            city = City.objects.get(pk=city_id)
             student.city = city
         student.save()
 

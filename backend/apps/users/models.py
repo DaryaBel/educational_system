@@ -107,7 +107,8 @@ class Employee(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", related_name="userEmployee")
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationEmployee")
     position = models.CharField("Должность", max_length=150, null=True, blank=True)
-    
+    moderated = models.BooleanField("Подтвержден", default=False)
+
     def __str__(self):
         return f"{self.user}"
 

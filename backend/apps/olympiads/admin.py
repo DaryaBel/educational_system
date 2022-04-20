@@ -24,7 +24,8 @@ class AnswerAdmin(admin.ModelAdmin):
     
 class ResultAdmin(admin.ModelAdmin):
     """Результаты"""
-    list_display = ('__str__', 'score', 'published',)
+    list_display = ('__str__', 'status', 'published',)
+    list_filter = ('status', 'published')
     search_fields = ('olympiad', 'student',)
     
 
