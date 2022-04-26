@@ -1,9 +1,6 @@
 <template>
   <div class="container">
     <h1>Проект "Пора"</h1>
-    <p align="center">
-      <img src="https://i.imgur.com/SA8cjs8.png" />
-    </p>
   </div>
 </template>
 

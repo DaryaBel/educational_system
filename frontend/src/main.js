@@ -1,14 +1,16 @@
 import Vue from "vue";
+import Vuelidate from "@vuelidate/core";
 import store from "@/store";
 import router from "@/router";
 
 import { createProvider } from "@/apollo";
 
-import VueYandexMetrika from "vue-yandex-metrika";
+// import VueYandexMetrika from "vue-yandex-metrika";
 
 import App from "@/App.vue";
 import "./registerServiceWorker";
 
+Vue.use(Vuelidate);
 Vue.config.productionTip = false;
 
 // more info: https://github.com/vchaptsev/vue-yandex-metrika
