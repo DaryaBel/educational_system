@@ -1,8 +1,6 @@
 <template>
   <div>
-    <h1>
-      Регистрация для представителей компаний и образовательных организаций
-    </h1>
+    <h1>Личный кабинет</h1>
     <div class="form-group">
       <label class="form-name">Фамилия *</label><br />
       <input
@@ -37,47 +35,39 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-name">Организация *</label><br />
-
-      <model-select
-        class="search-select"
-        ref="modelSelect"
-        :isDisabled="signupLoading"
-        :options="organizationList"
-        :isError="submitted && v$.form.organization.$error"
-        v-model="form.organization"
-      ></model-select>
-
-      <!-- <select
-        id="organization"
-        v-model="form.organization"
-        :disabled="signupLoading"
-        :class="{ 'is-invalid': submitted && v$.form.organization.$error }"
-      >
-        <option v-for="option in organizationList" v-bind:key="option.id">
-          {{ option.fullname }}
-        </option>
-      </select> -->
-      <div
-        v-if="submitted && v$.form.organization.$error"
-        class="invalid-feedback"
-      >
-        <span v-if="v$.form.organization.required.$invalid"
-          >Данное поле обязательно</span
-        >
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-name">Должность</label><br />
+      <label class="form-name">Отчество</label><br />
       <input
-        id="position"
+        id="patronymic"
         :disabled="signupLoading"
         type="text"
-        v-model.trim="form.position"
-        :class="{ 'is-invalid': submitted && v$.form.position.$error }"
+        v-model.trim="form.patronymic"
+        :class="{ 'is-invalid': submitted && v$.form.patronymic.$error }"
       />
     </div>
-
+    <div class="form-group">
+      <label class="form-name">Дата рождения</label><br />
+      <input
+        id="birthdate"
+        :disabled="signupLoading"
+        type="date"
+        v-model="form.birthdate"
+        :max="new Date().toISOString().substr(0, 10)"
+        :class="{ 'is-invalid': submitted && v$.form.birthdate.$error }"
+      />
+    </div>
+    <div class="form-group">
+      <label class="form-name">Город проживания </label><br />
+      <select
+        id="city"
+        v-model="form.city"
+        :disabled="signupLoading"
+        :class="{ 'is-invalid': submitted && v$.form.city.$error }"
+      >
+        <option v-for="option in cityList" v-bind:key="option.id">
+          {{ option.name }}
+        </option>
+      </select>
+    </div>
     <div class="form-group">
       <label class="form-name">E-mail *</label><br />
       <input
@@ -162,13 +152,12 @@
     <button @click="onSignUp">Зарегистрироваться</button>
     <p>
       Есть аккаунт?
-      <router-link tag="a" :to="{ name: 'LogIn' }"
-        >Авторизируйтесь!</router-link
-      >
+      <router-link tag="a" :to="{ name: 'LogIn' }">Авторизируйся!</router-link>
     </p>
     <p>
-      <router-link tag="a" :to="{ name: 'SignUp' }"
-        >Зарегистрироваться как школьник</router-link
+      <router-link tag="a" :to="{ name: 'SignUpEmployee' }"
+        >Зарегистрироваться как представитель образовательной организации или
+        компании</router-link
       >
     </p>
   </div>
@@ -177,27 +166,21 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
-import { ModelListSelect } from "vue-search-select";
-import { ModelSelect } from "vue-search-select";
-import "vue-search-select/dist/VueSearchSelect.css";
 export default {
-  name: "SignUpEmployee",
-  components: {
-    ModelListSelect,
-    ModelSelect,
-  },
+  name: "Profile",
   setup() {
     return { v$: useVuelidate() };
   },
   data() {
     return {
+      changePassword: false,
       passShow: false,
       passShow2: false,
       form: {
         firstName: "",
         lastName: "",
-        position: "",
-        organization: "",
+        patronymic: "",
+        birthdate: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -205,19 +188,14 @@ export default {
       },
       submitted: false,
       signupLoading: false,
-      organizationList: [
-        { text: "Один", value: "1" },
-        { text: "Два", value: "2" },
-        { text: "Три", value: "5" },
-      ],
     };
   },
   validations: {
     form: {
       firstName: { required },
       lastName: { required },
-      position: {},
-      organization: { required },
+      patronymic: {},
+      birthdate: {},
       email: {
         required,
         email,
@@ -246,8 +224,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.form-group div.search-select {
-  width: 11rem !important;
-}
-</style>
+<style lang="scss"></style>
