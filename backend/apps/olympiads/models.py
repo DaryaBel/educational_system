@@ -18,7 +18,7 @@ class Olympiad(models.Model):
     name = models.CharField("Название", max_length=150)
     description = models.TextField("Описание", null=True, blank=True)
     percent_to_win = models.PositiveIntegerField("Необходимое количество % для победы")   
-    time_to_pass = models.DurationField(null=True, blank=True, verbose_name='Ограничение времени для решения')
+    time_to_pass = models.DurationField(null=True, blank=True, verbose_name='Ограничение времени для решения', help_text="Например 04:00:00")
     date_result = models.DateField("Дата оглашения результатов", null=True, blank=True)
     date_end = models.DateField("Дата окончания приема ответов", null=True, blank=True)
     published = models.BooleanField("Опубликовано", default=False)

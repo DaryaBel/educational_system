@@ -6,12 +6,44 @@ import LogIn from "@/components/LogIn.vue";
 import Profile from "@/components/Profile.vue";
 import SignUp from "@/components/SignUp.vue";
 import SignUpEmployee from "@/components/SignUpEmployee.vue";
+import DeleteAccount from "@/components/DeleteAccount.vue";
+import Olympiad from "@/components/Olympiad.vue";
+import OlympiadRules from "@/components/OlympiadRules.vue";
+import OlympiadProcess from "@/components/OlympiadProcess.vue";
+import StudentOlympiads from "@/components/StudentOlympiads.vue";
 
 const routes = [
   {
     path: "/login",
     name: "LogIn",
     component: LogIn,
+  },
+
+  {
+    path: "/my-olympiads",
+    name: "StudentOlympiads",
+    component: StudentOlympiads,
+  },
+
+  {
+    path: "/olympiad",
+    name: "Olympiad",
+    component: Olympiad,
+  },
+  {
+    path: "/olympiad/rules",
+    name: "OlympiadRules",
+    component: OlympiadRules,
+  },
+  {
+    path: "/olympiad/start",
+    name: "OlympiadProcess",
+    component: OlympiadProcess,
+  },
+  {
+    path: "/delete-account",
+    name: "DeleteAccount",
+    component: DeleteAccount,
   },
   {
     path: "/profile",

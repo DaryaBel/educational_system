@@ -5,7 +5,7 @@
       <label class="form-name">E-mail *</label><br />
       <input
         id="email"
-        :disabled="loginLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.email"
         :class="{ 'is-invalid': submitted && v$.form.email.$error }"
@@ -21,7 +21,7 @@
       <label class="form-name">Пароль *</label><br />
       <input
         id="password"
-        :disabled="loginLoading"
+        :disabled="isLoading"
         :type="passShow ? 'text' : 'password'"
         v-model="form.password"
         :class="{ 'is-invalid': submitted && v$.form.password.$error }"
@@ -62,7 +62,7 @@ export default {
         password: "",
       },
       submitted: false,
-      loginLoading: false,
+      isLoading: false,
     };
   },
   validations: {

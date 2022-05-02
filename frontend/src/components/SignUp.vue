@@ -5,7 +5,7 @@
       <label class="form-name">Фамилия *</label><br />
       <input
         id="lastName"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.lastName"
         :class="{ 'is-invalid': submitted && v$.form.lastName.$error }"
@@ -20,7 +20,7 @@
       <label class="form-name">Имя *</label><br />
       <input
         id="firstName"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.firstName"
         :class="{ 'is-invalid': submitted && v$.form.firstName.$error }"
@@ -38,7 +38,7 @@
       <label class="form-name">Отчество</label><br />
       <input
         id="patronymic"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.patronymic"
         :class="{ 'is-invalid': submitted && v$.form.patronymic.$error }"
@@ -48,7 +48,7 @@
       <label class="form-name">Дата рождения</label><br />
       <input
         id="birthdate"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="date"
         v-model="form.birthdate"
         :max="new Date().toISOString().substr(0, 10)"
@@ -59,7 +59,7 @@
       <label class="form-name">E-mail *</label><br />
       <input
         id="email"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.email"
         :class="{ 'is-invalid': submitted && v$.form.email.$error }"
@@ -75,7 +75,7 @@
       <label class="form-name">Пароль *</label><br />
       <input
         id="password"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         :type="passShow ? 'text' : 'password'"
         v-model="form.password"
         :class="{ 'is-invalid': submitted && v$.form.password.$error }"
@@ -95,7 +95,7 @@
       <label class="form-name">Повторите пароль *</label><br />
       <input
         id="confirmPassword"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         :type="passShow2 ? 'text' : 'password'"
         v-model="form.confirmPassword"
         :class="{ 'is-invalid': submitted && v$.form.confirmPassword.$error }"
@@ -110,7 +110,7 @@
         <span v-if="v$.form.confirmPassword.required.$invalid"
           >Данное поле обязательно</span
         >
-        <span v-else-if="passwordIsSame">Пароли не совпадают</span>
+        <span v-else-if="!passwordIsSame()">Пароли не совпадают</span>
       </div>
     </div>
     <div class="form-group">
@@ -118,7 +118,7 @@
         type="checkbox"
         class="custom-checkbox"
         id="personalData"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         v-model="form.personalData"
         name="personalData"
         :class="{ 'is-invalid': submitted && v$.form.personalData.$error }"
@@ -173,7 +173,7 @@ export default {
         personalData: "",
       },
       submitted: false,
-      signupLoading: false,
+      isLoading: false,
     };
   },
   validations: {
@@ -198,10 +198,10 @@ export default {
       return this.form.password === this.form.confirmPassword;
     },
     onSignUp() {
-      this.signupLoading = true;
+      this.isLoading = true;
       this.submitted = true;
       this.v$.$touch();
-      this.signupLoading = false;
+      this.isLoading = false;
       if (this.v$.$invalid) return;
       // to form submit after this
       console.log(this.form);

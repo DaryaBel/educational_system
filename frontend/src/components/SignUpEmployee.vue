@@ -7,7 +7,7 @@
       <label class="form-name">Фамилия *</label><br />
       <input
         id="lastName"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.lastName"
         :class="{ 'is-invalid': submitted && v$.form.lastName.$error }"
@@ -22,7 +22,7 @@
       <label class="form-name">Имя *</label><br />
       <input
         id="firstName"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.firstName"
         :class="{ 'is-invalid': submitted && v$.form.firstName.$error }"
@@ -38,26 +38,14 @@
     </div>
     <div class="form-group">
       <label class="form-name">Организация *</label><br />
-
       <model-select
         class="search-select"
         ref="modelSelect"
-        :isDisabled="signupLoading"
+        :isDisabled="isLoading"
         :options="organizationList"
         :isError="submitted && v$.form.organization.$error"
         v-model="form.organization"
       ></model-select>
-
-      <!-- <select
-        id="organization"
-        v-model="form.organization"
-        :disabled="signupLoading"
-        :class="{ 'is-invalid': submitted && v$.form.organization.$error }"
-      >
-        <option v-for="option in organizationList" v-bind:key="option.id">
-          {{ option.fullname }}
-        </option>
-      </select> -->
       <div
         v-if="submitted && v$.form.organization.$error"
         class="invalid-feedback"
@@ -71,7 +59,7 @@
       <label class="form-name">Должность</label><br />
       <input
         id="position"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.position"
         :class="{ 'is-invalid': submitted && v$.form.position.$error }"
@@ -82,7 +70,7 @@
       <label class="form-name">E-mail *</label><br />
       <input
         id="email"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         type="text"
         v-model.trim="form.email"
         :class="{ 'is-invalid': submitted && v$.form.email.$error }"
@@ -98,7 +86,7 @@
       <label class="form-name">Пароль *</label><br />
       <input
         id="password"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         :type="passShow ? 'text' : 'password'"
         v-model="form.password"
         :class="{ 'is-invalid': submitted && v$.form.password.$error }"
@@ -118,7 +106,7 @@
       <label class="form-name">Повторите пароль *</label><br />
       <input
         id="confirmPassword"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         :type="passShow2 ? 'text' : 'password'"
         v-model="form.confirmPassword"
         :class="{ 'is-invalid': submitted && v$.form.confirmPassword.$error }"
@@ -133,7 +121,7 @@
         <span v-if="v$.form.confirmPassword.required.$invalid"
           >Данное поле обязательно</span
         >
-        <span v-else-if="passwordIsSame">Пароли не совпадают</span>
+        <span v-else-if="!passwordIsSame()">Пароли не совпадают</span>
       </div>
     </div>
     <div class="form-group">
@@ -141,7 +129,7 @@
         type="checkbox"
         class="custom-checkbox"
         id="personalData"
-        :disabled="signupLoading"
+        :disabled="isLoading"
         v-model="form.personalData"
         name="personalData"
         :class="{ 'is-invalid': submitted && v$.form.personalData.$error }"
@@ -204,7 +192,7 @@ export default {
         personalData: "",
       },
       submitted: false,
-      signupLoading: false,
+      isLoading: false,
       organizationList: [
         { text: "Один", value: "1" },
         { text: "Два", value: "2" },
@@ -234,10 +222,10 @@ export default {
       return this.form.password === this.form.confirmPassword;
     },
     onSignUp() {
-      this.signupLoading = true;
+      this.isLoading = true;
       this.submitted = true;
       this.v$.$touch();
-      this.signupLoading = false;
+      this.isLoading = false;
       if (this.v$.$invalid) return;
       // to form submit after this
       console.log(this.form);
