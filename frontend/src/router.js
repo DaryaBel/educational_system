@@ -1,22 +1,28 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+import Course from "@/components/course/Course.vue";
 import ExampleComponent from "@/components/ExampleComponent.vue";
 import LogIn from "@/components/LogIn.vue";
 import Profile from "@/components/Profile.vue";
 import SignUp from "@/components/SignUp.vue";
 import SignUpEmployee from "@/components/SignUpEmployee.vue";
 import DeleteAccount from "@/components/DeleteAccount.vue";
-import Olympiad from "@/components/Olympiad.vue";
-import OlympiadRules from "@/components/OlympiadRules.vue";
-import OlympiadProcess from "@/components/OlympiadProcess.vue";
-import StudentOlympiads from "@/components/StudentOlympiads.vue";
+import Olympiad from "@/components/olympiad/Olympiad.vue";
+import OlympiadRules from "@/components/olympiad/OlympiadRules.vue";
+import OlympiadProcess from "@/components/olympiad/OlympiadProcess.vue";
+import StudentOlympiads from "@/components/olympiad/StudentOlympiads.vue";
 
 const routes = [
   {
     path: "/login",
     name: "LogIn",
     component: LogIn,
+  },
+  {
+    path: "/course/:id",
+    name: "Course",
+    component: Course,
   },
 
   {

@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import Task from "@/components/Task.vue";
-import ModalOlympiad from "@/components/ModalOlympiad.vue";
+import Task from "@/components/olympiad/Task.vue";
+import ModalOlympiad from "@/components/olympiad/ModalOlympiad.vue";
 export default {
   name: "OlympiadProcess",
   components: {

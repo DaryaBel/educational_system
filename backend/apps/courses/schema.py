@@ -1,8 +1,9 @@
 from courses.mutation import CreateCourse, CreateCourseSubject, CreateStudentCourse, DeleteCourse, DeleteCourseSubject, DeleteStudentCourse, UpdateCourse
 import graphene
 from courses.models import Course, StudentCourse
-from courses.types import CourseType
+from courses.types import CourseType, StudentCourseType
 from organizations.models import Organization
+from users.models import Student, User
 
 class Query(graphene.ObjectType):
     courses = graphene.List(CourseType)
@@ -11,7 +12,9 @@ class Query(graphene.ObjectType):
     courses_organization = graphene.List(CourseType, organization_id=graphene.ID(required=True))
     published_courses_organization = graphene.List(CourseType, organization_id=graphene.ID(required=True))
     student_courses = graphene.List(CourseType, student_id=graphene.ID(required=True))
-
+    count_course_member = graphene.Int(course_id=graphene.ID(required=True))
+    is_student_course_member = graphene.Boolean(course_id=graphene.ID(required=True), user_id=graphene.ID(required=True))
+    
     def resolve_courses(root, info):
         return Course.objects.all()
 
@@ -38,6 +41,16 @@ class Query(graphene.ObjectType):
             return courses
         except Exception as e:
             return None  
+
+    def resolve_count_course_member(root, info, course_id):
+        course = Course.objects.get(pk=course_id)
+        return StudentCourse.objects.filter(course=course).count()
+
+    def resolve_is_student_course_member(root, info, course_id, user_id):
+        course = Course.objects.get(pk=course_id)
+        user = User.objects.get(pk=user_id)
+        student = Student.objects.get(user=user)
+        return StudentCourse.objects.filter(course=course, student=student)
 
 class Mutation(graphene.ObjectType):
     create_course = CreateCourse.Field()

@@ -2,7 +2,7 @@ from courses.models import Course, CourseSubject, StudentCourse
 from courses.types import CourseSubjectType, CourseType, StudentCourseType
 import graphene
 from organizations.models import Organization
-from users.models import Student, Subject
+from users.models import Student, Subject, User
 
 class CreateCourse(graphene.Mutation):
     class Arguments:
@@ -29,15 +29,16 @@ class CreateCourse(graphene.Mutation):
 
 class CreateStudentCourse(graphene.Mutation):
     class Arguments:
-        student_id = graphene.ID(required=True)
+        user_id = graphene.ID(required=True)
         course_id = graphene.ID(required=True)
         
     ok = graphene.Boolean()
     studentCourse = graphene.Field(StudentCourseType)
 
     @classmethod
-    def mutate(cls, root, info, student_id, course_id):
-        student = Student.objects.get(pk=student_id)
+    def mutate(cls, root, info, user_id, course_id):
+        user = User.objects.get(pk=user_id)
+        student = Student.objects.get(user=user)
         course = Course.objects.get(pk=course_id)
         
         studentCourse = StudentCourse.objects.create(
@@ -78,13 +79,17 @@ class DeleteCourse(graphene.Mutation):
 
 class DeleteStudentCourse(graphene.Mutation):
     class Arguments:
-        student_course_id = graphene.ID(required=True)
+        user_id = graphene.ID(required=True)
+        course_id = graphene.ID(required=True)
 
     ok = graphene.Boolean()
 
     @classmethod
-    def mutate(cls, root, info, student_course_id):
-        studentCourse = StudentCourse.objects.get(pk=student_course_id)
+    def mutate(cls, root, info, user_id, course_id):
+        user = User.objects.get(pk=user_id)
+        student = Student.objects.get(user=user)
+        course = Course.objects.get(pk=course_id)
+        studentCourse = StudentCourse.objects.get(course=course, student=student)
         studentCourse.delete()
 
         return cls(ok=True)
