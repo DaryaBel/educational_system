@@ -22,28 +22,34 @@
       <option value="SENT">Отправлено на проверку</option>
       <option value="CHECKED">Проверено</option>
     </select>
-
-    <multi-select
-      class="search-select"
-      :isDisabled="isLoading"
-      :options="subjectList"
-      :selected-options="findSubjects"
+    <multiselect
+      :disabled="isLoading"
+      track-by="id"
+      label="name"
+      v-model="findSubjects"
       placeholder="Выберите школьные предметы"
-      @select="onSelect"
+      :options="subjectList"
+      :showLabels="false"
+      :searchable="true"
+      :multiple="true"
+      :close-on-select="false"
+      :clear-on-select="false"
+      :allow-empty="true"
+      :showPointer="false"
     >
-    </multi-select>
+      <span slot="noResult">Не найдено</span>
+    </multiselect>
+
     <p v-if="filterItems.length == 0">Не найдено</p>
   </div>
 </template>
 
 <script>
-import _ from "lodash";
-import { MultiSelect } from "vue-search-select";
+import Multiselect from "vue-multiselect";
+
 export default {
   name: "StudentOlympiad",
-  components: {
-    MultiSelect,
-  },
+  components: { Multiselect },
   data() {
     return {
       pagination: 1,
@@ -54,9 +60,9 @@ export default {
       findSubjects: [],
       studentOlympiads: [],
       subjectList: [
-        { text: "Один", value: "1" },
-        { text: "Два", value: "2" },
-        { text: "Три", value: "5" },
+        { name: "Один", id: "1" },
+        { name: "Два", id: "2" },
+        { name: "Три", id: "5" },
       ],
     };
   },
@@ -121,10 +127,6 @@ export default {
     },
   },
   methods: {
-    onSelect(items, lastSelectItem) {
-      this.findSubjects = items;
-      this.lastSelectSubject = lastSelectItem;
-    },
     onLink(id) {
       //   this.$router.push({ name: "Olympiad", params: { id: id } });
     },
@@ -132,8 +134,5 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.form-group div.search-select {
-  width: 11rem !important;
-}
-</style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style lang="scss"></style>

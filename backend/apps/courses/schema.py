@@ -1,7 +1,7 @@
-from courses.mutation import CreateCourse, CreateCourseSubject, CreateStudentCourse, DeleteCourse, DeleteCourseSubject, DeleteStudentCourse, UpdateCourse
+from courses.mutation import CreateCity, CreateCourse, CreateCourseCity, CreateCourseSubject, CreateStudentCourse, DeleteCity, DeleteCourse, DeleteCourseCity, DeleteCourseSubject, DeleteStudentCourse, UpdateCity, UpdateCourse
 import graphene
-from courses.models import Course, StudentCourse
-from courses.types import CourseType, StudentCourseType
+from courses.models import City, Course, StudentCourse
+from courses.types import CityType, CourseType, StudentCourseType
 from organizations.models import Organization
 from users.models import Student, User
 
@@ -14,7 +14,9 @@ class Query(graphene.ObjectType):
     student_courses = graphene.List(CourseType, student_id=graphene.ID(required=True))
     count_course_member = graphene.Int(course_id=graphene.ID(required=True))
     is_student_course_member = graphene.Boolean(course_id=graphene.ID(required=True), user_id=graphene.ID(required=True))
-    
+    cities = graphene.List(CityType)
+    city = graphene.Field(CityType, city_id=graphene.ID(required=True))
+
     def resolve_courses(root, info):
         return Course.objects.all()
 
@@ -52,6 +54,12 @@ class Query(graphene.ObjectType):
         student = Student.objects.get(user=user)
         return StudentCourse.objects.filter(course=course, student=student)
 
+    def resolve_cities(root, info):
+        return City.objects.all()
+
+    def resolve_city(root, info, city_id):
+        return City.objects.get(pk=city_id)
+
 class Mutation(graphene.ObjectType):
     create_course = CreateCourse.Field()
     create_student_course = CreateStudentCourse.Field()
@@ -60,5 +68,10 @@ class Mutation(graphene.ObjectType):
     delete_student_course = DeleteStudentCourse.Field()
     delete_course_subject = DeleteCourseSubject.Field()
     update_course = UpdateCourse.Field()
+    create_city = CreateCity.Field()
+    delete_city = DeleteCity.Field()
+    update_city = UpdateCity.Field()
+    create_organization_city = CreateCourseCity.Field()
+    delete_organization_city = DeleteCourseCity.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)    

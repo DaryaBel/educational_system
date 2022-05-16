@@ -18,6 +18,17 @@ DURATION_CHOICES = [
     ('YEARANDMORE', 'Год и более'),
 ]
 
+# Города
+class City(models.Model):
+    name = models.CharField("Название", max_length=150)
+    
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
 # Курсы
 class Course(models.Model):
     name = models.CharField("Название", max_length=150)
@@ -36,6 +47,19 @@ class Course(models.Model):
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
+
+# Города проведения курса
+class CourseCity(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс", related_name="courseCity")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город", related_name="cityCourse")
+    
+    def __str__(self):
+        return f"{self.course}. {self.city}"
+
+    class Meta:
+        verbose_name = "Город проведения курса"
+        verbose_name_plural = "Города проведения курса"
+        
 
 # Школьники на курсах
 class StudentCourse(models.Model):

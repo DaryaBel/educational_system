@@ -41,15 +41,14 @@ class EmployeeAdmin(admin.ModelAdmin):
     
 class StudentAdmin(admin.ModelAdmin):
     """Школьники"""
-    list_display = ('__str__', 'birthdate', 'city',)
-    list_filter = ('city',)
+    list_display = ('__str__', 'birthdate',)
     search_fields = ('user', 'patronymic',)
     inlines = [StudentSubjectInline]
 
 class SubjectAdmin(admin.ModelAdmin):
     """Предметы"""
     list_display = ('__str__',)
-    search_fields = ('name', 'description',)
+    search_fields = ('name',)
 
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Student, StudentAdmin)

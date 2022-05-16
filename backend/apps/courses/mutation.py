@@ -1,5 +1,5 @@
-from courses.models import Course, CourseSubject, StudentCourse
-from courses.types import CourseSubjectType, CourseType, StudentCourseType
+from courses.models import City, Course, CourseCity, CourseSubject, StudentCourse
+from courses.types import CityType, CourseCityType, CourseSubjectType, CourseType, StudentCourseType
 import graphene
 from organizations.models import Organization
 from users.models import Student, Subject, User
@@ -26,6 +26,38 @@ class CreateCourse(graphene.Mutation):
             name=name, form=form, organization=organization, published=published, description=description, duration=duration, date_start=date_start, date_end=date_end, max_number_member=max_number_member)
 
         return cls(ok=True, course=course)
+
+class CreateCity(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        
+    ok = graphene.Boolean()
+    city = graphene.Field(CityType)
+
+    @classmethod
+    def mutate(cls, root, info, name):
+        city = City.objects.create(
+            name=name)
+
+        return cls(ok=True, city=city)
+
+class CreateCourseCity(graphene.Mutation):
+    class Arguments:
+        city_id = graphene.ID(required=True)
+        course_id = graphene.ID(required=True)
+        
+    ok = graphene.Boolean()
+    courseCity = graphene.Field(CourseCityType)
+
+    @classmethod
+    def mutate(cls, root, info, city_id, course_id):
+        course = Course.objects.get(pk=course_id)
+        city = City.objects.get(pk=city_id)
+        courseCity = CourseCity.objects.create(
+            city=city, course=course)
+
+        return cls(ok=True, courseCity=courseCity)
+
 
 class CreateStudentCourse(graphene.Mutation):
     class Arguments:
@@ -76,6 +108,33 @@ class DeleteCourse(graphene.Mutation):
         course.delete()
 
         return cls(ok=True)
+
+class DeleteCity(graphene.Mutation):
+    class Arguments:
+        city_id = graphene.ID(required=True)
+
+    ok = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info, city_id):
+        city = City.objects.get(pk=city_id)
+        city.delete()
+
+        return cls(ok=True)
+
+class DeleteCourseCity(graphene.Mutation):
+    class Arguments:
+        course_city_id = graphene.ID(required=True)
+
+    ok = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info, course_city_id):
+        course_city = CourseCity.objects.get(pk=course_city_id)
+        course_city.delete()
+
+        return cls(ok=True)
+
 
 class DeleteStudentCourse(graphene.Mutation):
     class Arguments:
@@ -145,5 +204,20 @@ class UpdateCourse(graphene.Mutation):
         if max_number_member != None:
             course.max_number_member = max_number_member
         course.save()
+
+        return cls(ok=True)
+
+class UpdateCity(graphene.Mutation):
+    class Arguments:
+        city_id = graphene.ID(required=True)
+        name = graphene.String()
+        
+    ok = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info, city_id, name):
+        city = City.objects.get(pk=city_id)
+        city.name = name
+        city.save()
 
         return cls(ok=True)

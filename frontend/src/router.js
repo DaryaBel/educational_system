@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+import CourseList from "@/components/course/CourseList.vue";
 import Course from "@/components/course/Course.vue";
 import ExampleComponent from "@/components/ExampleComponent.vue";
 import LogIn from "@/components/LogIn.vue";
@@ -24,9 +25,14 @@ const routes = [
     name: "Course",
     component: Course,
   },
+  {
+    path: "/courses",
+    name: "CourseList",
+    component: CourseList,
+  },
 
   {
-    path: "/my-olympiads",
+    path: "/my/olympiads",
     name: "StudentOlympiads",
     component: StudentOlympiads,
   },
@@ -62,7 +68,7 @@ const routes = [
     component: SignUp,
   },
   {
-    path: "/signup-employee",
+    path: "/signup/employee",
     name: "SignUpEmployee",
     component: SignUpEmployee,
   },

@@ -1,5 +1,5 @@
 import graphene
-from courses.models import Course, CourseSubject, StudentCourse
+from courses.models import City, Course, CourseCity, CourseSubject, StudentCourse
 from users.types import SubjectType
 from users.models import Subject
 from graphene_django import DjangoObjectType
@@ -9,6 +9,16 @@ class CourseType(DjangoObjectType):
         model = Course
         fields = "__all__"
 
+class CityType(DjangoObjectType):
+    class Meta:
+        model = City
+        fields = "__all__"
+
+class CourseCityType(DjangoObjectType):
+    class Meta:
+        model = CourseCity
+        fields = "__all__"
+        
 class StudentCourseType(DjangoObjectType):
     class Meta:
         model = StudentCourse

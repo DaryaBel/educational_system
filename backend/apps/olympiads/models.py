@@ -5,12 +5,11 @@ from organizations.models import Organization
 from users.models import Student, Subject
 
 RESULT_STATUS = [
-    ('TAKEPART', 'Записался'),
-    ('BEGIN', 'Начал выполнение'),
-    ('SENT', 'Отправил на проверку'),
+    ('TAKEPART', 'Записался(лась)'),
+    ('BEGIN', 'В процессе выполнения'),
+    ('SENT', 'Отправлено на проверку'),
     ('CHECKED', 'Проверено'),
 ]
-
 
 # Олимпиады
 class Olympiad(models.Model):

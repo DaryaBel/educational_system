@@ -145,6 +145,12 @@ export default {
         .then(() => {
           this.$apollo.queries.isStudentCourseMember.refresh();
           this.$apollo.queries.isStudentCourseMember.refetch();
+          // this.$toast.success("Вы успешно записались на курс!", {
+          //   position: "bottom-right",
+          //   duration: 5000,
+          //   dismissible: false,
+          //   pauseOnHover: false,
+          // });
         })
         .catch((error) => {
           console.error(error);

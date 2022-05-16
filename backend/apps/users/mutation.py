@@ -5,7 +5,7 @@ from django.contrib.auth import logout
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from organizations.models import City, Organization
+from organizations.models import Organization
 from users.models import Employee, Student, StudentSubject, Subject, User
 from users.types import EmployeeType, StudentSubjectType, StudentType, SubjectType
 
@@ -109,7 +109,6 @@ class CreateEmployee(graphene.Mutation):
 class CreateStudent(graphene.Mutation):
     class Arguments:
         user_id = graphene.ID(required=True)
-        city_id = graphene.ID(required=True)
         patronymic = graphene.String()
         birthdate = graphene.Date()
         
@@ -117,26 +116,24 @@ class CreateStudent(graphene.Mutation):
     student = graphene.Field(StudentType)
 
     @classmethod
-    def mutate(cls, root, info, user_id, city_id, patronymic=None, birthdate=None):
-        city = City.objects.get(pk=city_id)
+    def mutate(cls, root, info, user_id, patronymic=None, birthdate=None):
         user = User.objects.get(pk=user_id)
         student = Student.objects.create(
-            user=user, city=city, patronymic=patronymic, birthdate=birthdate)
+            user=user, patronymic=patronymic, birthdate=birthdate)
 
         return cls(ok=True, student=student)
 
 class CreateSubject(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        description = graphene.String()
         
     ok = graphene.Boolean()
     subject = graphene.Field(SubjectType)
 
     @classmethod
-    def mutate(cls, root, info, name, description=None):
+    def mutate(cls, root, info, name):
         subject = Subject.objects.create(
-            name=name, description=description)
+            name=name)
 
         return cls(ok=True, subject=subject)
 
@@ -242,20 +239,16 @@ class UpdateStudent(graphene.Mutation):
         student_id = graphene.ID(required=True)
         patronymic = graphene.String()
         birthdate = graphene.Date()
-        city_id = graphene.ID()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, student_id, patronymic=None, birthdate=None, city_id=None):
+    def mutate(cls, root, info, student_id, patronymic=None, birthdate=None):
         student = Student.objects.get(pk=student_id)
         if patronymic != None:
             student.patronymic = patronymic
         if birthdate != None:
             student.birthdate = birthdate
-        if city_id != None:
-            city = City.objects.get(pk=city_id)
-            student.city = city
         student.save()
 
         return cls(ok=True)

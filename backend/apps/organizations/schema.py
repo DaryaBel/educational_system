@@ -1,19 +1,13 @@
 import graphene
-from organizations.models import City, Organization, OrganizationCity
-from organizations.mutation import CreateCity, CreateOrganization, CreateOrganizationCity, DeleteCity, DeleteOrganization, DeleteOrganizationCity, UpdateCity, UpdateOrganization
-from organizations.types import CityType, OrganizationType
+from organizations.models import Organization
+from organizations.mutation import CreateOrganization, DeleteOrganization, UpdateOrganization
+from organizations.types import OrganizationType
 
 class Query(graphene.ObjectType):
     organizations = graphene.List(OrganizationType)
     organization = graphene.Field(OrganizationType, organization_id=graphene.ID(required=True))
     organizations_company = graphene.List(OrganizationType)
     organizations_university = graphene.List(OrganizationType)
-    organizations_city = graphene.List(OrganizationType, city_id=graphene.ID(required=True))
-    organizations_city_company = graphene.List(OrganizationType, city_id=graphene.ID(required=True))
-    organizations_city_university = graphene.List(OrganizationType, city_id=graphene.ID(required=True))
-
-    cities = graphene.List(CityType)
-    city = graphene.Field(CityType, city_id=graphene.ID(required=True))
     
     def resolve_organizations(root, info):
         return Organization.objects.all()
@@ -26,53 +20,11 @@ class Query(graphene.ObjectType):
 
     def resolve_organizations_university(root, info):
         return Organization.objects.filter(kind='UNIVERSITY')  
-
-    def resolve_organizations_city(root, info, city_id):
-        try:
-            organizationCity = OrganizationCity.objects.filter(city=city_id)
-            organizations = []
-            for organizationCity in organizationCity:
-                organizations += [organizationCity.organization]
-            return organizations
-        except Exception as e:
-            return None  
-
-    def resolve_organizations_city_company(root, info, city_id):
-        try:
-            organizationCity = OrganizationCity.objects.filter(city=city_id)
-            organizations = []
-            for organizationCity in organizationCity:
-                organizations += [organizationCity.organization]
-            result = filter(lambda organization: organization.kind == 'COMPANY', organizations)
-            return result
-        except Exception as e:
-            return None 
-
-    def resolve_organizations_city_university(root, info, city_id):
-        try:
-            organizationCity = OrganizationCity.objects.filter(city=city_id)
-            organizations = []
-            for organizationCity in organizationCity:
-                organizations += [organizationCity.organization]
-            result = filter(lambda organization: organization.kind == 'UNIVERSITY', organizations)
-            return result
-        except Exception as e:
-            return None    
-
-    def resolve_cities(root, info):
-        return City.objects.all()
-
-    def resolve_city(root, info, city_id):
-        return City.objects.get(pk=city_id)
+   
 
 class Mutation(graphene.ObjectType):
     create_organization = CreateOrganization.Field()
-    create_city = CreateCity.Field()
-    create_organization_city = CreateOrganizationCity.Field()
     delete_organization = DeleteOrganization.Field()
-    delete_city = DeleteCity.Field()
-    delete_organization_city = DeleteOrganizationCity.Field()
     update_organization = UpdateOrganization.Field()
-    update_city = UpdateCity.Field()
-
+    
 schema = graphene.Schema(query=Query, mutation=Mutation)    

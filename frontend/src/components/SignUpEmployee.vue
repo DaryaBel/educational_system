@@ -38,14 +38,25 @@
     </div>
     <div class="form-group">
       <label class="form-name">Организация *</label><br />
-      <model-select
-        class="search-select"
-        ref="modelSelect"
-        :isDisabled="isLoading"
-        :options="organizationList"
-        :isError="submitted && v$.form.organization.$error"
+      <multiselect
+        :disabled="isLoading"
         v-model="form.organization"
-      ></model-select>
+        track-by="id"
+        label="fullname"
+        placeholder="Выберите организацию"
+        :options="organizationList"
+        :showLabels="false"
+        :searchable="true"
+        :close-on-select="true"
+        :allow-empty="false"
+        :showPointer="false"
+      >
+        <span slot="noResult">Не найдено</span>
+      </multiselect>
+
+      <!-- <model-select
+        :isError="submitted && v$.form.organization.$error"
+      ></model-select> -->
       <div
         v-if="submitted && v$.form.organization.$error"
         class="invalid-feedback"
@@ -165,14 +176,11 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
-import { ModelListSelect } from "vue-search-select";
-import { ModelSelect } from "vue-search-select";
-import "vue-search-select/dist/VueSearchSelect.css";
+import Multiselect from "vue-multiselect";
 export default {
   name: "SignUpEmployee",
   components: {
-    ModelListSelect,
-    ModelSelect,
+    Multiselect,
   },
   setup() {
     return { v$: useVuelidate() };
@@ -194,9 +202,9 @@ export default {
       submitted: false,
       isLoading: false,
       organizationList: [
-        { text: "Один", value: "1" },
-        { text: "Два", value: "2" },
-        { text: "Три", value: "5" },
+        { fullname: "Один", id: "1" },
+        { fullname: "Два", id: "2" },
+        { fullname: "Три", id: "5" },
       ],
     };
   },
@@ -234,8 +242,5 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.form-group div.search-select {
-  width: 11rem !important;
-}
-</style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style lang="scss"></style>

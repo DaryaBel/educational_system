@@ -72,16 +72,28 @@
     </div>
     <div class="form-group" v-if="isStudent()">
       <label class="form-name">Город проживания </label><br />
-      <p v-if="!edit">{{ user.city }}</p>
-      <model-select
+      <p v-if="!edit">{{ user.city.name }}</p>
+      <multiselect
         v-else
-        class="search-select"
-        ref="modelSelect"
-        :isDisabled="isLoading"
-        :options="cityList"
-        :isError="submittedForm && v$.form.city.$error"
+        :disabled="isLoading"
         v-model="form.city"
-      ></model-select>
+        track-by="id"
+        :value="{ id: user.city.id, name: user.city.name }"
+        label="name"
+        placeholder="Выберите город"
+        :options="cityList"
+        :showLabels="false"
+        :searchable="true"
+        :close-on-select="true"
+        :allow-empty="true"
+        :showPointer="false"
+      >
+        <span slot="noResult">Не найдено</span>
+      </multiselect>
+
+      <!-- <model-select
+        :isError="submittedForm && v$.form.city.$error"
+      ></model-select> -->
     </div>
     <div class="form-group" v-if="!isStudent()">
       <label class="form-name">Организация </label><br />
@@ -185,9 +197,7 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
-import { ModelListSelect } from "vue-search-select";
-import { ModelSelect } from "vue-search-select";
-import "vue-search-select/dist/VueSearchSelect.css";
+import Multiselect from "vue-multiselect";
 
 export default {
   name: "Profile",
@@ -195,8 +205,7 @@ export default {
     return { v$: useVuelidate() };
   },
   components: {
-    ModelListSelect,
-    ModelSelect,
+    Multiselect,
   },
   data() {
     return {
@@ -208,8 +217,11 @@ export default {
         email: "d.belyaeva@gmail.com",
         password: "",
         confirmPassword: "",
-        city: "2",
-        role: 2,
+        city: {
+          id: 2,
+          name: "Два",
+        },
+        role: 1,
         position: "Отдел кадров",
         organization: "CUSTIS",
       },
@@ -219,7 +231,10 @@ export default {
         patronymic: "",
         birthdate: "",
         email: "",
-        city: "",
+        city: {
+          id: 0,
+          name: "",
+        },
       },
       formEmployee: {
         position: "",
@@ -236,9 +251,9 @@ export default {
       submittedPassword: false,
       isLoading: false,
       cityList: [
-        { text: "Один", value: "1" },
-        { text: "Два", value: "2" },
-        { text: "Три", value: "5" },
+        { name: "Один", id: "1" },
+        { name: "Два", id: "2" },
+        { name: "Три", id: "5" },
       ],
     };
   },
@@ -266,6 +281,7 @@ export default {
     isStudent() {
       return this.user.role == 1;
     },
+
     onEdit() {
       if (this.isStudent()) {
         if (!this.edit) {
@@ -275,7 +291,8 @@ export default {
           this.form.firstName = this.user.firstName;
           this.form.patronymic = this.user.patronymic;
           this.form.birthdate = this.user.birthdate;
-          this.form.city = this.user.city;
+          this.form.city.id = this.user.city.id;
+          this.form.city.name = this.user.city.name;
           this.form.email = this.user.email;
         } else {
           // Поставить загрузку
@@ -299,12 +316,13 @@ export default {
               return;
             }
           }
-
+          console.log(this.form.city);
           this.user.lastName = this.form.lastName;
           this.user.firstName = this.form.firstName;
           this.user.patronymic = this.form.patronymic;
           this.user.birthdate = this.form.birthdate;
-          this.user.city = this.form.city;
+          this.user.city.id = this.form.city.id;
+          this.user.city.name = this.form.city.name;
           this.user.email = this.form.email;
           this.changePassword = false;
           this.edit = false;
@@ -340,5 +358,5 @@ export default {
   },
 };
 </script>
-
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style lang="scss"></style>

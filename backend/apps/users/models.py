@@ -4,7 +4,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 from django.db import models
 from django.utils import timezone
 
-from organizations.models import Organization, City
+from organizations.models import Organization
 
 class UserManager(BaseUserManager):
     def _create_user(
@@ -121,7 +121,6 @@ class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", related_name="userStudent")
     patronymic = models.CharField("Отчество", max_length=150, null=True, blank=True)
     birthdate = models.DateField(verbose_name="Дата рождения", null=True, blank=True)
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город", related_name="cityStudent")
     
     def __str__(self):
         return f"{self.user}"
@@ -133,7 +132,6 @@ class Student(models.Model):
 # Предметы
 class Subject(models.Model):
     name = models.CharField("Название", max_length=150)
-    description = models.TextField("Описание", null=True, blank=True)
     
     def __str__(self):
         return self.name

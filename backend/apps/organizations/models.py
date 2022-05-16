@@ -5,17 +5,6 @@ ORGANIZATION_KIND_CHOICES = [
     ('COMPANY', 'Компания'),
 ]
 
-# Города
-class City(models.Model):
-    name = models.CharField("Название", max_length=150)
-    
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Город"
-        verbose_name_plural = "Города"
-
 # Организации
 class Organization(models.Model):
     fullname = models.CharField("Полное название", max_length=150)
@@ -31,15 +20,3 @@ class Organization(models.Model):
         verbose_name = "Организация"
         verbose_name_plural = "Организации"
 
-# Города организации
-class OrganizationCity(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationCity")
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город", related_name="cityOrganization")
-    
-    def __str__(self):
-        return f"{self.organization}. {self.city}"
-
-    class Meta:
-        verbose_name = "Город организации"
-        verbose_name_plural = "Города организаций"
-        
