@@ -38,7 +38,17 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'organization', 'moderated',)
     search_fields = ('user', 'organization', 'position',)
     list_filter = ('moderated',)
+    actions = ["moderate"]
     
+    def moderate(self, request, queryset):
+        # Подтвердить аккаунт
+        row_update = queryset.update(moderated=True)
+        message_bit = f"Количество пользователей, аккаунты которых были успешно подтверждены: {row_update}"
+        self.message_user(request, f"{message_bit}")
+
+    moderate.short_description = "Подтвердить аккаунт"
+    moderate.allowed_permissions = ('change', )
+
 class StudentAdmin(admin.ModelAdmin):
     """Школьники"""
     list_display = ('__str__', 'birthdate',)
