@@ -9,29 +9,24 @@ from users.forms import UserChangeForm, UserCreationForm
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-
-    # Поля, которые используются при отображении модели пользователя.
-    # Они переопределяют определения в базовом UserAdmin
-    # которые ссылаются на определенные поля в auth.User.list_display = ['full_name', 'email']
     list_display = ['full_name', 'email']
     fieldsets = [
         ['Данные авторизации', {'fields': ['email', 'password']}],
         ['Личная информация', {'fields': ['last_name', 'first_name']}],
-        ['Настройки', {'fields': ['groups', 'is_admin', 'is_active', 'is_staff', 'is_superuser']}],
+        ['Настройки', {'fields': ['is_staff', ]}],
         ['Важные отметки времени', {'fields': ['last_login', 'registered_at']}],
     ]
-    # add_fieldsets не является стандартным атрибутом ModelAdmin. UserAdmin
-    # переопределяет get_fieldsets для использования этого атрибута при создании пользователя.
     add_fieldsets = [[None, {'classes': ['wide'], 'fields': [
         'email', 'first_name', 'last_name', 'password1', 'password2']}], ]
-    search_fields = ['email']
+    search_fields = ['email', 'first_name', 'last_name',]
     ordering = ['email']
+    list_filter = ['is_staff']
     readonly_fields = ['last_login', 'registered_at']
 
 
-class StudentSubjectInline(admin.StackedInline):
-    model = StudentSubject
-    extra = 0
+# class StudentSubjectInline(admin.StackedInline):
+#     model = StudentSubject
+#     extra = 0
     
 class EmployeeAdmin(admin.ModelAdmin):
     """Сотрудники"""
@@ -49,20 +44,20 @@ class EmployeeAdmin(admin.ModelAdmin):
     moderate.short_description = "Подтвердить аккаунт"
     moderate.allowed_permissions = ('change', )
 
-class StudentAdmin(admin.ModelAdmin):
-    """Школьники"""
-    list_display = ('__str__', 'birthdate',)
-    search_fields = ('user', 'patronymic',)
-    inlines = [StudentSubjectInline]
+# class StudentAdmin(admin.ModelAdmin):
+#     """Школьники"""
+#     list_display = ('__str__', 'birthdate',)
+#     search_fields = ('user', 'patronymic',)
+#     inlines = [StudentSubjectInline]
 
-class SubjectAdmin(admin.ModelAdmin):
-    """Предметы"""
-    list_display = ('__str__',)
-    search_fields = ('name',)
+# class SubjectAdmin(admin.ModelAdmin):
+#     """Предметы"""
+#     list_display = ('__str__',)
+#     search_fields = ('name',)
 
 admin.site.register(Employee, EmployeeAdmin)
-admin.site.register(Student, StudentAdmin)
-admin.site.register(Subject, SubjectAdmin)
+# admin.site.register(Student, StudentAdmin)
+# admin.site.register(Subject, SubjectAdmin)
 
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
