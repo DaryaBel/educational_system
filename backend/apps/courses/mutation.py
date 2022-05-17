@@ -14,16 +14,15 @@ class CreateCourse(graphene.Mutation):
         date_end = graphene.Date()
         organization_id = graphene.ID(required=True)
         max_number_member = graphene.Int()
-        published = graphene.Boolean(required=True)
         
     ok = graphene.Boolean()
     course = graphene.Field(CourseType)
 
     @classmethod
-    def mutate(cls, root, info, name, form, organization_id, published, description=None, duration=None, date_start=None, date_end=None, max_number_member=None):
+    def mutate(cls, root, info, name, form, organization_id, description=None, duration=None, date_start=None, date_end=None, max_number_member=None):
         organization = Organization.objects.get(pk=organization_id)
         course = Course.objects.create(
-            name=name, form=form, organization=organization, published=published, description=description, duration=duration, date_start=date_start, date_end=date_end, max_number_member=max_number_member)
+            name=name, form=form, organization=organization, description=description, duration=duration, date_start=date_start, date_end=date_end, max_number_member=max_number_member)
 
         return cls(ok=True, course=course)
 
