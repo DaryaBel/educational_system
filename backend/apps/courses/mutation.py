@@ -1,5 +1,5 @@
-from courses.models import City, Course, CourseCity, CourseSubject, StudentCourse
-from courses.types import CityType, CourseCityType, CourseSubjectType, CourseType, StudentCourseType
+from courses.models import City, Course, CourseSubject, StudentCourse
+from courses.types import CityType,  CourseSubjectType, CourseType, StudentCourseType
 import graphene
 from organizations.models import Organization
 from users.models import Student, Subject, User
@@ -13,16 +13,20 @@ class CreateCourse(graphene.Mutation):
         date_start = graphene.Date()
         date_end = graphene.Date()
         organization_id = graphene.ID(required=True)
+        city_id = graphene.ID(required=True)
         max_number_member = graphene.Int()
         
     ok = graphene.Boolean()
     course = graphene.Field(CourseType)
 
     @classmethod
-    def mutate(cls, root, info, name, form, organization_id, description=None, duration=None, date_start=None, date_end=None, max_number_member=None):
+    def mutate(cls, root, info, name, form, organization_id, city_id=None, description=None, duration=None, date_start=None, date_end=None, max_number_member=None):
         organization = Organization.objects.get(pk=organization_id)
+        city=None
+        if city_id != None:
+            city = City.objects.get(pk=city_id)
         course = Course.objects.create(
-            name=name, form=form, organization=organization, description=description, duration=duration, date_start=date_start, date_end=date_end, max_number_member=max_number_member)
+            name=name, form=form, organization=organization, description=description, duration=duration, date_start=date_start, date_end=date_end, max_number_member=max_number_member, city=city)
 
         return cls(ok=True, course=course)
 
@@ -39,24 +43,6 @@ class CreateCity(graphene.Mutation):
             name=name)
 
         return cls(ok=True, city=city)
-
-class CreateCourseCity(graphene.Mutation):
-    class Arguments:
-        city_id = graphene.ID(required=True)
-        course_id = graphene.ID(required=True)
-        
-    ok = graphene.Boolean()
-    courseCity = graphene.Field(CourseCityType)
-
-    @classmethod
-    def mutate(cls, root, info, city_id, course_id):
-        course = Course.objects.get(pk=course_id)
-        city = City.objects.get(pk=city_id)
-        courseCity = CourseCity.objects.create(
-            city=city, course=course)
-
-        return cls(ok=True, courseCity=courseCity)
-
 
 class CreateStudentCourse(graphene.Mutation):
     class Arguments:
@@ -121,19 +107,6 @@ class DeleteCity(graphene.Mutation):
 
         return cls(ok=True)
 
-class DeleteCourseCity(graphene.Mutation):
-    class Arguments:
-        course_city_id = graphene.ID(required=True)
-
-    ok = graphene.Boolean()
-
-    @classmethod
-    def mutate(cls, root, info, course_city_id):
-        course_city = CourseCity.objects.get(pk=course_city_id)
-        course_city.delete()
-
-        return cls(ok=True)
-
 
 class DeleteStudentCourse(graphene.Mutation):
     class Arguments:
@@ -175,13 +148,14 @@ class UpdateCourse(graphene.Mutation):
         date_start = graphene.Date()
         date_end = graphene.Date()
         organization_id = graphene.ID()
+        city_id = graphene.ID()
         max_number_member = graphene.Int()
         published = graphene.Boolean()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, course_id, name=None, form=None, organization_id=None, published=None, description=None, duration=None, date_start=None, date_end=None, max_number_member=None):
+    def mutate(cls, root, info, course_id, name=None, form=None, organization_id=None, city_id=None, published=None, description=None, duration=None, date_start=None, date_end=None, max_number_member=None):
         course = Course.objects.get(pk=course_id)
         if name != None:
             course.name = name
@@ -191,7 +165,10 @@ class UpdateCourse(graphene.Mutation):
             course.description = description
         if organization_id != None:
             organization = Organization.objects.get(pk=organization_id)
-            course.organization = organization    
+            course.organization = organization
+        if city_id != None:
+            city = City.objects.get(pk=city_id)
+            course.city = city        
         if published != None:
             course.published = published
         if duration != None:

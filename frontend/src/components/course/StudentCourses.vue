@@ -1,17 +1,17 @@
 <template>
   <div>
-    <h1>Образовательные курсы</h1>
+    <h1>Мои курсы</h1>
     <div>
       <input
         placeholder="Поиск по названию и описанию"
         name="search"
         id="search"
-        :disabled="publishedCourses == undefined"
+        :disabled="studentCourses == undefined"
         type="text"
         v-model.trim="findString"
       />
       <multiselect
-        :disabled="publishedCourses == undefined || subjects == undefined"
+        :disabled="studentCourses == undefined || subjects == undefined"
         v-model="findSubject"
         track-by="id"
         label="name"
@@ -29,7 +29,7 @@
       </multiselect>
 
       <multiselect
-        :disabled="publishedCourses == undefined"
+        :disabled="studentCourses == undefined"
         v-model="findFormat"
         track-by="value"
         label="text"
@@ -46,7 +46,7 @@
       </multiselect>
 
       <multiselect
-        :disabled="publishedCourses == undefined || organizations == undefined"
+        :disabled="studentCourses == undefined || organizations == undefined"
         v-model="findOrganization"
         track-by="id"
         label="fullname"
@@ -62,34 +62,17 @@
       >
         <span slot="noResult">Не найдено</span>
       </multiselect>
-      <multiselect
-        :disabled="
-          publishedCourses == undefined ||
-          cities == undefined ||
-          !offlineFormat()
-        "
-        v-model="findCities"
-        track-by="id"
-        label="name"
-        placeholder="Выберите город проведения"
-        :options="citiesOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-        <span slot="noOptions">Не найдено</span>
-      </multiselect>
     </div>
     <div>
-      <p v-if="publishedCourses == undefined">Загрузка...</p>
+      <p v-if="studentCourses == undefined">Загрузка...</p>
       <div v-else>
         <div v-for="course in filterItems" :key="course.id">
-          <course-element :course="course" :delete="false"> </course-element>
+          <course-element
+            :course="course"
+            :delete="true"
+            @cancel="refreshList()"
+          >
+          </course-element>
         </div>
         <p v-if="filterItems.length == 0">Не найдено</p>
       </div>
@@ -99,8 +82,7 @@
 
 <script>
 import {
-  CITIES,
-  PUBLISHED_COURSES,
+  STUDENT_COURSES,
   SHORT_LIST_ORGANIZATIONS,
   SUBJECTS,
 } from "@/graphql/queries/queries";
@@ -108,17 +90,20 @@ import CourseElement from "@/components/course/CourseElement.vue";
 import Multiselect from "vue-multiselect";
 
 export default {
-  name: "CourseList",
+  name: "StudentCourses",
   apollo: {
-    publishedCourses: {
-      query: PUBLISHED_COURSES,
+    studentCourses: {
+      query: STUDENT_COURSES,
+      variables() {
+        return {
+          userId: this.userId,
+        };
+      },
     },
     subjects: {
       query: SUBJECTS,
     },
-    cities: {
-      query: CITIES,
-    },
+
     organizations: {
       query: SHORT_LIST_ORGANIZATIONS,
     },
@@ -131,7 +116,6 @@ export default {
     return {
       findString: "",
       findSubject: [],
-      findCities: [],
       findOrganization: [],
       findFormat: [],
       formats: [
@@ -151,18 +135,15 @@ export default {
       if (this.organizations == undefined) return [];
       else return this.organizations;
     },
-    citiesOption() {
-      if (this.cities == undefined) return [];
-      else return this.cities;
-    },
+
     filterItems() {
       let courses;
       if (
-        this.publishedCourses != null &&
-        this.publishedCourses != undefined &&
-        this.publishedCourses.length != 0
+        this.studentCourses != null &&
+        this.studentCourses != undefined &&
+        this.studentCourses.length != 0
       ) {
-        courses = this.publishedCourses;
+        courses = this.studentCourses;
         if (this.findString != "") {
           courses = courses.filter((el) => {
             return (
@@ -217,32 +198,15 @@ export default {
             return flag;
           });
         }
-        if (this.findCities.length != 0) {
-          courses = courses.filter((el) => {
-            let flag = false;
-            this.findCities.forEach((city) => {
-              if (el.city.id == city.id) flag = true;
-            });
-            return flag;
-          });
-        }
       } else courses = [];
       return courses;
     },
   },
 
   methods: {
-    offlineFormat() {
-      if (this.findFormat.length == 0) return true;
-      else {
-        if (
-          this.findFormat.find(
-            (format) => "BOTH" == format.value || "OFF" == format.value
-          ) != undefined
-        )
-          return true;
-        else return false;
-      }
+    refreshList() {
+      this.$apollo.queries.studentCourses.refresh();
+      this.$apollo.queries.studentCourses.refetch();
     },
   },
 };

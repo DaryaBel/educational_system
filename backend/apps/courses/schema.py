@@ -1,7 +1,7 @@
-from courses.mutation import CreateCity, CreateCourse, CreateCourseCity, CreateCourseSubject, CreateStudentCourse, DeleteCity, DeleteCourse, DeleteCourseCity, DeleteCourseSubject, DeleteStudentCourse, UpdateCity, UpdateCourse
+from courses.mutation import CreateCity, CreateCourse, CreateCourseSubject, CreateStudentCourse, DeleteCity, DeleteCourse,  DeleteCourseSubject, DeleteStudentCourse, UpdateCity, UpdateCourse
 import graphene
 from courses.models import City, Course, StudentCourse
-from courses.types import CityType, CourseType, StudentCourseType
+from courses.types import CityType, CourseType
 from organizations.models import Organization
 from users.models import Student, User
 
@@ -9,9 +9,9 @@ class Query(graphene.ObjectType):
     courses = graphene.List(CourseType)
     published_courses = graphene.List(CourseType)
     course = graphene.Field(CourseType, course_id=graphene.ID(required=True))
-    courses_organization = graphene.List(CourseType, organization_id=graphene.ID(required=True))
+    organization_courses = graphene.List(CourseType, organization_id=graphene.ID(required=True))
     published_courses_organization = graphene.List(CourseType, organization_id=graphene.ID(required=True))
-    student_courses = graphene.List(CourseType, student_id=graphene.ID(required=True))
+    student_courses = graphene.List(CourseType, user_id=graphene.ID(required=True))
     count_course_member = graphene.Int(course_id=graphene.ID(required=True))
     is_student_course_member = graphene.Boolean(course_id=graphene.ID(required=True), user_id=graphene.ID(required=True))
     cities = graphene.List(CityType)
@@ -34,9 +34,11 @@ class Query(graphene.ObjectType):
         organization = Organization.objects.get(pk=organization_id)
         return Course.objects.filter(organization=organization, published=True)
 
-    def resolve_student_courses(root, info, student_id):
+    def resolve_student_courses(root, info, user_id):
         try:
-            studentCourse = StudentCourse.objects.filter(student=student_id)
+            user = User.objects.get(pk=user_id)
+            student = Student.objects.get(user=user)
+            studentCourse = StudentCourse.objects.filter(student=student)
             courses = []
             for studentCourse in studentCourse:
                 courses += [studentCourse.course]
@@ -71,7 +73,5 @@ class Mutation(graphene.ObjectType):
     create_city = CreateCity.Field()
     delete_city = DeleteCity.Field()
     update_city = UpdateCity.Field()
-    create_organization_city = CreateCourseCity.Field()
-    delete_organization_city = DeleteCourseCity.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)    

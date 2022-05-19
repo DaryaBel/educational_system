@@ -13,12 +13,19 @@ import Olympiad from "@/components/olympiad/Olympiad.vue";
 import OlympiadRules from "@/components/olympiad/OlympiadRules.vue";
 import OlympiadProcess from "@/components/olympiad/OlympiadProcess.vue";
 import StudentOlympiads from "@/components/olympiad/StudentOlympiads.vue";
+import StudentCourses from "@/components/course/StudentCourses.vue";
+import OrganizationCourses from "@/components/course/organizers/OrganizationCourses.vue";
 
 const routes = [
   {
     path: "/login",
     name: "LogIn",
     component: LogIn,
+  },
+  {
+    path: "/organization/courses",
+    name: "OrganizationCourses",
+    component: OrganizationCourses,
   },
   {
     path: "/course/:id",
@@ -35,6 +42,11 @@ const routes = [
     path: "/my/olympiads",
     name: "StudentOlympiads",
     component: StudentOlympiads,
+  },
+  {
+    path: "/my/courses",
+    name: "StudentCourses",
+    component: StudentCourses,
   },
 
   {

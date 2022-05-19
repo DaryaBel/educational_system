@@ -22,6 +22,10 @@ export const COURSE_FOR_STUDENT = gql`
       dateStart
       dateEnd
       maxNumberMember
+      city {
+        id
+        name
+      }
       courseSubject {
         subject {
           id
@@ -57,12 +61,15 @@ export const PUBLISHED_COURSES = gql`
       description
       organization {
         id
-        kind
         fullname
         shortname
         logo
       }
       form
+      city {
+        id
+        name
+      }
       courseSubject {
         subject {
           id
@@ -97,6 +104,47 @@ export const CITIES = gql`
     cities {
       id
       name
+    }
+  }
+`;
+
+export const STUDENT_COURSES = gql`
+  query ($userId: ID!) {
+    studentCourses(userId: $userId) {
+      id
+      name
+      description
+      organization {
+        id
+        fullname
+        shortname
+        logo
+      }
+      form
+      courseSubject {
+        subject {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const ORGANIZATION_COURSES = gql`
+  query ($organizationId: ID!) {
+    organizationCourses(organizationId: $organizationId) {
+      id
+      name
+      description
+      form
+
+      courseSubject {
+        subject {
+          id
+          name
+        }
+      }
     }
   }
 `;

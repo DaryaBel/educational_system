@@ -13,19 +13,38 @@
       </span>
     </p>
     <p>{{ course.description }}</p>
+    <button @click="toCancelAppointment">Отменить запись на курс</button>
   </div>
 </template>
 
 <script>
+import { DELETE_STUDENT_COURSE } from "@/graphql/mutations/mutations.js";
 export default {
   name: "CourseList",
-  props: ["course"],
+  props: ["course", "delete"],
   data() {
     return {
       userId: 2,
     };
   },
-  methods: {},
+  methods: {
+    toCancelAppointment() {
+      this.$apollo
+        .mutate({
+          mutation: DELETE_STUDENT_COURSE,
+          variables: {
+            courseId: this.course.id,
+            userId: this.userId,
+          },
+        })
+        .then(() => {
+          this.$emit("cancel");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  },
 };
 </script>
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from courses.models import City, Course, CourseCity, CourseSubject, StudentCourse
+from courses.models import City, Course, CourseSubject, StudentCourse
 
 # class StudentCourseInline(admin.StackedInline):
 #     model = StudentCourse
@@ -15,16 +15,12 @@ from courses.models import City, Course, CourseCity, CourseSubject, StudentCours
 #     model = CourseSubject
 #     extra = 0
 
-# class CourseCityInline(admin.StackedInline):
-#     model = CourseCity
-#     extra = 0
-
 # class CourseAdmin(admin.ModelAdmin):
 #     """Курсы"""
 #     list_display = ('__str__', 'organization', 'form', 'published',)
 #     list_filter = ('form', 'duration')
 #     search_fields = ('name', 'organization', 'description',)
-#     inlines = [CourseCityInline, CourseSubjectInline, StudentCourseInline]
+#     inlines = [ CourseSubjectInline, StudentCourseInline]
 
 # admin.site.register(City, CityAdmin)
 # admin.site.register(Course, CourseAdmin)

@@ -38,6 +38,7 @@ class Course(models.Model):
     date_start = models.DateField("Дата начала", null=True, blank=True)
     date_end = models.DateField("Дата окончания", null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationCourse")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город проведения", null=True, blank=True, related_name="cityCourse")
     max_number_member = models.PositiveIntegerField("Максимальное количество слушателей", null=True, blank=True)
     published = models.BooleanField("Опубликовано", default=False)
     
@@ -47,18 +48,6 @@ class Course(models.Model):
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
-
-# Города проведения курса
-class CourseCity(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс", related_name="courseCity")
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город", related_name="cityCourse")
-    
-    def __str__(self):
-        return f"{self.course}. {self.city}"
-
-    class Meta:
-        verbose_name = "Город проведения курса"
-        verbose_name_plural = "Города проведения курса"
         
 
 # Школьники на курсах
