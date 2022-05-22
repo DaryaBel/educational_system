@@ -26,7 +26,7 @@ class Query(graphene.ObjectType):
     def resolve_course(root, info, course_id):
         return Course.objects.get(pk=course_id)
 
-    def resolve_courses_organization(root, info, organization_id):
+    def resolve_organization_courses(root, info, organization_id):
         organization = Organization.objects.get(pk=organization_id)
         return Course.objects.filter(organization=organization)
 

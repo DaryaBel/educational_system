@@ -7,7 +7,7 @@ from users.models import Student, Subject
 STUDYING_FORM = [
     ('ON', 'Онлайн'),
     ('OFF', 'Оффлайн'),
-    ('BOTH', 'Смешанная'),
+    ('BOTH', 'Смешанный'),
 ]
 
 DURATION_CHOICES = [

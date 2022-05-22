@@ -1,86 +1,133 @@
 <template>
   <div>
     <h1>Курсы организации</h1>
+    <button @click="onLink()">Добавить новый курс</button>
     <div>
       <input
         placeholder="Поиск по названию и описанию"
         name="search"
         id="search"
-        :disabled="publishedCourses == undefined"
+        :disabled="organizationCourses == undefined"
         type="text"
         v-model.trim="findString"
       />
-      <multiselect
-        :disabled="publishedCourses == undefined || subjects == undefined"
-        v-model="findSubject"
-        track-by="id"
-        label="name"
-        placeholder="Выберите школьные предметы"
-        :options="subjectsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
     </div>
+    <span>Опубликован?</span>
+    <select name="published" id="published" v-model="published">
+      <option value="all">Все</option>
+      <option value="yes">Да</option>
+      <option value="no">Нет</option>
+    </select>
     <div>
-      <p v-if="publishedCourses == undefined">Загрузка...</p>
+      <p v-if="organizationCourses == undefined">Загрузка...</p>
       <div v-else>
-        <div v-for="course in filterItems" :key="course.id">
-          <course-element :course="course" :delete="false"> </course-element>
-        </div>
         <p v-if="filterItems.length == 0">Не найдено</p>
+        <table v-else>
+          <tr>
+            <th>Название</th>
+            <th>Предметы</th>
+            <th>Форма проведения</th>
+            <th>Опубликовано</th>
+            <th></th>
+          </tr>
+          <tr v-for="course in filterItems" :key="course.id">
+            <td>
+              <router-link
+                tag="a"
+                :to="{ name: 'OrganizationCourse', params: { id: course.id } }"
+                >{{ course.name }}</router-link
+              >
+            </td>
+            <td>
+              <span
+                v-for="subject in course.courseSubject"
+                :key="subject.subject.id"
+              >
+                {{ subject.subject.name }} <br />
+              </span>
+            </td>
+            <td>{{ whatIsStudyingForm(course.form) }}</td>
+            <td>{{ course.published ? "Да" : "Нет" }}</td>
+            <td>
+              <button
+                @click="
+                  modal = true;
+                  modalId = course.id;
+                  modalName = course.name;
+                "
+              >
+                Удалить</button
+              ><br />
+              <button
+                v-if="!course.published"
+                @click="toPublish(course.id, true)"
+              >
+                Опубликовать
+              </button>
+              <button
+                v-if="course.published"
+                @click="toPublish(course.id, false)"
+              >
+                Снять с публикации
+              </button>
+            </td>
+          </tr>
+        </table>
+        <modal-delete-course
+          v-if="modal"
+          @delete="deleteCourse"
+          @close="
+            modal = false;
+            modalId = 0;
+            modalName = '';
+          "
+          :courseId="modalId"
+          :courseName="modalName"
+        ></modal-delete-course>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { PUBLISHED_COURSES, SUBJECTS } from "@/graphql/queries/queries";
-import CourseElement from "@/components/course/CourseElement.vue";
-import Multiselect from "vue-multiselect";
-
+import { UPDATE_COURSE, DELETE_COURSE } from "@/graphql/mutations/mutations";
+import { ORGANIZATION_COURSES } from "@/graphql/queries/queries";
+import ModalDeleteCourse from "@/components/course/organizers/ModalDeleteCourse.vue";
 export default {
   name: "OrganizationCourses",
   apollo: {
-    publishedCourses: {
-      query: PUBLISHED_COURSES,
-    },
-    subjects: {
-      query: SUBJECTS,
+    organizationCourses: {
+      query: ORGANIZATION_COURSES,
+      variables() {
+        return {
+          organizationId: this.organizationId,
+        };
+      },
     },
   },
   components: {
-    CourseElement,
-    Multiselect,
+    ModalDeleteCourse,
   },
   data() {
     return {
+      modal: false,
+      modalId: 0,
+      modalName: "",
       findString: "",
-      findSubject: [],
-      organizationId: 2,
+      published: "all",
+      organizationId: 4,
       userId: 2,
     };
   },
   computed: {
-    subjectsOption() {
-      if (this.subjects == undefined) return [];
-      else return this.subjects;
-    },
-
     filterItems() {
       let courses;
       if (
-        this.publishedCourses != null &&
-        this.publishedCourses != undefined &&
-        this.publishedCourses.length != 0
+        this.organizationCourses != null &&
+        this.organizationCourses != undefined &&
+        this.organizationCourses.length != 0
       ) {
-        courses = this.publishedCourses;
+        courses = this.organizationCourses;
         if (this.findString != "") {
           courses = courses.filter((el) => {
             return (
@@ -101,21 +148,10 @@ export default {
             );
           });
         }
-
-        if (this.findSubject.length != 0) {
+        if (this.published != "all") {
           courses = courses.filter((el) => {
-            let flag = false;
-            let i = 0;
-            let j = 0;
-            while (!flag && j < el.courseSubject.length) {
-              if (el.courseSubject[j].subject.id == this.findSubject[i].id)
-                flag = true;
-              if (i + 1 == this.findSubject.length) {
-                i = 0;
-                j++;
-              } else i++;
-            }
-            return flag;
+            let publishedBoolean = this.published == "yes" ? true : false;
+            return el.published == publishedBoolean;
           });
         }
       } else courses = [];
@@ -123,9 +159,51 @@ export default {
     },
   },
 
-  methods: {},
+  methods: {
+    whatIsStudyingForm(studyingForm) {
+      if (studyingForm == "ON") return "онлайн";
+      if (studyingForm == "OFF") return "оффлайн";
+      if (studyingForm == "BOTH") return "в смешанном формате";
+      return "";
+    },
+    toPublish(courseId, published) {
+      this.$apollo
+        .mutate({
+          mutation: UPDATE_COURSE,
+          variables: {
+            courseId: courseId,
+            published: published,
+          },
+        })
+        .then(() => {
+          this.$apollo.queries.organizationCourses.refresh();
+          this.$apollo.queries.organizationCourses.refetch();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    onLink() {
+      this.$router.push({ name: "NewCourse" });
+    },
+    deleteCourse(courseId) {
+      this.$apollo
+        .mutate({
+          mutation: DELETE_COURSE,
+          variables: {
+            courseId: courseId,
+          },
+        })
+        .then(() => {
+          this.$apollo.queries.organizationCourses.refresh();
+          this.$apollo.queries.organizationCourses.refetch();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  },
 };
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style lang="scss"></style>

@@ -136,9 +136,12 @@ export const ORGANIZATION_COURSES = gql`
     organizationCourses(organizationId: $organizationId) {
       id
       name
+      published
       description
       form
-
+      city {
+        id
+      }
       courseSubject {
         subject {
           id

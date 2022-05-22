@@ -47,6 +47,7 @@
           <div v-if="!isStudentCourseMember">
             <p
               v-if="
+                course.maxNumberMember != undefined &&
                 course.maxNumberMember - countCourseMember < 10 &&
                 course.maxNumberMember - countCourseMember > 0
               "

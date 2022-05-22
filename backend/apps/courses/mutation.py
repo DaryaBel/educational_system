@@ -13,7 +13,7 @@ class CreateCourse(graphene.Mutation):
         date_start = graphene.Date()
         date_end = graphene.Date()
         organization_id = graphene.ID(required=True)
-        city_id = graphene.ID(required=True)
+        city_id = graphene.ID()
         max_number_member = graphene.Int()
         
     ok = graphene.Boolean()
@@ -26,7 +26,7 @@ class CreateCourse(graphene.Mutation):
         if city_id != None:
             city = City.objects.get(pk=city_id)
         course = Course.objects.create(
-            name=name, form=form, organization=organization, description=description, duration=duration, date_start=date_start, date_end=date_end, max_number_member=max_number_member, city=city)
+            name=name, form=form, organization=organization, description=description, duration=duration, published=False, date_start=date_start, date_end=date_end, max_number_member=max_number_member, city=city)
 
         return cls(ok=True, course=course)
 
