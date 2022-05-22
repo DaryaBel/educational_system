@@ -16,7 +16,23 @@ export const DELETE_STUDENT_COURSE = gql`
   }
 `;
 
-export const UPDATE_COURSE = gql`
+export const CREATE_COURSE_SUBJECT = gql`
+  mutation ($courseId: ID!, $subjectId: ID!) {
+    createCourseSubject(courseId: $courseId, subjectId: $subjectId) {
+      ok
+    }
+  }
+`;
+
+export const DELETE_COURSE_SUBJECT = gql`
+  mutation ($courseId: ID!, $subjectId: ID!) {
+    deleteCourseSubject(courseId: $courseId, subjectId: $subjectId) {
+      ok
+    }
+  }
+`;
+
+export const PUBLISH_COURSE = gql`
   mutation ($courseId: ID!, $published: Boolean) {
     updateCourse(courseId: $courseId, published: $published) {
       ok
@@ -50,6 +66,34 @@ export const CREATE_COURSE = gql`
       course {
         id
       }
+    }
+  }
+`;
+
+export const UPDATE_COURSE = gql`
+  mutation (
+    $courseId: ID!
+    $name: String
+    $form: String
+    $description: String
+    $duration: String
+    $dateStart: Date
+    $dateEnd: Date
+    $cityId: ID
+    $maxNumberMember: Int
+  ) {
+    updateCourse(
+      courseId: $courseId
+      name: $name
+      form: $form
+      description: $description
+      duration: $duration
+      dateStart: $dateStart
+      dateEnd: $dateEnd
+      cityId: $cityId
+      maxNumberMember: $maxNumberMember
+    ) {
+      ok
     }
   }
 `;

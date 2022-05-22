@@ -11,11 +11,12 @@ export const PROFILE = gql`
   }
 `;
 
-export const COURSE_FOR_STUDENT = gql`
+export const COURSE = gql`
   query ($courseId: ID!) {
     course(courseId: $courseId) {
       id
       name
+      published
       description
       duration
       form

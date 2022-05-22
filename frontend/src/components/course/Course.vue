@@ -19,13 +19,19 @@
       <p v-if="whatIsStudyingForm(course.form) != ''">
         Курс проводится {{ whatIsStudyingForm(course.form) }}.
       </p>
-      <p v-if="whatIsDurationType(course.duration) != ''">
+      <p
+        v-if="
+          whatIsDurationType(course.duration) != '' &&
+          whatIsDurationType(course.duration) != undefined
+        "
+      >
         Длительность: {{ whatIsDurationType(course.duration) }}.
       </p>
       <p
         v-if="
           formatDate(course.dateEnd) != null ||
-          formatDate(course.dateStart) != null
+          formatDate(course.dateStart) != null ||
+          course.city != undefined
         "
       >
         Курс проводится<span v-if="formatDate(course.dateStart) != null">
@@ -33,6 +39,15 @@
         >
         <span v-if="formatDate(course.dateEnd) != null">
           до {{ formatDate(course.dateEnd) }}</span
+        >
+        <span
+          v-if="
+            course.city != undefined &&
+            course.city.name != undefined &&
+            course.city.name != ''
+          "
+        >
+          в городе {{ course.city.name }}</span
         >.
       </p>
       <div>
@@ -93,7 +108,7 @@ import {
   DELETE_STUDENT_COURSE,
 } from "@/graphql/mutations/mutations.js";
 import {
-  COURSE_FOR_STUDENT,
+  COURSE,
   IS_STUDENT_COURSE_MEMBER,
   NUMBER_MEMBER_COURSE,
 } from "@/graphql/queries/queries.js";
@@ -101,7 +116,7 @@ export default {
   name: "Course",
   apollo: {
     course: {
-      query: COURSE_FOR_STUDENT,
+      query: COURSE,
       variables() {
         return {
           courseId: this.$route.params.id,

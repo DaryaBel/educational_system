@@ -127,15 +127,18 @@ class DeleteStudentCourse(graphene.Mutation):
 
 class DeleteCourseSubject(graphene.Mutation):
     class Arguments:
-        course_subject_id = graphene.ID(required=True)
+        subject_id = graphene.ID(required=True)
+        course_id = graphene.ID(required=True)
 
     ok = graphene.Boolean()
 
     @classmethod
-    def mutate(cls, root, info, course_subject_id):
-        courseSubject = CourseSubject.objects.get(pk=course_subject_id)
+    def mutate(cls, root, info, subject_id, course_id):
+        subject = Subject.objects.get(pk=subject_id)
+        course = Course.objects.get(pk=course_id)
+        courseSubject = CourseSubject.objects.get(course=course, subject=subject)
         courseSubject.delete()
-
+        
         return cls(ok=True)
 
 class UpdateCourse(graphene.Mutation):

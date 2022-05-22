@@ -33,6 +33,34 @@
         ></textarea>
       </div>
       <div class="form-group">
+        <label for="subjects">Предметы *</label><br />
+        <multiselect
+          :disabled="subjects == undefined"
+          v-model="form.subjects"
+          track-by="id"
+          label="name"
+          placeholder="Выберите школьные предметы"
+          :options="subjectsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
+        <div
+          v-if="submittedForm && v$.form.subjects.$error"
+          class="invalid-feedback"
+        >
+          <span v-if="v$.form.subjects.required.$invalid"
+            >Данное поле обязательно</span
+          >
+        </div>
+      </div>
+      <div class="form-group">
         <label for="duration">Длительность</label><br />
         <select
           v-model="form.duration"
@@ -130,11 +158,14 @@
 </template>
 
 <script>
-import { CREATE_COURSE } from "@/graphql/mutations/mutations";
+import {
+  CREATE_COURSE,
+  CREATE_COURSE_SUBJECT,
+} from "@/graphql/mutations/mutations";
 import useVuelidate from "@vuelidate/core";
 import { required, integer } from "@vuelidate/validators";
 import Multiselect from "vue-multiselect";
-import { CITIES } from "@/graphql/queries/queries";
+import { CITIES, SUBJECTS } from "@/graphql/queries/queries";
 
 export default {
   name: "NewCourse",
@@ -142,6 +173,9 @@ export default {
     return { v$: useVuelidate() };
   },
   apollo: {
+    subjects: {
+      query: SUBJECTS,
+    },
     cities: {
       query: CITIES,
     },
@@ -159,6 +193,7 @@ export default {
         form: undefined,
         dateStart: undefined,
         dateEnd: undefined,
+        subjects: [],
         city: undefined,
         maxNumberMember: undefined,
       },
@@ -176,11 +211,16 @@ export default {
       form: { required },
       dateStart: {},
       dateEnd: {},
+      subjects: { required },
       maxNumberMember: { integer },
       city: {},
     },
   },
   computed: {
+    subjectsOption() {
+      if (this.subjects == undefined) return [];
+      else return this.subjects;
+    },
     citiesOption() {
       if (this.cities == undefined) return [];
       else return this.cities;
@@ -214,6 +254,21 @@ export default {
         })
         .then((result) => {
           this.createdId = result.data.createCourse.course.id;
+          this.form.subjects.forEach((element) => {
+            this.$apollo
+              .mutate({
+                mutation: CREATE_COURSE_SUBJECT,
+                variables: {
+                  subjectId: element.id,
+                  courseId: this.createdId,
+                },
+              })
+              .then(() => {})
+              .catch((error) => {
+                console.error(error);
+              });
+          });
+
           this.form = {
             name: undefined,
             description: undefined,
@@ -221,9 +276,11 @@ export default {
             form: undefined,
             dateStart: undefined,
             dateEnd: undefined,
+            subjects: [],
             city: undefined,
             maxNumberMember: undefined,
           };
+
           this.submittedForm = false;
           this.isLoading = false;
         })

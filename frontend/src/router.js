@@ -17,6 +17,7 @@ import StudentCourses from "@/components/course/StudentCourses.vue";
 import OrganizationCourses from "@/components/course/organizers/OrganizationCourses.vue";
 import OrganizationCourse from "@/components/course/organizers/OrganizationCourse.vue";
 import NewCourse from "@/components/course/organizers/NewCourse.vue";
+import CourseMembers from "@/components/course/organizers/CourseMembers.vue";
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     path: "/organization/courses/new",
     name: "NewCourse",
     component: NewCourse,
+  },
+  {
+    path: "/organization/course/:id/members",
+    name: "CourseMembers",
+    component: CourseMembers,
   },
   {
     path: "/organization/courses",

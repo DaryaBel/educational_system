@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import { UPDATE_COURSE, DELETE_COURSE } from "@/graphql/mutations/mutations";
+import { PUBLISH_COURSE, DELETE_COURSE } from "@/graphql/mutations/mutations";
 import { ORGANIZATION_COURSES } from "@/graphql/queries/queries";
 import ModalDeleteCourse from "@/components/course/organizers/ModalDeleteCourse.vue";
 export default {
@@ -169,7 +169,7 @@ export default {
     toPublish(courseId, published) {
       this.$apollo
         .mutate({
-          mutation: UPDATE_COURSE,
+          mutation: PUBLISH_COURSE,
           variables: {
             courseId: courseId,
             published: published,
