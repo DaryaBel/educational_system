@@ -9,6 +9,7 @@ import Profile from "@/components/Profile.vue";
 import SignUp from "@/components/SignUp.vue";
 import SignUpEmployee from "@/components/SignUpEmployee.vue";
 import DeleteAccount from "@/components/DeleteAccount.vue";
+import OlympiadList from "@/components/olympiad/OlympiadList.vue";
 import Olympiad from "@/components/olympiad/Olympiad.vue";
 import OlympiadRules from "@/components/olympiad/OlympiadRules.vue";
 import OlympiadProcess from "@/components/olympiad/OlympiadProcess.vue";
@@ -29,6 +30,11 @@ const routes = [
     path: "/organization/courses/new",
     name: "NewCourse",
     component: NewCourse,
+  },
+  {
+    path: "/olympiads",
+    name: "OlympiadList",
+    component: OlympiadList,
   },
   {
     path: "/organization/course/:id/members",
@@ -68,7 +74,7 @@ const routes = [
   },
 
   {
-    path: "/olympiad",
+    path: "/olympiad/:id",
     name: "Olympiad",
     component: Olympiad,
   },

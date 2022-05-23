@@ -1,59 +1,85 @@
 <template>
   <div>
-    <h1>{{ olympiad.name }}</h1>
-    <p>
-      <span v-for="subject in olympiad.subjects" :key="subject.id">
-        {{ subject.name }}
-      </span>
-    </p>
-    <img src="https://picsum.photos/200" alt="" />
-    <p>{{ olympiad.description }}</p>
-    <p>
-      Организатор: {{ organizationType() }}
-      {{ olympiad.organization.shortname }}
-    </p>
-    <p v-if="formatDate(olympiad.date_end) != null">
-      Олимпиада проводится до {{ formatDate(olympiad.date_end) }} (включительно)
-    </p>
-    <p v-if="formatDate(olympiad.date_result) != null">
-      Результаты олимпиады будут объявлены
-      {{ formatDate(olympiad.date_result) }}
-    </p>
-    <button v-if="status != 'Отправлено'" @click="toRules">
-      Принять участие
-    </button>
+    <div v-if="olympiad == undefined">
+      <p>Загрузка...</p>
+    </div>
+    <div v-else>
+      <h1>{{ olympiad.name }}</h1>
+      <p>
+        <span
+          v-for="subject in olympiad.olympiadSubject"
+          :key="subject.subject.id"
+        >
+          {{ subject.subject.name }}
+        </span>
+      </p>
+      <img src="https://picsum.photos/200" alt="" />
+      <p>{{ olympiad.description }}</p>
+      <p>
+        Организатор: {{ organizationType() }}
+        {{ olympiad.organization.shortname }}
+      </p>
+      <p v-if="formatDate(olympiad.dateEnd) != null">
+        Олимпиада проводится до
+        {{ formatDate(olympiad.dateEnd) }} (включительно).
+      </p>
+      <p v-if="formatDate(olympiad.dateResult) != null">
+        Результаты олимпиады будут объявлены
+        {{ formatDate(olympiad.dateResult) }}.
+      </p>
+      <button v-if="studentOlympiadResult == undefined">Принять участие</button>
+      <div v-else>
+        <button
+          v-if="studentOlympiadResult.status == 'TAKEPART'"
+          @click="toRules"
+        >
+          Начать выполнение
+        </button>
+        <button v-if="studentOlympiadResult.status == 'TAKEPART'">
+          Отменить участие
+        </button>
+        <button v-if="studentOlympiadResult.status == 'BEGIN'">
+          Продолжить выполнение
+        </button>
+        <p v-if="studentOlympiadResult.status == 'SENT'">
+          Вы успешно отправили свои ответы на олимпиаду. После того, как
+          организаторы проверят все решения, будут вывешны результаты.
+        </p>
+        <button v-if="studentOlympiadResult.status == 'CHECKED'">
+          Посмотреть результаты
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { OLYMPIAD, OLYMPIAD_STATUS } from "@/graphql/queries/queries.js";
 export default {
   name: "Olympiad",
   data() {
     return {
-      status: "",
-      olympiad: {
-        name: 'Олимпиада "Инновационный полет"',
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at ultrices enim. Maecenas id sodales libero, vitae tristique orci. Cras quis venenatis sem, laoreet pellentesque dui. Mauris faucibus neque turpis. Vivamus id sapien fermentum metus pulvinar pellentesque eget ac diam. Phasellus tristique massa non bibendum suscipit. Aliquam vel libero ut nunc ultrices maximus ac in turpis. Phasellus commodo, orci sit amet suscipit consectetur, risus est tempus felis, sed rhoncus eros lacus vitae purus. Nullam pellentesque consectetur libero, vel bibendum mauris blandit eu. Quisque hendrerit libero nec sem sollicitudin fermentum. Nullam id dui mattis, imperdiet velit vitae, placerat magna. Aliquam lobortis tempus orci, in placerat dui eleifend id. Sed sed lacus eget nulla aliquam aliquet. Nunc egestas lacus in pellentesque iaculis. Phasellus blandit efficitur lectus, sit amet finibus leo tincidunt eget. Aenean in viverra dui.",
-        percent_to_win: 85,
-        time_to_pass: undefined,
-        date_end: "2022-06-05",
-        date_result: "2022-07-05",
-        published: true,
-        subjects: [
-          { id: 1, name: "Обществознание" },
-          { id: 2, name: "Экономика" },
-        ],
-        organization: {
-          fullname: "ОАО Тинькофф Банк",
-          shortname: "Тинькофф",
-          kind: "COMPANY",
-          description:
-            " российский коммерческий банк, сфокусированный полностью на дистанционном обслуживании, не имеющий розничных отделений",
-          logo: "",
-        },
-      },
+      userId: 2,
     };
+  },
+  apollo: {
+    olympiad: {
+      query: OLYMPIAD,
+      variables() {
+        return {
+          olympiadId: this.$route.params.id,
+        };
+      },
+    },
+    studentOlympiadResult: {
+      query: OLYMPIAD_STATUS,
+      variables() {
+        return {
+          userId: this.userId,
+          olympiadId: this.$route.params.id,
+        };
+      },
+    },
   },
   methods: {
     organizationType() {
@@ -67,7 +93,6 @@ export default {
       return `${day}.${month}.${year}`;
     },
     toRules() {
-      // поставить статус как записан
       this.$router.push({ name: "OlympiadRules" });
     },
   },

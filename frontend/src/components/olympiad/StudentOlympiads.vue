@@ -1,72 +1,124 @@
 <template>
   <div>
     <h1>Мои олимпиады</h1>
-    <input
-      placeholder="Поиск по названию олимпиаде и ее организатору"
-      name="search"
-      id="search"
-      :disabled="isLoading"
-      type="text"
-      v-model.trim="findString"
-    />
+    <div>
+      <input
+        placeholder="Поиск по названию олимпиады и ее описанию"
+        name="search"
+        id="search"
+        :disabled="studentOlympiads == undefined"
+        type="text"
+        v-model.trim="findString"
+      />
 
-    <select
-      placeholder="Статус олимпиады"
-      :disabled="isLoading"
-      name="status"
-      id="status"
-      v-model.trim="findStatus"
-    >
-      <option value="TAKEPART">Записался(лась)</option>
-      <option value="BEGIN">В процессе выполнения</option>
-      <option value="SENT">Отправлено на проверку</option>
-      <option value="CHECKED">Проверено</option>
-    </select>
-    <multiselect
-      :disabled="isLoading"
-      track-by="id"
-      label="name"
-      v-model="findSubjects"
-      placeholder="Выберите школьные предметы"
-      :options="subjectList"
-      :showLabels="false"
-      :searchable="true"
-      :multiple="true"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :allow-empty="true"
-      :showPointer="false"
-    >
-      <span slot="noResult">Не найдено</span>
-    </multiselect>
+      <select
+        placeholder="Статус"
+        :disabled="studentOlympiads == undefined"
+        name="status"
+        id="status"
+        v-model.trim="findStatus"
+      >
+        <option value="TAKEPART">Участвую</option>
+        <option value="BEGIN">В процессе выполнения</option>
+        <option value="SENT">Отправлено на проверку</option>
+        <option value="CHECKED">Проверено</option>
+      </select>
+      <multiselect
+        :disabled="studentOlympiads == undefined"
+        track-by="id"
+        label="name"
+        v-model="findSubject"
+        placeholder="Выберите школьные предметы"
+        :options="subjectsOption"
+        :showLabels="false"
+        :searchable="true"
+        :multiple="true"
+        :close-on-select="false"
+        :clear-on-select="false"
+        :allow-empty="true"
+        :showPointer="false"
+      >
+        <span slot="noResult">Не найдено</span>
+      </multiselect>
+      <multiselect
+        :disabled="studentOlympiads == undefined || organizations == undefined"
+        v-model="findOrganization"
+        track-by="id"
+        label="fullname"
+        placeholder="Выберите организатора"
+        :options="organizationsOption"
+        :showLabels="false"
+        :searchable="true"
+        :allow-empty="true"
+        :showPointer="false"
+        :multiple="true"
+        :close-on-select="false"
+        :clear-on-select="false"
+      >
+        <span slot="noResult">Не найдено</span>
+      </multiselect>
+    </div>
 
-    <p v-if="filterItems.length == 0">Не найдено</p>
+    <div>
+      <p v-if="studentOlympiads == undefined">Загрузка...</p>
+      <div v-else>
+        <div v-for="olympiad in filterItems" :key="olympiad.id">
+          <olympiad-element :olympiad="olympiad" @cancel="refreshList()">
+          </olympiad-element>
+        </div>
+        <p v-if="filterItems.length == 0">Не найдено</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import {
+  STUDENT_OLYMPIADS,
+  SHORT_LIST_ORGANIZATIONS,
+  SUBJECTS,
+} from "@/graphql/queries/queries";
 import Multiselect from "vue-multiselect";
-
+import OlympiadElement from "@/components/olympiad/OlympiadElement.vue";
 export default {
-  name: "StudentOlympiad",
-  components: { Multiselect },
+  name: "StudentOlympiads",
+  apollo: {
+    studentOlympiads: {
+      query: STUDENT_OLYMPIADS,
+      variables() {
+        return {
+          userId: this.userId,
+        };
+      },
+    },
+    subjects: {
+      query: SUBJECTS,
+    },
+    organizations: {
+      query: SHORT_LIST_ORGANIZATIONS,
+    },
+  },
+  components: { OlympiadElement, Multiselect },
   data() {
     return {
-      pagination: 1,
-      lastSelectSubject: {},
-      isLoading: false,
       findString: "",
       findStatus: "",
-      findSubjects: [],
-      studentOlympiads: [],
-      subjectList: [
-        { name: "Один", id: "1" },
-        { name: "Два", id: "2" },
-        { name: "Три", id: "5" },
-      ],
+      findSubject: [],
+      findOrganization: [],
+
+      userId: 2,
     };
   },
   computed: {
+    subjectsOption() {
+      if (this.subjects == undefined) return [];
+      else return this.subjects;
+    },
+    organizationsOption() {
+      if (this.organizations == undefined) return [];
+      else return this.organizations;
+    },
+
     filterItems() {
       let olympiads;
       if (
@@ -76,7 +128,7 @@ export default {
       ) {
         olympiads = this.studentOlympiads;
         if (this.findString != "") {
-          olympiads = this.olympiads.filter((el) => {
+          olympiads = olympiads.filter((el) => {
             return (
               (el.name
                 .toLowerCase()
@@ -85,36 +137,39 @@ export default {
                 .indexOf(this.findString.toLowerCase().split(" ").join("")) !=
                 -1 &&
                 el.name != "") ||
-              (el.organization.fullname
+              (el.description
                 .toLowerCase()
                 .split(" ")
                 .join("")
                 .indexOf(this.findString.toLowerCase().split(" ").join("")) !=
                 -1 &&
-                el.organization.fullname != "") ||
-              (el.organization.shortname
-                .toLowerCase()
-                .split(" ")
-                .join("")
-                .indexOf(this.findString.toLowerCase().split(" ").join("")) !=
-                -1 &&
-                el.organization.shortname != "")
+                el.description != "")
             );
           });
         }
         if (this.findStatus != "") {
-          olympiads = this.olympiads.filter((el) => {
-            return el.result.status == this.findStatus;
+          olympiads = olympiads.filter((el) => {
+            return el.olympiadResult.result.status == this.findStatus;
           });
         }
-        if (this.findSubjects.length != 0) {
-          olympiads = this.olympiads.filter((el) => {
+        if (this.findOrganization.length != 0) {
+          olympiads = olympiads.filter((el) => {
+            let flag = false;
+            this.findOrganization.forEach((organization) => {
+              if (el.organization.id == organization.id) flag = true;
+            });
+            return flag;
+          });
+        }
+        if (this.findSubject.length != 0) {
+          olympiads = olympiads.filter((el) => {
             let flag = false;
             i = 0;
             j = 0;
-            while (!flag && j < el.subjects.length) {
-              if (el.subjects[j].id == this.findSubjects[i].value) flag = true;
-              if (i == this.findSubjects.length) {
+            while (!flag && j < el.olympiadSubject.length) {
+              if (el.olympiadSubject[j].subject.id == this.findSubject[i].id)
+                flag = true;
+              if (i + 1 == this.findSubject.length) {
                 i = 0;
                 j++;
               } else i++;

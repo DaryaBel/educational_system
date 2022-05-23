@@ -13,15 +13,17 @@
       </span>
     </p>
     <p>{{ course.description }}</p>
-    <button @click="toCancelAppointment">Отменить запись на курс</button>
+    <button v-if="canDelete" @click="toCancelAppointment">
+      Отменить запись на курс
+    </button>
   </div>
 </template>
 
 <script>
 import { DELETE_STUDENT_COURSE } from "@/graphql/mutations/mutations.js";
 export default {
-  name: "CourseList",
-  props: ["course", "delete"],
+  name: "CourseElement",
+  props: ["course", "canDelete"],
   data() {
     return {
       userId: 2,

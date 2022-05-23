@@ -144,8 +144,6 @@ export default {
   data() {
     return {
       userId: 2,
-      status: "",
-      takePart: false,
     };
   },
   methods: {

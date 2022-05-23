@@ -89,7 +89,7 @@
       <p v-if="publishedCourses == undefined">Загрузка...</p>
       <div v-else>
         <div v-for="course in filterItems" :key="course.id">
-          <course-element :course="course" :delete="false"> </course-element>
+          <course-element :course="course" :canDelete="false"> </course-element>
         </div>
         <p v-if="filterItems.length == 0">Не найдено</p>
       </div>

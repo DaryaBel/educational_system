@@ -100,6 +100,28 @@ export const PUBLISHED_COURSES = gql`
   }
 `;
 
+export const PUBLISHED_OLYMPIADS = gql`
+  {
+    publishedOlympiads {
+      id
+      name
+      description
+      organization {
+        id
+        fullname
+        shortname
+        logo
+      }
+      olympiadSubject {
+        subject {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export const SUBJECTS = gql`
   {
     subjects {
@@ -147,6 +169,66 @@ export const STUDENT_COURSES = gql`
           name
         }
       }
+    }
+  }
+`;
+
+export const STUDENT_OLYMPIADS = gql`
+  query ($userId: ID!) {
+    studentOlympiads(userId: $userId) {
+      id
+      name
+      description
+      organization {
+        id
+        fullname
+        shortname
+        logo
+      }
+      olympiadResult {
+        id
+        status
+      }
+      olympiadSubject {
+        subject {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const OLYMPIAD = gql`
+  query ($olympiadId: ID!) {
+    olympiad(olympiadId: $olympiadId) {
+      id
+      name
+      description
+      organization {
+        id
+        kind
+        fullname
+        shortname
+        logo
+      }
+      dateResult
+      dateEnd
+      olympiadSubject {
+        subject {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const OLYMPIAD_STATUS = gql`
+  query ($olympiadId: ID!, $userId: ID!) {
+    studentOlympiadResult(olympiadId: $olympiadId, userId: $userId) {
+      id
+      status
     }
   }
 `;

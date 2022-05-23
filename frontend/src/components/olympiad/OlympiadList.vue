@@ -1,17 +1,17 @@
 <template>
   <div>
-    <h1>Мои курсы</h1>
+    <h1>Олимпиады</h1>
     <div>
       <input
         placeholder="Поиск по названию и описанию"
         name="search"
         id="search"
-        :disabled="studentCourses == undefined"
+        :disabled="publishedOlympiads == undefined"
         type="text"
         v-model.trim="findString"
       />
       <multiselect
-        :disabled="studentCourses == undefined || subjects == undefined"
+        :disabled="publishedOlympiads == undefined || subjects == undefined"
         v-model="findSubject"
         track-by="id"
         label="name"
@@ -29,24 +29,9 @@
       </multiselect>
 
       <multiselect
-        :disabled="studentCourses == undefined"
-        v-model="findFormat"
-        track-by="value"
-        label="text"
-        placeholder="Выберите формат проведения"
-        :options="formats"
-        :showLabels="false"
-        :searchable="false"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-
-      <multiselect
-        :disabled="studentCourses == undefined || organizations == undefined"
+        :disabled="
+          publishedOlympiads == undefined || organizations == undefined
+        "
         v-model="findOrganization"
         track-by="id"
         label="fullname"
@@ -64,15 +49,10 @@
       </multiselect>
     </div>
     <div>
-      <p v-if="studentCourses == undefined">Загрузка...</p>
+      <p v-if="publishedOlympiads == undefined">Загрузка...</p>
       <div v-else>
-        <div v-for="course in filterItems" :key="course.id">
-          <course-element
-            :course="course"
-            :canDelete="true"
-            @cancel="refreshList()"
-          >
-          </course-element>
+        <div v-for="olympiad in filterItems" :key="olympiad.id">
+          <olympiad-element :olympiad="olympiad"> </olympiad-element>
         </div>
         <p v-if="filterItems.length == 0">Не найдено</p>
       </div>
@@ -82,34 +62,28 @@
 
 <script>
 import {
-  STUDENT_COURSES,
+  PUBLISHED_OLYMPIADS,
   SHORT_LIST_ORGANIZATIONS,
   SUBJECTS,
 } from "@/graphql/queries/queries";
-import CourseElement from "@/components/course/CourseElement.vue";
+import OlympiadElement from "@/components/olympiad/OlympiadElement.vue";
 import Multiselect from "vue-multiselect";
 
 export default {
-  name: "StudentCourses",
+  name: "OlympiadList",
   apollo: {
-    studentCourses: {
-      query: STUDENT_COURSES,
-      variables() {
-        return {
-          userId: this.userId,
-        };
-      },
+    publishedOlympiads: {
+      query: PUBLISHED_OLYMPIADS,
     },
     subjects: {
       query: SUBJECTS,
     },
-
     organizations: {
       query: SHORT_LIST_ORGANIZATIONS,
     },
   },
   components: {
-    CourseElement,
+    OlympiadElement,
     Multiselect,
   },
   data() {
@@ -117,12 +91,7 @@ export default {
       findString: "",
       findSubject: [],
       findOrganization: [],
-      findFormat: [],
-      formats: [
-        { value: "ON", text: "Онлайн" },
-        { value: "OFF", text: "Оффлайн" },
-        { value: "BOTH", text: "В смешанном формате" },
-      ],
+
       userId: 2,
     };
   },
@@ -137,15 +106,15 @@ export default {
     },
 
     filterItems() {
-      let courses;
+      let olympiads;
       if (
-        this.studentCourses != null &&
-        this.studentCourses != undefined &&
-        this.studentCourses.length != 0
+        this.publishedOlympiads != null &&
+        this.publishedOlympiads != undefined &&
+        this.publishedOlympiads.length != 0
       ) {
-        courses = this.studentCourses;
+        olympiads = this.publishedOlympiads;
         if (this.findString != "") {
-          courses = courses.filter((el) => {
+          olympiads = olympiads.filter((el) => {
             return (
               (el.name
                 .toLowerCase()
@@ -164,17 +133,9 @@ export default {
             );
           });
         }
-        if (this.findFormat.length != 0) {
-          courses = courses.filter((el) => {
-            let flag = false;
-            this.findFormat.forEach((format) => {
-              if (el.form == format.value) flag = true;
-            });
-            return flag;
-          });
-        }
+
         if (this.findOrganization.length != 0) {
-          courses = courses.filter((el) => {
+          olympiads = olympiads.filter((el) => {
             let flag = false;
             this.findOrganization.forEach((organization) => {
               if (el.organization.id == organization.id) flag = true;
@@ -183,12 +144,12 @@ export default {
           });
         }
         if (this.findSubject.length != 0) {
-          courses = courses.filter((el) => {
+          olympiads = olympiads.filter((el) => {
             let flag = false;
             let i = 0;
             let j = 0;
-            while (!flag && j < el.courseSubject.length) {
-              if (el.courseSubject[j].subject.id == this.findSubject[i].id)
+            while (!flag && j < el.olympiadSubject.length) {
+              if (el.olympiadSubject[j].subject.id == this.findSubject[i].id)
                 flag = true;
               if (i + 1 == this.findSubject.length) {
                 i = 0;
@@ -198,17 +159,12 @@ export default {
             return flag;
           });
         }
-      } else courses = [];
-      return courses;
+      } else olympiads = [];
+      return olympiads;
     },
   },
 
-  methods: {
-    refreshList() {
-      this.$apollo.queries.studentCourses.refresh();
-      this.$apollo.queries.studentCourses.refetch();
-    },
-  },
+  methods: {},
 };
 </script>
 
