@@ -42,6 +42,25 @@ export const COURSE = gql`
   }
 `;
 
+export const ALL_MEMBER_COURSE = gql`
+  query ($courseId: ID!) {
+    courseStudents(courseId: $courseId) {
+      id
+      student {
+        id
+        birthdate
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        patronymic
+      }
+    }
+  }
+`;
+
 export const NUMBER_MEMBER_COURSE = gql`
   query ($courseId: ID!) {
     countCourseMember(courseId: $courseId)
