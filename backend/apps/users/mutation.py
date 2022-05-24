@@ -208,13 +208,17 @@ class DeleteSubject(graphene.Mutation):
 
 class DeleteStudentSubject(graphene.Mutation):
     class Arguments:
-        studentSubject_id = graphene.ID(required=True)
+        user_id = graphene.ID(required=True)
+        subject_id = graphene.ID(required=True)
 
     ok = graphene.Boolean()
 
     @classmethod
-    def mutate(cls, root, info, studentSubject_id):
-        studentSubject = StudentSubject.objects.get(pk=studentSubject_id)
+    def mutate(cls, root, info, user_id, subject_id):
+        user = User.objects.get(pk=user_id)
+        student = Student.objects.get(user=user)
+        subject = Subject.objects.get(pk=subject_id)
+        studentSubject = StudentSubject.objects.get(subject=subject, student=student)
         studentSubject.delete()
 
         return cls(ok=True)
@@ -236,15 +240,16 @@ class UpdateEmployee(graphene.Mutation):
 
 class UpdateStudent(graphene.Mutation):
     class Arguments:
-        student_id = graphene.ID(required=True)
+        user_id = graphene.ID(required=True)
         patronymic = graphene.String()
         birthdate = graphene.Date()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, student_id, patronymic=None, birthdate=None):
-        student = Student.objects.get(pk=student_id)
+    def mutate(cls, root, info, user_id, patronymic=None, birthdate=None):
+        user = User.objects.get(pk=user_id)
+        student = Student.objects.get(user=user)
         if patronymic != None:
             student.patronymic = patronymic
         if birthdate != None:
@@ -257,17 +262,13 @@ class UpdateSubject(graphene.Mutation):
     class Arguments:
         subject_id = graphene.ID(required=True)
         name = graphene.String()
-        description = graphene.String()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, subject_id, name=None, description=None):
+    def mutate(cls, root, info, subject_id, name=None):
         subject = Student.objects.get(pk=subject_id)
-        if name != None:
-            subject.name = name
-        if description != None:
-            subject.description = description
+        subject.name = name
         subject.save()
 
         return cls(ok=True)
