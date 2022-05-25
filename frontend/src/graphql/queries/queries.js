@@ -230,6 +230,19 @@ export const OLYMPIAD = gql`
   }
 `;
 
+export const OLYMPIAD_RULES = gql`
+  query ($olympiadId: ID!) {
+    olympiad(olympiadId: $olympiadId) {
+      id
+      name
+      timeToPass
+      olympiadTask {
+        id
+      }
+    }
+  }
+`;
+
 export const OLYMPIAD_STATUS = gql`
   query ($olympiadId: ID!, $userId: ID!) {
     studentOlympiadResult(olympiadId: $olympiadId, userId: $userId) {

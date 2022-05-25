@@ -47,8 +47,8 @@ class Task(models.Model):
 class Result(models.Model):
     olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, verbose_name="Олимпиада", related_name="olympiadResult")
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Школьник", related_name="studentResult")
-    start_try_time = models.PositiveIntegerField("Время начала выполнения", null=True, blank=True, help_text="в секундах") 
-    finish_try_time = models.PositiveIntegerField("Время окончания выполнения", null=True, blank=True, help_text="в секундах") 
+    start_try_time = models.BigIntegerField("Время начала выполнения", null=True, blank=True, help_text="в секундах") 
+    finish_try_time = models.BigIntegerField("Время окончания выполнения", null=True, blank=True, help_text="в секундах") 
     score = models.PositiveIntegerField("Балл", null=True, blank=True)
     status = models.CharField(verbose_name="Статус", max_length=20, choices=RESULT_STATUS, default='TAKEPART')
     won = models.BooleanField("Победил", null=True, blank=True) 

@@ -1,68 +1,92 @@
 <template>
   <div>
-    <h1>{{ olympiad.name }}</h1>
-
-    <p>
-      Данная олимпиада состоит из {{ olympiad.olympiadTask.length }}
-      {{ formOfWord(olympiad.olympiadTask.length, 1) }} с развернутым ответом.
-      Ответ можно написать в текстовом поле или приложить в данное поле ссылку
-      (например, на гугл-диск). Проверьте, что ваш документ доступен для чтения
-      по ссылке.
-    </p>
-    <p v-if="olympiad.time_to_pass != null && olympiad.time_to_pass != 0">
-      На решение заданий даётся {{ formatTime(olympiad.time_to_pass) }}. Если
-      работа не будет отправлена по истечению данного времени, она отправится
-      автоматически.
-    </p>
-    <button @click="toStart()">Начать</button>
+    <div v-if="olympiad == undefined">
+      <p>Загрузка...</p>
+    </div>
+    <div v-else>
+      <h1>{{ olympiad.name }}</h1>
+      <p>
+        Данная олимпиада состоит из {{ olympiad.olympiadTask.length }}
+        {{ formOfWord(olympiad.olympiadTask.length, 1) }} с развернутым ответом.
+        Ответ можно написать в текстовом поле или приложить в данное поле ссылку
+        (например, на гугл-диск). Перед отправкой, проверьте, что ваш документ
+        доступен для чтения по ссылке.
+      </p>
+      <p v-if="olympiad.timeToPass != null && olympiad.timeToPass != 0">
+        На решение заданий даётся {{ formatTime(olympiad.timeToPass) }}. Если
+        работа не будет отправлена по истечению данного времени, она отправится
+        автоматически.
+      </p>
+      <button @click="toStart()">Начать</button>
+    </div>
   </div>
 </template>
 
 <script>
+import { UPDATE_RESULT } from "@/graphql/mutations/mutations";
+import { OLYMPIAD_RULES, OLYMPIAD_STATUS } from "@/graphql/queries/queries.js";
+
 export default {
   name: "OlympiadRules",
+  apollo: {
+    olympiad: {
+      query: OLYMPIAD_RULES,
+      variables() {
+        return {
+          olympiadId: this.$route.params.id,
+        };
+      },
+    },
+    studentOlympiadResult: {
+      query: OLYMPIAD_STATUS,
+      variables() {
+        return {
+          userId: this.userId,
+          olympiadId: this.$route.params.id,
+        };
+      },
+    },
+  },
+  computed: {
+    resultId() {
+      if (this.studentOlympiadResult == undefined) return 0;
+      else return this.studentOlympiadResult.id;
+    },
+  },
   data() {
     return {
+      userId: 2,
       hours: "",
       minutes: "",
       seconds: "",
-      olympiad: {
-        name: 'Олимпиада "Инновационный полет"',
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at ultrices enim. Maecenas id sodales libero, vitae tristique orci. Cras quis venenatis sem, laoreet pellentesque dui. Mauris faucibus neque turpis. Vivamus id sapien fermentum metus pulvinar pellentesque eget ac diam. Phasellus tristique massa non bibendum suscipit. Aliquam vel libero ut nunc ultrices maximus ac in turpis. Phasellus commodo, orci sit amet suscipit consectetur, risus est tempus felis, sed rhoncus eros lacus vitae purus. Nullam pellentesque consectetur libero, vel bibendum mauris blandit eu. Quisque hendrerit libero nec sem sollicitudin fermentum. Nullam id dui mattis, imperdiet velit vitae, placerat magna. Aliquam lobortis tempus orci, in placerat dui eleifend id. Sed sed lacus eget nulla aliquam aliquet. Nunc egestas lacus in pellentesque iaculis. Phasellus blandit efficitur lectus, sit amet finibus leo tincidunt eget. Aenean in viverra dui.",
-        percent_to_win: 85,
-        time_to_pass: "8147.0",
-        date_end: "2022-06-05",
-        date_result: "2022-07-05",
-        published: true,
-        subjects: [
-          { id: 1, name: "Обществознание" },
-          { id: 2, name: "Экономика" },
-        ],
-        olympiadTask: [
-          { id: 1, task: "Опишите мировую экономику" },
-          { id: 2, task: "Посчитайте 2+2" },
-        ],
-        organization: {
-          fullname: "ОАО Тинькофф Банк",
-          shortname: "Тинькофф",
-          kind: "COMPANY",
-          description:
-            " российский коммерческий банк, сфокусированный полностью на дистанционном обслуживании, не имеющий розничных отделений",
-          logo: "",
-        },
-      },
     };
   },
   methods: {
     toStart() {
-      // создать результат в табличке
       let start = new Date();
-      console.log(start.toLocaleTimeString());
-      let delta = Math.trunc(this.olympiad.time_to_pass);
+      let delta = Math.trunc(this.olympiad.timeToPass);
       let finish = new Date(start.setMilliseconds(delta * 1000));
-      console.log(finish.toLocaleTimeString());
-      this.$router.push({ name: "OlympiadProcess" });
+      this.$apollo
+        .mutate({
+          mutation: UPDATE_RESULT,
+          variables: {
+            resultId: this.resultId,
+            startTryTime: Math.trunc(start.getTime() / 1000),
+            finishTryTime: Math.trunc(finish.getTime() / 1000),
+            status: "BEGIN",
+          },
+        })
+        .then(() => {
+          this.$apollo.queries.studentOlympiadResult.refresh();
+          this.$apollo.queries.studentOlympiadResult.refetch();
+          this.$router.push({
+            name: "OlympiadProcess",
+            params: { id: this.$route.params.id },
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
     formatTime(time) {
       if (!time) return null;

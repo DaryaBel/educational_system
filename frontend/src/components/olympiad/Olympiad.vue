@@ -114,22 +114,6 @@ export default {
         name: "OlympiadRules",
         params: { id: this.$route.params.id },
       });
-
-      // this.$apollo
-      //   .mutate({
-      //     mutation: UPDATE_RESULT,
-      //     variables: {
-      //       resultId: this.resultId,
-      //       status: "BEGIN",
-      //     },
-      //   })
-      //   .then(() => {
-      //     this.$apollo.queries.studentOlympiadResult.refresh();
-      //     this.$apollo.queries.studentOlympiadResult.refetch();
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //   });
     },
     toContinue() {
       this.$router.push({
