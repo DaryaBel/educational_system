@@ -63,7 +63,10 @@
       <p v-if="studentOlympiads == undefined">Загрузка...</p>
       <div v-else>
         <div v-for="olympiad in filterItems" :key="olympiad.id">
-          <olympiad-element :olympiad="olympiad" @cancel="refreshList()">
+          <olympiad-element
+            :olympiad="olympiad"
+            :status="getStatusResult(olympiad.id)"
+          >
           </olympiad-element>
         </div>
         <p v-if="filterItems.length == 0">Не найдено</p>
@@ -149,7 +152,12 @@ export default {
         }
         if (this.findStatus != "") {
           olympiads = olympiads.filter((el) => {
-            return el.olympiadResult.result.status == this.findStatus;
+            let flag = false;
+            let userResult = el.olympiadResult.find(
+              (res) => res.student.user.id == this.userId
+            );
+            if (userResult.status == this.findStatus) flag = true;
+            return flag;
           });
         }
         if (this.findOrganization.length != 0) {
@@ -164,8 +172,8 @@ export default {
         if (this.findSubject.length != 0) {
           olympiads = olympiads.filter((el) => {
             let flag = false;
-            i = 0;
-            j = 0;
+            let i = 0;
+            let j = 0;
             while (!flag && j < el.olympiadSubject.length) {
               if (el.olympiadSubject[j].subject.id == this.findSubject[i].id)
                 flag = true;
@@ -182,8 +190,36 @@ export default {
     },
   },
   methods: {
-    onLink(id) {
-      //   this.$router.push({ name: "Olympiad", params: { id: id } });
+    getStatusResult(id) {
+      let olympiad = this.studentOlympiads.find((el) => el.id == id);
+      let userResult = olympiad.olympiadResult.find(
+        (res) => res.student.user.id == this.userId
+      );
+      return this.statusType(userResult.status, userResult.published);
+    },
+    statusType(status, published) {
+      switch (status) {
+        case "TAKEPART":
+          return "Участвую";
+          break;
+
+        case "BEGIN":
+          return "В процессе выполнения";
+          break;
+
+        case "SENT":
+          return "Отправлено на проверку";
+          break;
+
+        case "CHECKED":
+          if (!published) return "Отправлено на проверку";
+          else return "Проверено";
+          break;
+
+        default:
+          return "-";
+          break;
+      }
     },
   },
 };

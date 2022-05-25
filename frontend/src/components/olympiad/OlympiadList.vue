@@ -52,7 +52,8 @@
       <p v-if="publishedOlympiads == undefined">Загрузка...</p>
       <div v-else>
         <div v-for="olympiad in filterItems" :key="olympiad.id">
-          <olympiad-element :olympiad="olympiad"> </olympiad-element>
+          <olympiad-element :olympiad="olympiad" :status="'-'">
+          </olympiad-element>
         </div>
         <p v-if="filterItems.length == 0">Не найдено</p>
       </div>

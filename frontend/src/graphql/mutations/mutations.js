@@ -1,5 +1,39 @@
 import gql from "graphql-tag";
 
+export const CREATE_RESULT = gql`
+  mutation ($olympiadId: ID!, $userId: ID!) {
+    createResult(olympiadId: $olympiadId, userId: $userId) {
+      ok
+    }
+  }
+`;
+
+export const DELETE_RESULT = gql`
+  mutation ($resultId: ID!) {
+    deleteResult(resultId: $resultId) {
+      ok
+    }
+  }
+`;
+
+export const UPDATE_RESULT = gql`
+  mutation (
+    $resultId: ID!
+    $startTryTime: Int
+    $finishTryTime: Int
+    $status: String
+  ) {
+    updateResult(
+      resultId: $resultId
+      startTryTime: $startTryTime
+      finishTryTime: $finishTryTime
+      status: $status
+    ) {
+      ok
+    }
+  }
+`;
+
 export const CREATE_STUDENT_COURSE = gql`
   mutation ($courseId: ID!, $userId: ID!) {
     createStudentCourse(courseId: $courseId, userId: $userId) {

@@ -16,13 +16,14 @@
       </span>
     </p>
     <p>{{ olympiad.description }}</p>
+    <p v-if="status != '-'">Статус: {{ status }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: "OlympiadElement",
-  props: ["olympiad"],
+  props: ["olympiad", "status"],
   data() {
     return {
       userId: 2,

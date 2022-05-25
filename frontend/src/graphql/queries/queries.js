@@ -188,6 +188,12 @@ export const STUDENT_OLYMPIADS = gql`
       olympiadResult {
         id
         status
+        student {
+          id
+          user {
+            id
+          }
+        }
       }
       olympiadSubject {
         subject {
@@ -229,6 +235,7 @@ export const OLYMPIAD_STATUS = gql`
     studentOlympiadResult(olympiadId: $olympiadId, userId: $userId) {
       id
       status
+      published
     }
   }
 `;

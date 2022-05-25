@@ -13,6 +13,7 @@ import OlympiadList from "@/components/olympiad/OlympiadList.vue";
 import Olympiad from "@/components/olympiad/Olympiad.vue";
 import OlympiadRules from "@/components/olympiad/OlympiadRules.vue";
 import OlympiadProcess from "@/components/olympiad/OlympiadProcess.vue";
+import OlympiadResult from "@/components/olympiad/OlympiadResult.vue";
 import StudentOlympiads from "@/components/olympiad/StudentOlympiads.vue";
 import StudentCourses from "@/components/course/StudentCourses.vue";
 import OrganizationCourses from "@/components/course/organizers/OrganizationCourses.vue";
@@ -79,14 +80,19 @@ const routes = [
     component: Olympiad,
   },
   {
-    path: "/olympiad/rules",
+    path: "/olympiad/:id/rules",
     name: "OlympiadRules",
     component: OlympiadRules,
   },
   {
-    path: "/olympiad/start",
+    path: "/olympiad/:id/start",
     name: "OlympiadProcess",
     component: OlympiadProcess,
+  },
+  {
+    path: "/olympiad/:id/results",
+    name: "OlympiadResult",
+    component: OlympiadResult,
   },
   {
     path: "/delete-account",
