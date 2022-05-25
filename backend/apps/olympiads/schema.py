@@ -1,6 +1,7 @@
 from unittest import result
 import graphene
 from olympiads.models import Answer, Olympiad, Result, Task
+from olympiads.mutation import CreateAnswer, CreateOlympiad, CreateOlympiadSubject, CreateResult, CreateTask, DeleteAnswer, DeleteOlympiad, DeleteOlympiadSubject, DeleteResult, DeleteTask, UpdateAnswer, UpdateOlympiad, UpdateResult, UpdateTask
 from olympiads.types import AnswerType, OlympiadType, ResultType, TaskType
 from organizations.models import Organization
 from users.models import Student, User
@@ -17,17 +18,30 @@ class Query(graphene.ObjectType):
     answers = graphene.List(AnswerType, olympiad_id=graphene.ID(required=True), user_id=graphene.ID(required=True))
 
     def resolve_olympiads(root, info):
-        return Olympiad.objects.all()
+        try:    
+            return Olympiad.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_organization_olympiads(root, info, organization_id):
-        organization = Organization.objects.get(pk=organization_id)
-        return Olympiad.objects.filter(organization=organization)
+        try:
+            organization = Organization.objects.get(pk=organization_id)
+            return Olympiad.objects.filter(organization=organization)
+        except Exception as e:
+            return None
 
     def resolve_olympiad(root, info, olympiad_id):
-        return Olympiad.objects.get(pk=olympiad_id)
+        try:    
+            return Olympiad.objects.get(pk=olympiad_id)
+        except Exception as e:
+            return None
 
     def resolve_published_olympiads(root, info):
-        return Olympiad.objects.filter(published=True)
+        try:    
+            return Olympiad.objects.filter(published=True)
+        except Exception as e:
+            return None
+
 
     def resolve_student_olympiads(root, info, user_id):
         try:
@@ -42,12 +56,18 @@ class Query(graphene.ObjectType):
             return None  
 
     def resolve_course_students(root, info, olympiad_id):
-        olympiad = Olympiad.objects.get(pk=olympiad_id)
-        return Result.objects.filter(olympiad=olympiad)
+        try:
+            olympiad = Olympiad.objects.get(pk=olympiad_id)
+            return Result.objects.filter(olympiad=olympiad)
+        except Exception as e:
+            return None
 
     def resolve_tasks(root, info, olympiad_id):
-        olympiad = Olympiad.objects.get(pk=olympiad_id)
-        return Task.objects.filter(olympiad=olympiad)
+        try:
+            olympiad = Olympiad.objects.get(pk=olympiad_id)
+            return Task.objects.filter(olympiad=olympiad)
+        except Exception as e:
+            return None
 
     def resolve_student_olympiad_result(root, info, olympiad_id, user_id):
         try:
@@ -69,21 +89,21 @@ class Query(graphene.ObjectType):
             return None
 
 class Mutation(graphene.ObjectType):
-    create_olympiad = CreateCourse.Field()
-    create_task = CreateStudentCourse.Field()
-    create_result = CreateCourseSubject.Field()
-    create_answer = CreateCourseSubject.Field()
-    create_olympiad_subject = CreateCourseSubject.Field()
+    create_olympiad = CreateOlympiad.Field()
+    create_task = CreateTask.Field()
+    create_result = CreateResult.Field()
+    create_answer = CreateAnswer.Field()
+    create_olympiad_subject = CreateOlympiadSubject.Field()
     
-    delete_olympiad = DeleteCourse.Field()
-    delete_task = DeleteStudentCourse.Field()
-    delete_result = DeleteCourseSubject.Field()
-    delete_answer = DeleteStudentCourse.Field()
-    delete_olympiad_subject = DeleteCourseSubject.Field()
+    delete_olympiad = DeleteOlympiad.Field()
+    delete_task = DeleteTask.Field()
+    delete_result = DeleteResult.Field()
+    delete_answer = DeleteAnswer.Field()
+    delete_olympiad_subject = DeleteOlympiadSubject.Field()
     
-    update_olympiad = UpdateCourse.Field()
-    update_task = UpdateCity.Field()
-    update_result = UpdateCity.Field()
-    update_answer = UpdateCity.Field()
+    update_olympiad = UpdateOlympiad.Field()
+    update_task = UpdateTask.Field()
+    update_result = UpdateResult.Field()
+    update_answer = UpdateAnswer.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)    

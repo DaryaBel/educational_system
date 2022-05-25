@@ -10,16 +10,28 @@ class Query(graphene.ObjectType):
     organizations_university = graphene.List(OrganizationType)
     
     def resolve_organizations(root, info):
-        return Organization.objects.all()
+        try:
+            return Organization.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_organization(root, info, organization_id):
-        return Organization.objects.get(pk=organization_id)
+        try:
+            return Organization.objects.get(pk=organization_id)
+        except Exception as e:
+            return None
 
     def resolve_organizations_company(root, info):
-        return Organization.objects.filter(kind='COMPANY')
+        try:
+            return Organization.objects.filter(kind='COMPANY')
+        except Exception as e:
+            return None
 
     def resolve_organizations_university(root, info):
-        return Organization.objects.filter(kind='UNIVERSITY')  
+        try:
+            return Organization.objects.filter(kind='UNIVERSITY')  
+        except Exception as e:
+            return None
    
 
 class Mutation(graphene.ObjectType):

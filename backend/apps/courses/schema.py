@@ -19,21 +19,36 @@ class Query(graphene.ObjectType):
     city = graphene.Field(CityType, city_id=graphene.ID(required=True))
 
     def resolve_courses(root, info):
-        return Course.objects.all()
+        try:
+            return Course.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_published_courses(root, info):
-        return Course.objects.filter(published=True)
+        try:
+            return Course.objects.filter(published=True)
+        except Exception as e:
+            return None
 
     def resolve_course(root, info, course_id):
-        return Course.objects.get(pk=course_id)
+        try:
+            return Course.objects.get(pk=course_id)
+        except Exception as e:
+            return None
 
     def resolve_organization_courses(root, info, organization_id):
-        organization = Organization.objects.get(pk=organization_id)
-        return Course.objects.filter(organization=organization)
+        try:
+            organization = Organization.objects.get(pk=organization_id)
+            return Course.objects.filter(organization=organization)
+        except Exception as e:
+            return None
 
     def resolve_published_courses_organization(root, info, organization_id):
-        organization = Organization.objects.get(pk=organization_id)
-        return Course.objects.filter(organization=organization, published=True)
+        try:
+            organization = Organization.objects.get(pk=organization_id)
+            return Course.objects.filter(organization=organization, published=True)
+        except Exception as e:
+            return None
 
     def resolve_student_courses(root, info, user_id):
         try:
@@ -48,24 +63,39 @@ class Query(graphene.ObjectType):
             return None  
 
     def resolve_course_students(root, info, course_id):
-        course = Course.objects.get(pk=course_id)
-        return StudentCourse.objects.filter(course=course)
+        try:
+            course = Course.objects.get(pk=course_id)
+            return StudentCourse.objects.filter(course=course)
+        except Exception as e:
+            return None
 
     def resolve_count_course_member(root, info, course_id):
-        course = Course.objects.get(pk=course_id)
-        return StudentCourse.objects.filter(course=course).count()
+        try:
+            course = Course.objects.get(pk=course_id)
+            return StudentCourse.objects.filter(course=course).count()
+        except Exception as e:
+            return None
 
     def resolve_is_student_course_member(root, info, course_id, user_id):
-        course = Course.objects.get(pk=course_id)
-        user = User.objects.get(pk=user_id)
-        student = Student.objects.get(user=user)
-        return StudentCourse.objects.filter(course=course, student=student)
+        try:
+            course = Course.objects.get(pk=course_id)
+            user = User.objects.get(pk=user_id)
+            student = Student.objects.get(user=user)
+            return StudentCourse.objects.filter(course=course, student=student)
+        except Exception as e:
+            return None
 
     def resolve_cities(root, info):
-        return City.objects.all()
+        try:
+            return City.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_city(root, info, city_id):
-        return City.objects.get(pk=city_id)
+        try:
+            return City.objects.get(pk=city_id)
+        except Exception as e:
+            return None
 
 class Mutation(graphene.ObjectType):
     create_course = CreateCourse.Field()

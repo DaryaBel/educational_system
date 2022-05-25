@@ -33,22 +33,40 @@ class Query(object):
             return info.context.user
 
     def resolve_employees(root, info):
-        return Employee.objects.all()
+        try:
+            return Employee.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_employee(root, info, employee_id):
-        return Employee.objects.get(pk=employee_id)
+        try:
+            return Employee.objects.get(pk=employee_id)
+        except Exception as e:
+            return None
 
     def resolve_students(root, info):
-        return Student.objects.all()
+        try:
+            return Student.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_student(root, info, student_id):
-        return Student.objects.get(pk=student_id)
+        try:
+            return Student.objects.get(pk=student_id)
+        except Exception as e:
+            return None
 
     def resolve_subjects(root, info):
-        return Subject.objects.all()
+        try:
+            return Subject.objects.all()
+        except Exception as e:
+            return None
 
     def resolve_subject(root, info, subject_id):
-        return Subject.objects.get(pk=subject_id)
+        try:
+            return Subject.objects.get(pk=subject_id)
+        except Exception as e:
+            return None
 
 class Mutation(object):
     login = graphql_jwt.ObtainJSONWebToken.Field()
