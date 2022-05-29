@@ -21,7 +21,7 @@
 <script>
 export default {
   name: "Task",
-  props: ["task"],
+  props: ["task", "oldAnswer"],
   computed: {
     taskId() {
       return this.task.id;
@@ -29,17 +29,9 @@ export default {
   },
   methods: {
     getAnswer() {
-      if (
-        this.task.taskAnswer != undefined &&
-        this.task.taskAnswer.length != 0
-      ) {
-        let userAnswer = this.task.taskAnswer.find(
-          (el) => el.student.user.id == this.userId
-        );
-        if (userAnswer != undefined) {
-          if (userAnswer.answer != undefined) {
-            this.answer = userAnswer.answer;
-          } else this.answer = "";
+      if (this.oldAnswer != undefined) {
+        if (this.oldAnswer != undefined) {
+          this.answer = this.oldAnswer.answer;
         } else this.answer = "";
       } else this.answer = "";
     },

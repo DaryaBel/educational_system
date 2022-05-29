@@ -10,7 +10,6 @@ class CreateOlympiad(graphene.Mutation):
         description = graphene.String()
         percent_to_win = graphene.Int(required=True)
         organization_id = graphene.ID(required=True)
-        time_to_pass = graphene.Int()
         date_result = graphene.Date()
         date_end = graphene.Date()
         
@@ -18,10 +17,10 @@ class CreateOlympiad(graphene.Mutation):
     olympiad = graphene.Field(OlympiadType)
 
     @classmethod
-    def mutate(cls, root, info, name, percent_to_win, organization_id, time_to_pass=None, description=None, date_result=None, date_end=None):
+    def mutate(cls, root, info, name, percent_to_win, organization_id, description=None, date_result=None, date_end=None):
         organization = Organization.objects.get(pk=organization_id)
         olympiad = Olympiad.objects.create(
-            name=name, published=False, percent_to_win=percent_to_win, organization=organization, description=description, time_to_pass=time_to_pass, date_result=date_result, date_end=date_end)
+            name=name, published=False, percent_to_win=percent_to_win, organization=organization, description=description, date_result=date_result, date_end=date_end)
 
         return cls(ok=True, olympiad=olympiad)
 
@@ -47,21 +46,19 @@ class CreateResult(graphene.Mutation):
     class Arguments:
         olympiad_id = graphene.ID(required=True)
         user_id = graphene.ID(required=True)
-        start_try_time = graphene.Int()
-        finish_try_time = graphene.Int()
         score = graphene.Int()
         
     ok = graphene.Boolean()
     result = graphene.Field(ResultType)
 
     @classmethod
-    def mutate(cls, root, info, olympiad_id, user_id, start_try_time=None, finish_try_time=None, score=None):
+    def mutate(cls, root, info, olympiad_id, user_id, score=None):
         olympiad = Olympiad.objects.get(pk=olympiad_id)
         user = User.objects.get(pk=user_id)
         student = Student.objects.get(user=user)
         
         result = Result.objects.create(
-            olympiad=olympiad, published=False, status="TAKEPART", won=False, student=student, start_try_time=start_try_time, finish_try_time=finish_try_time, score=score)
+            olympiad=olympiad, published=False, status="TAKEPART", won=False, student=student, score=score)
 
         return cls(ok=True, result=result)
 
@@ -181,7 +178,6 @@ class UpdateOlympiad(graphene.Mutation):
         name = graphene.String()
         description = graphene.String()
         percent_to_win = graphene.Int()
-        time_to_pass = graphene.Int()
         date_result = graphene.Date()
         date_end = graphene.Date()
         published = graphene.Boolean()
@@ -189,7 +185,7 @@ class UpdateOlympiad(graphene.Mutation):
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, olympiad_id, published=None, name=None, percent_to_win=None, time_to_pass=None, description=None, date_result=None, date_end=None):
+    def mutate(cls, root, info, olympiad_id, published=None, name=None, percent_to_win=None, description=None, date_result=None, date_end=None):
         olympiad = Olympiad.objects.get(pk=olympiad_id)
         if name != None:
             olympiad.name = name
@@ -197,8 +193,6 @@ class UpdateOlympiad(graphene.Mutation):
             olympiad.description = description
         if percent_to_win != None:
             olympiad.percent_to_win = percent_to_win
-        if time_to_pass != None:
-            olympiad.time_to_pass = time_to_pass
         if date_result != None:
             olympiad.date_result = date_result
         if date_end != None:
@@ -234,8 +228,6 @@ class UpdateTask(graphene.Mutation):
 class UpdateResult(graphene.Mutation):
     class Arguments:
         result_id = graphene.ID(required=True)
-        start_try_time = graphene.Int()
-        finish_try_time = graphene.Int()
         score = graphene.Int()
         status = graphene.String()
         won = graphene.Boolean()
@@ -244,12 +236,8 @@ class UpdateResult(graphene.Mutation):
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, result_id, start_try_time=None, finish_try_time=None, score=None, status=None, won=None, published=None):
+    def mutate(cls, root, info, result_id, score=None, status=None, won=None, published=None):
         result = Result.objects.get(pk=result_id)
-        if start_try_time != None:
-            result.namestart_try_time = start_try_time
-        if finish_try_time != None:
-            result.finish_try_time = finish_try_time
         if score != None:
             result.score = score
         if status != None:

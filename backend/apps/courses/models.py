@@ -38,7 +38,7 @@ class Course(models.Model):
     date_start = models.DateField("Дата начала", null=True, blank=True)
     date_end = models.DateField("Дата окончания", null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Организация", related_name="organizationCourse")
-    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город проведения", null=True, blank=True, related_name="cityCourse")
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, verbose_name="Город проведения", null=True, blank=True, related_name="cityCourse")
     max_number_member = models.PositiveIntegerField("Максимальное количество слушателей", null=True, blank=True)
     published = models.BooleanField("Опубликовано", default=False)
     

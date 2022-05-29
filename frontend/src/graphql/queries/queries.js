@@ -235,9 +235,34 @@ export const OLYMPIAD_RULES = gql`
     olympiad(olympiadId: $olympiadId) {
       id
       name
-      timeToPass
       olympiadTask {
         id
+      }
+    }
+  }
+`;
+
+export const STUDENT_ANSWERS = gql`
+  query ($olympiadId: ID!, $userId: ID!) {
+    answers(olympiadId: $olympiadId, userId: $userId) {
+      id
+      answer
+      task {
+        id
+      }
+    }
+  }
+`;
+
+export const OLYMPIAD_PROCESS = gql`
+  query ($olympiadId: ID!) {
+    olympiad(olympiadId: $olympiadId) {
+      id
+      name
+      olympiadTask {
+        id
+        task
+        order
       }
     }
   }

@@ -44,20 +44,20 @@ class EmployeeAdmin(admin.ModelAdmin):
     moderate.short_description = "Подтвердить аккаунт"
     moderate.allowed_permissions = ('change', )
 
-# class StudentAdmin(admin.ModelAdmin):
-#     """Школьники"""
-#     list_display = ('__str__', 'birthdate',)
-#     search_fields = ('user', 'patronymic',)
-#     inlines = [StudentSubjectInline]
+class StudentAdmin(admin.ModelAdmin):
+    """Школьники"""
+    list_display = ('__str__', 'birthdate',)
+    search_fields = ('user', 'patronymic',)
+    # inlines = [StudentSubjectInline]
 
-# class SubjectAdmin(admin.ModelAdmin):
-#     """Предметы"""
-#     list_display = ('__str__',)
-#     search_fields = ('name',)
+class SubjectAdmin(admin.ModelAdmin):
+    """Предметы"""
+    list_display = ('__str__',)
+    search_fields = ('name',)
 
 admin.site.register(Employee, EmployeeAdmin)
-# admin.site.register(Student, StudentAdmin)
-# admin.site.register(Subject, SubjectAdmin)
+admin.site.register(Student, StudentAdmin)
+admin.site.register(Subject, SubjectAdmin)
 
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)

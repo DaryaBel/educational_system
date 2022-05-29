@@ -8,6 +8,37 @@ export const CREATE_RESULT = gql`
   }
 `;
 
+export const CREATE_ANSWER = gql`
+  mutation ($taskId: ID!, $olympiadId: ID!, $userId: ID!, $answer: String!) {
+    createAnswer(
+      taskId: $taskId
+      olympiadId: $olympiadId
+      userId: $userId
+      answer: $answer
+    ) {
+      answer {
+        id
+      }
+    }
+  }
+`;
+
+export const UPDATE_ANSWER = gql`
+  mutation ($answerId: ID!, $answer: String) {
+    updateAnswer(answerId: $answerId, answer: $answer) {
+      ok
+    }
+  }
+`;
+
+export const DELETE_ANSWER = gql`
+  mutation ($answerId: ID!) {
+    deleteAnswer(answerId: $answerId) {
+      ok
+    }
+  }
+`;
+
 export const DELETE_RESULT = gql`
   mutation ($resultId: ID!) {
     deleteResult(resultId: $resultId) {
@@ -17,18 +48,8 @@ export const DELETE_RESULT = gql`
 `;
 
 export const UPDATE_RESULT = gql`
-  mutation (
-    $resultId: ID!
-    $startTryTime: Int
-    $finishTryTime: Int
-    $status: String
-  ) {
-    updateResult(
-      resultId: $resultId
-      startTryTime: $startTryTime
-      finishTryTime: $finishTryTime
-      status: $status
-    ) {
+  mutation ($resultId: ID!, $status: String) {
+    updateResult(resultId: $resultId, status: $status) {
       ok
     }
   }
