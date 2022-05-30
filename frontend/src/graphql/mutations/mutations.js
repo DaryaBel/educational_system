@@ -87,9 +87,33 @@ export const DELETE_COURSE_SUBJECT = gql`
   }
 `;
 
+export const CREATE_OLYMPIAD_SUBJECT = gql`
+  mutation ($olympiadId: ID!, $subjectId: ID!) {
+    createOlympiadSubject(olympiadId: $olympiadId, subjectId: $subjectId) {
+      ok
+    }
+  }
+`;
+
+export const DELETE_OLYMPIAD_SUBJECT = gql`
+  mutation ($olympiadId: ID!, $subjectId: ID!) {
+    deleteOlympiadSubject(olympiadId: $olympiadId, subjectId: $subjectId) {
+      ok
+    }
+  }
+`;
+
 export const PUBLISH_COURSE = gql`
   mutation ($courseId: ID!, $published: Boolean) {
     updateCourse(courseId: $courseId, published: $published) {
+      ok
+    }
+  }
+`;
+
+export const PUBLISH_OLYMPIAD = gql`
+  mutation ($olympiadId: ID!, $published: Boolean) {
+    updateOlympiad(olympiadId: $olympiadId, published: $published) {
       ok
     }
   }
@@ -119,6 +143,30 @@ export const CREATE_COURSE = gql`
       maxNumberMember: $maxNumberMember
     ) {
       course {
+        id
+      }
+    }
+  }
+`;
+
+export const CREATE_OLYMPIAD = gql`
+  mutation (
+    $name: String!
+    $organizationId: ID!
+    $description: String
+    $dateResult: Date
+    $dateEnd: Date
+    $percentToWin: Int!
+  ) {
+    createOlympiad(
+      name: $name
+      organizationId: $organizationId
+      description: $description
+      dateResult: $dateResult
+      dateEnd: $dateEnd
+      percentToWin: $percentToWin
+    ) {
+      olympiad {
         id
       }
     }
@@ -156,6 +204,14 @@ export const UPDATE_COURSE = gql`
 export const DELETE_COURSE = gql`
   mutation ($courseId: ID!) {
     deleteCourse(courseId: $courseId) {
+      ok
+    }
+  }
+`;
+
+export const DELETE_OLYMPIAD = gql`
+  mutation ($olympiadId: ID!) {
+    deleteOlympiad(olympiadId: $olympiadId) {
       ok
     }
   }

@@ -20,6 +20,9 @@ import OrganizationCourses from "@/components/course/organizers/OrganizationCour
 import OrganizationCourse from "@/components/course/organizers/OrganizationCourse.vue";
 import NewCourse from "@/components/course/organizers/NewCourse.vue";
 import CourseMembers from "@/components/course/organizers/CourseMembers.vue";
+import OrganizationOlympiads from "@/components/olympiad/organizers/OrganizationOlympiads.vue";
+import OrganizationOlympiad from "@/components/olympiad/organizers/OrganizationOlympiad.vue";
+import NewOlympiad from "@/components/olympiad/organizers/NewOlympiad.vue";
 
 const routes = [
   {
@@ -43,6 +46,11 @@ const routes = [
     component: CourseMembers,
   },
   {
+    path: "/organization/olympiads/new",
+    name: "NewOlympiad",
+    component: NewOlympiad,
+  },
+  {
     path: "/organization/courses",
     name: "OrganizationCourses",
     component: OrganizationCourses,
@@ -51,6 +59,16 @@ const routes = [
     path: "/organization/course/:id",
     name: "OrganizationCourse",
     component: OrganizationCourse,
+  },
+  {
+    path: "/organization/olympiads",
+    name: "OrganizationOlympiads",
+    component: OrganizationOlympiads,
+  },
+  {
+    path: "/organization/olympiads/:id",
+    name: "OrganizationOlympiad",
+    component: OrganizationOlympiad,
   },
   {
     path: "/course/:id",

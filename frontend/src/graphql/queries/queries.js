@@ -298,3 +298,26 @@ export const ORGANIZATION_COURSES = gql`
     }
   }
 `;
+
+export const ORGANIZATION_OLYMPIADS = gql`
+  query ($organizationId: ID!) {
+    organizationOlympiads(organizationId: $organizationId) {
+      id
+      name
+      published
+      description
+      percentToWin
+      dateResult
+      dateEnd
+      olympiadTask {
+        id
+      }
+      olympiadSubject {
+        subject {
+          id
+          name
+        }
+      }
+    }
+  }
+`;

@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuelidate from "@vuelidate/core";
+import Vuelidate from "vuelidate";
 import store from "@/store";
 import router from "@/router";
 

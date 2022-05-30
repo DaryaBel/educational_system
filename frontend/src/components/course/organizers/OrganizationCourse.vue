@@ -68,15 +68,13 @@
             name="name"
             type="text"
             v-model.trim="form.name"
-            :class="{ 'is-invalid': submittedForm && v$.form.name.$error }"
+            :class="{ 'is-invalid': submittedForm && $v.form.name.$error }"
           />
           <div
-            v-if="submittedForm && v$.form.name.$error"
+            v-if="submittedForm && $v.form.name.$error"
             class="invalid-feedback"
           >
-            <span v-if="v$.form.name.required.$invalid"
-              >Данное поле обязательно</span
-            >
+            <span v-if="!$v.form.name.required">Данное поле обязательно</span>
           </div>
         </div>
         <div class="form-group">
@@ -88,7 +86,7 @@
             rows="10"
             v-model.trim="form.description"
             :class="{
-              'is-invalid': submittedForm && v$.form.description.$error,
+              'is-invalid': submittedForm && $v.form.description.$error,
             }"
           ></textarea>
         </div>
@@ -112,10 +110,10 @@
             <span slot="noResult">Не найдено</span>
           </multiselect>
           <div
-            v-if="submittedForm && v$.form.subjects.$error"
+            v-if="submittedForm && $v.form.subjects.$error"
             class="invalid-feedback"
           >
-            <span v-if="v$.form.subjects.required.$invalid"
+            <span v-if="!$v.form.subjects.required"
               >Данное поле обязательно</span
             >
           </div>
@@ -126,7 +124,7 @@
             v-model="form.duration"
             name="duration"
             id="duration"
-            :class="{ 'is-invalid': submittedForm && v$.form.duration.$error }"
+            :class="{ 'is-invalid': submittedForm && $v.form.duration.$error }"
           >
             <option value="LESSMONTH">Меньше месяца</option>
             <option value="MONTH">1-2 месяца</option>
@@ -141,19 +139,17 @@
             v-model="form.form"
             name="form"
             id="form"
-            :class="{ 'is-invalid': submittedForm && v$.form.form.$error }"
+            :class="{ 'is-invalid': submittedForm && $v.form.form.$error }"
           >
             <option value="ON">Онлайн</option>
             <option value="OFF">Оффлайн</option>
             <option value="BOTH">Смешанный</option>
           </select>
           <div
-            v-if="submittedForm && v$.form.form.$error"
+            v-if="submittedForm && $v.form.form.$error"
             class="invalid-feedback"
           >
-            <span v-if="v$.form.form.required.$invalid"
-              >Данное поле обязательно</span
-            >
+            <span v-if="!$v.form.form.required">Данное поле обязательно</span>
           </div>
         </div>
         <div class="form-group">
@@ -163,7 +159,7 @@
             name="dateStart"
             type="date"
             v-model="form.dateStart"
-            :class="{ 'is-invalid': submittedForm && v$.form.dateStart.$error }"
+            :class="{ 'is-invalid': submittedForm && $v.form.dateStart.$error }"
           />
         </div>
         <div class="form-group">
@@ -173,7 +169,7 @@
             name="dateEnd"
             type="date"
             v-model="form.dateEnd"
-            :class="{ 'is-invalid': submittedForm && v$.form.dateEnd.$error }"
+            :class="{ 'is-invalid': submittedForm && $v.form.dateEnd.$error }"
           />
         </div>
         <div class="form-group">
@@ -190,7 +186,7 @@
             :showPointer="false"
             :multiple="false"
             :close-on-select="true"
-            :class="{ 'is-invalid': submittedForm && v$.form.city.$error }"
+            :class="{ 'is-invalid': submittedForm && $v.form.city.$error }"
           >
             <span slot="noResult">Не найдено</span>
           </multiselect>
@@ -207,7 +203,7 @@
             step="1"
             v-model.trim="form.maxNumberMember"
             :class="{
-              'is-invalid': submittedForm && v$.form.maxNumberMember.$error,
+              'is-invalid': submittedForm && $v.form.maxNumberMember.$error,
             }"
           />
         </div>
@@ -226,16 +222,12 @@ import {
   CREATE_COURSE_SUBJECT,
   DELETE_COURSE_SUBJECT,
 } from "@/graphql/mutations/mutations";
-import useVuelidate from "@vuelidate/core";
-import { required, integer } from "@vuelidate/validators";
+import { required, integer } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { CITIES, COURSE, SUBJECTS } from "@/graphql/queries/queries";
 
 export default {
   name: "OrganizationCourse",
-  setup() {
-    return { v$: useVuelidate() };
-  },
   apollo: {
     course: {
       query: COURSE,
@@ -346,8 +338,8 @@ export default {
         this.isLoading = true;
         this.edit = false;
         this.submittedForm = true;
-        this.v$.form.$touch();
-        if (this.v$.form.$invalid) {
+        this.$v.form.$touch();
+        if (this.$v.form.$invalid) {
           this.isLoading = false;
           return;
         }

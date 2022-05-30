@@ -8,12 +8,9 @@
         :disabled="isLoading"
         type="text"
         v-model.trim="form.email"
-        :class="{ 'is-invalid': submitted && v$.form.email.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.email.$error }"
       />
-      <p
-        v-if="submitted && v$.form.email.required.$invalid"
-        class="invalid-feedback"
-      >
+      <p v-if="submitted && !$v.form.email.required" class="invalid-feedback">
         Данное поле обязательно
       </p>
     </div>
@@ -24,11 +21,11 @@
         :disabled="isLoading"
         :type="passShow ? 'text' : 'password'"
         v-model="form.password"
-        :class="{ 'is-invalid': submitted && v$.form.password.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.password.$error }"
       />
       <button @click="passShow = !passShow">Показать/спрятать</button>
       <p
-        v-if="submitted && v$.form.password.required.$invalid"
+        v-if="submitted && !$v.form.password.required"
         class="invalid-feedback"
       >
         Данное поле обязательно
@@ -47,13 +44,9 @@
 </template>
 
 <script>
-import useVuelidate from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { required } from "vuelidate/lib/validators";
 export default {
   name: "LogIn",
-  setup() {
-    return { v$: useVuelidate() };
-  },
   data() {
     return {
       passShow: false,
@@ -78,8 +71,8 @@ export default {
   methods: {
     onLogin() {
       this.submitted = true;
-      this.v$.$touch();
-      if (this.v$.$invalid) return;
+      this.$v.$touch();
+      if (this.$v.$invalid) return;
       // to form submit after this
       console.log(this.form);
     },

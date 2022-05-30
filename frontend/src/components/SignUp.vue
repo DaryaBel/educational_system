@@ -8,12 +8,10 @@
         :disabled="isLoading"
         type="text"
         v-model.trim="form.lastName"
-        :class="{ 'is-invalid': submitted && v$.form.lastName.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.lastName.$error }"
       />
-      <div v-if="submitted && v$.form.lastName.$error" class="invalid-feedback">
-        <span v-if="v$.form.lastName.required.$invalid"
-          >Данное поле обязательно</span
-        >
+      <div v-if="submitted && $v.form.lastName.$error" class="invalid-feedback">
+        <span v-if="!$v.form.lastName.required">Данное поле обязательно</span>
       </div>
     </div>
     <div class="form-group">
@@ -23,15 +21,13 @@
         :disabled="isLoading"
         type="text"
         v-model.trim="form.firstName"
-        :class="{ 'is-invalid': submitted && v$.form.firstName.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.firstName.$error }"
       />
       <div
-        v-if="submitted && v$.form.firstName.$error"
+        v-if="submitted && $v.form.firstName.$error"
         class="invalid-feedback"
       >
-        <span v-if="v$.form.firstName.required.$invalid"
-          >Данное поле обязательно</span
-        >
+        <span v-if="!$v.form.firstName.required">Данное поле обязательно</span>
       </div>
     </div>
     <div class="form-group">
@@ -41,7 +37,7 @@
         :disabled="isLoading"
         type="text"
         v-model.trim="form.patronymic"
-        :class="{ 'is-invalid': submitted && v$.form.patronymic.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.patronymic.$error }"
       />
     </div>
     <div class="form-group">
@@ -52,7 +48,7 @@
         type="date"
         v-model="form.birthdate"
         :max="new Date().toISOString().substr(0, 10)"
-        :class="{ 'is-invalid': submitted && v$.form.birthdate.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.birthdate.$error }"
       />
     </div>
     <div class="form-group">
@@ -62,13 +58,11 @@
         :disabled="isLoading"
         type="text"
         v-model.trim="form.email"
-        :class="{ 'is-invalid': submitted && v$.form.email.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.email.$error }"
       />
-      <div v-if="submitted && v$.form.email.$error" class="invalid-feedback">
-        <span v-if="v$.form.email.required.$invalid"
-          >Данное поле обязательно</span
-        >
-        <span v-if="v$.form.email.email.$invalid">Некорректный email</span>
+      <div v-if="submitted && $v.form.email.$error" class="invalid-feedback">
+        <span v-if="!$v.form.email.required">Данное поле обязательно</span>
+        <span v-if="!$v.form.email.email">Некорректный email</span>
       </div>
     </div>
     <div class="form-group">
@@ -78,15 +72,13 @@
         :disabled="isLoading"
         :type="passShow ? 'text' : 'password'"
         v-model="form.password"
-        :class="{ 'is-invalid': submitted && v$.form.password.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.password.$error }"
       />
       <button @click="passShow = !passShow">Показать/спрятать</button>
 
-      <div v-if="submitted && v$.form.password.$error" class="invalid-feedback">
-        <span v-if="v$.form.password.required.$invalid"
-          >Данное поле обязательно</span
-        >
-        <span v-if="v$.form.password.minLength.$invalid"
+      <div v-if="submitted && $v.form.password.$error" class="invalid-feedback">
+        <span v-if="!$v.form.password.required">Данное поле обязательно</span>
+        <span v-if="$v.form.password.minLength.$invalid"
           >Пароль должен содержать не менее 6 символов</span
         >
       </div>
@@ -98,16 +90,16 @@
         :disabled="isLoading"
         :type="passShow2 ? 'text' : 'password'"
         v-model="form.confirmPassword"
-        :class="{ 'is-invalid': submitted && v$.form.confirmPassword.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.confirmPassword.$error }"
       />
       <button @click="passShow2 = !passShow2">Показать/спрятать</button>
       <div
         v-if="
-          submitted && (v$.form.confirmPassword.$error || !passwordIsSame())
+          submitted && ($v.form.confirmPassword.$error || !passwordIsSame())
         "
         class="invalid-feedback"
       >
-        <span v-if="v$.form.confirmPassword.required.$invalid"
+        <span v-if="!$v.form.confirmPassword.required"
           >Данное поле обязательно</span
         >
         <span v-else-if="!passwordIsSame()">Пароли не совпадают</span>
@@ -121,16 +113,16 @@
         :disabled="isLoading"
         v-model="form.personalData"
         name="personalData"
-        :class="{ 'is-invalid': submitted && v$.form.personalData.$error }"
+        :class="{ 'is-invalid': submitted && $v.form.personalData.$error }"
       />
       <label for="personalData"
         >Согласен(на) на обработку персональных данных</label
       >
       <div
-        v-if="submitted && v$.form.personalData.$error"
+        v-if="submitted && $v.form.personalData.$error"
         class="invalid-feedback"
       >
-        <span v-if="v$.form.personalData.required.$invalid"
+        <span v-if="!$v.form.personalData.required"
           >Данное поле обязательно</span
         >
       </div>
@@ -151,13 +143,9 @@
 </template>
 
 <script>
-import useVuelidate from "@vuelidate/core";
-import { required, email, minLength } from "@vuelidate/validators";
+import { required, email, minLength } from "vuelidate/lib/validators";
 export default {
   name: "SignUp",
-  setup() {
-    return { v$: useVuelidate() };
-  },
   data() {
     return {
       passShow: false,
@@ -200,9 +188,9 @@ export default {
     onSignUp() {
       this.isLoading = true;
       this.submitted = true;
-      this.v$.$touch();
+      this.$v.$touch();
       this.isLoading = false;
-      if (this.v$.$invalid) return;
+      if (this.$v.$invalid) return;
       // to form submit after this
       console.log(this.form);
     },
