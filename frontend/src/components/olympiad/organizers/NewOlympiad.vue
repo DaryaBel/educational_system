@@ -106,7 +106,11 @@
       </div>
       <div>
         <h4>Задания</h4>
-        <!-- <div class="border-line" v-for="task in sortedTasks" :key="task.order">
+        <div
+          v-for="(task, i) in sortedTasks"
+          :key="i"
+          :set="(v = $v.tasks.$each[i])"
+        >
           <div class="form-group">
             <label for="task">Текст задания *</label><br />
             <textarea
@@ -116,19 +120,12 @@
               rows="10"
               v-model.trim="task.task"
               :class="{
-                'is-invalid':
-                  submittedForm &&
-                  (task.task == undefined || task.task.trim() == ''),
+                'is-invalid': submittedForm && v.task.$error,
               }"
             ></textarea>
-            <div
-              v-if="
-                submittedForm &&
-                (task.task == undefined || task.task.trim() == '')
-              "
-              class="invalid-feedback"
-            >
-              <span>Данное поле обязательно</span>
+
+            <div v-if="submittedForm && v.task.$error" class="invalid-feedback">
+              <span v-if="!v.task.required">Данное поле обязательно</span>
             </div>
           </div>
           <div class="form-group">
@@ -142,59 +139,46 @@
               step="1"
               v-model.trim="task.maxScore"
               :class="{
-                'is-invalid': submittedForm && task.maxScore == undefined,
+                'is-invalid': submittedForm && v.maxScore.$error,
               }"
             />
             <div
-              v-if="submittedForm && task.maxScore == undefined"
+              v-if="submittedForm && v.maxScore.$error"
               class="invalid-feedback"
             >
-              <span>Данное поле обязательно</span>
+              <span v-if="!v.maxScore.required">Данное поле обязательно</span>
+              <span v-if="!v.maxScore.betweenValue"
+                >Число должно находиться в отрезке от 1 до 100</span
+              >
             </div>
           </div>
           <button
-            v-if="localTasks.length != 1"
+            v-if="tasks.length != 1"
             :disabled="task.order == 1"
             @click="toUp(task.order)"
           >
             Вверх
           </button>
           <button
-            v-if="localTasks.length != 1"
-            :disabled="task.order == localTasks.length"
+            v-if="tasks.length != 1"
+            :disabled="task.order == tasks.length"
             @click="toDown(task.order)"
           >
             Вниз
           </button>
           <button
-            v-if="localTasks.length != 1"
+            v-if="tasks.length != 1"
             @click="deleteFromLocalTasks(task.order)"
           >
             Удалить
           </button>
-        </div> -->
-        <div v-for="(task, i) in tasks" :key="i" :set="(v = $v.tasks.$each[i])">
-          <div class="form-group">
-            <label class="form__label">Name for {{ i }}</label>
-            <input class="form__input" v-model.trim="task.task" />
-            <label for="maxScore">Максимальный балл *</label><br />
-            <input
-              name="maxScore"
-              id="maxScore"
-              type="number"
-              min="0"
-              max="100"
-              step="1"
-              v-model.trim="task.maxScore"
-            />
-          </div>
         </div>
         <button
           @click="
-            localTasks.push({
+            tasks.push({
               task: undefined,
               maxScore: undefined,
-              order: localTasks.length + 1,
+              order: tasks.length + 1,
             })
           "
         >
@@ -213,6 +197,7 @@
 import {
   CREATE_OLYMPIAD,
   CREATE_OLYMPIAD_SUBJECT,
+  CREATE_TASK,
 } from "@/graphql/mutations/mutations";
 import { required, integer, between } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
@@ -243,7 +228,6 @@ export default {
         tasks: [],
       },
       userId: 2,
-      localTasks: [{ task: undefined, maxScore: undefined, order: 1 }],
       organizationId: 4,
       submittedForm: false,
       isLoading: false,
@@ -266,13 +250,14 @@ export default {
         maxScore: {
           required,
           integer,
+          betweenValue: between(1, 100),
         },
       },
     },
   },
   computed: {
     sortedTasks() {
-      return this.localTasks.sort(this.sortByOrder);
+      return this.tasks.sort(this.sortByOrder);
     },
     subjectsOption() {
       if (this.subjects == undefined) return [];
@@ -284,29 +269,34 @@ export default {
       return d1.order > d2.order ? 1 : -1;
     },
     deleteFromLocalTasks(order) {
-      let i = this.localTasks.findIndex((el) => el.order == order);
-      this.localTasks.splice(i, 1);
-      for (var k = i; k < this.localTasks.length; k++) {
-        this.localTasks[k].order = this.localTasks[k].order - 1;
+      let i = this.tasks.findIndex((el) => el.order == order);
+      this.tasks.splice(i, 1);
+      for (var k = i; k < this.tasks.length; k++) {
+        this.tasks[k].order = this.tasks[k].order - 1;
       }
     },
     toUp(order) {
-      let i1 = this.localTasks.findIndex((el) => el.order == order);
-      let i2 = this.localTasks.findIndex((el) => el.order == order - 1);
-      this.localTasks[i1].order = order - 1;
-      this.localTasks[i2].order = order;
+      let i1 = this.tasks.findIndex((el) => el.order == order);
+      let i2 = this.tasks.findIndex((el) => el.order == order - 1);
+      this.tasks[i1].order = order - 1;
+      this.tasks[i2].order = order;
     },
     toDown(order) {
-      let i1 = this.localTasks.findIndex((el) => el.order == order);
-      let i2 = this.localTasks.findIndex((el) => el.order == order + 1);
-      this.localTasks[i1].order = order + 1;
-      this.localTasks[i2].order = order;
+      let i1 = this.tasks.findIndex((el) => el.order == order);
+      let i2 = this.tasks.findIndex((el) => el.order == order + 1);
+      this.tasks[i1].order = order + 1;
+      this.tasks[i2].order = order;
     },
     onAdd() {
       this.isLoading = true;
       this.submittedForm = true;
       this.$v.form.$touch();
+      this.$v.tasks.$touch();
       if (this.$v.form.$invalid) {
+        this.isLoading = false;
+        return;
+      }
+      if (this.$v.tasks.$invalid) {
         this.isLoading = false;
         return;
       }
@@ -338,6 +328,22 @@ export default {
                 console.error(error);
               });
           });
+          this.tasks.forEach((element) => {
+            this.$apollo
+              .mutate({
+                mutation: CREATE_TASK,
+                variables: {
+                  task: element.task,
+                  maxScore: element.maxScore,
+                  order: element.order,
+                  olympiadId: this.createdId,
+                },
+              })
+              .then(() => {})
+              .catch((error) => {
+                console.error(error);
+              });
+          });
 
           this.form = {
             name: undefined,
@@ -346,8 +352,8 @@ export default {
             dateResult: undefined,
             dateEnd: undefined,
             subjects: [],
-            tasks: [],
           };
+          this.tasks = [{ task: undefined, maxScore: undefined, order: 1 }];
 
           this.submittedForm = false;
           this.isLoading = false;

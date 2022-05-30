@@ -103,6 +103,19 @@ export const DELETE_OLYMPIAD_SUBJECT = gql`
   }
 `;
 
+export const CREATE_TASK = gql`
+  mutation ($olympiadId: ID!, $task: String!, $maxScore: Int!, $order: Int!) {
+    createTask(
+      olympiadId: $olympiadId
+      task: $task
+      order: $order
+      maxScore: $maxScore
+    ) {
+      ok
+    }
+  }
+`;
+
 export const PUBLISH_COURSE = gql`
   mutation ($courseId: ID!, $published: Boolean) {
     updateCourse(courseId: $courseId, published: $published) {

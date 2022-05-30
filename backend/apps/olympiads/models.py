@@ -34,7 +34,7 @@ class Task(models.Model):
     olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, verbose_name="Олимпиада", related_name="olympiadTask")
     task = models.TextField("Текст задания")
     max_score = models.PositiveIntegerField("Максимальное количество баллов")   
-    order = models.IntegerField(verbose_name="Номер задания", default=0, unique=True)
+    order = models.IntegerField(verbose_name="Номер задания", default=0)
     
     def __str__(self):
         return f"Задание {self.order}. {self.olympiad}"
