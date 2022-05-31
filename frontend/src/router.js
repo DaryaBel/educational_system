@@ -23,6 +23,7 @@ import CourseMembers from "@/components/course/organizers/CourseMembers.vue";
 import OrganizationOlympiads from "@/components/olympiad/organizers/OrganizationOlympiads.vue";
 import OrganizationOlympiad from "@/components/olympiad/organizers/OrganizationOlympiad.vue";
 import NewOlympiad from "@/components/olympiad/organizers/NewOlympiad.vue";
+import OlympiadMembers from "@/components/olympiad/organizers/OlympiadMembers.vue";
 
 const routes = [
   {
@@ -44,6 +45,11 @@ const routes = [
     path: "/organization/course/:id/members",
     name: "CourseMembers",
     component: CourseMembers,
+  },
+  {
+    path: "/organization/olympiad/:id/members",
+    name: "OlympiadMembers",
+    component: OlympiadMembers,
   },
   {
     path: "/organization/olympiads/new",

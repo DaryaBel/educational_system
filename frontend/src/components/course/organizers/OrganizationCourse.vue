@@ -48,6 +48,15 @@
         </p>
         <p v-if="course.published">Опубликовано</p>
         <p v-if="!course.published">Не опубликовано</p>
+        <button
+          @click="
+            modal = true;
+            modalId = course.id;
+            modalName = course.name;
+          "
+        >
+          Удалить
+        </button>
         <button v-if="!course.published" @click="onEdit">
           Отредактировать
         </button>
@@ -211,6 +220,17 @@
         <p>* - обязательное поле</p>
         <button @click="onEdit">Сохранить</button>
       </div>
+      <modal-delete-course
+        v-if="modal"
+        @delete="deleteCourse"
+        @close="
+          modal = false;
+          modalId = 0;
+          modalName = '';
+        "
+        :courseId="modalId"
+        :courseName="modalName"
+      ></modal-delete-course>
     </div>
   </div>
 </template>
@@ -219,9 +239,11 @@
 import {
   PUBLISH_COURSE,
   UPDATE_COURSE,
+  DELETE_COURSE,
   CREATE_COURSE_SUBJECT,
   DELETE_COURSE_SUBJECT,
 } from "@/graphql/mutations/mutations";
+import ModalDeleteCourse from "@/components/course/organizers/ModalDeleteCourse.vue";
 import { required, integer } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { CITIES, COURSE, SUBJECTS } from "@/graphql/queries/queries";
@@ -246,9 +268,13 @@ export default {
   },
   components: {
     Multiselect,
+    ModalDeleteCourse,
   },
   data() {
     return {
+      modal: false,
+      modalId: 0,
+      modalName: "",
       form: {
         name: undefined,
         description: undefined,
@@ -291,6 +317,23 @@ export default {
     },
   },
   methods: {
+    deleteCourse() {
+      this.$apollo
+        .mutate({
+          mutation: DELETE_COURSE,
+          variables: {
+            courseId: this.$route.params.id,
+          },
+        })
+        .then(() => {
+          this.$router.push({
+            name: "OrganizationCourses",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     toPublish(courseId, published) {
       this.$apollo
         .mutate({
@@ -336,7 +379,6 @@ export default {
     onEdit() {
       if (this.edit) {
         this.isLoading = true;
-        this.edit = false;
         this.submittedForm = true;
         this.$v.form.$touch();
         if (this.$v.form.$invalid) {
@@ -408,6 +450,8 @@ export default {
 
             this.$apollo.queries.course.refresh();
             this.$apollo.queries.course.refetch();
+
+            this.edit = false;
             this.submittedForm = false;
             this.isLoading = false;
           })

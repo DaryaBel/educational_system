@@ -116,6 +116,27 @@ export const CREATE_TASK = gql`
   }
 `;
 
+export const UPDATE_TASK = gql`
+  mutation ($taskId: ID!, $task: String, $maxScore: Int, $order: Int) {
+    updateTask(
+      taskId: $taskId
+      task: $task
+      order: $order
+      maxScore: $maxScore
+    ) {
+      ok
+    }
+  }
+`;
+
+export const DELETE_TASK = gql`
+  mutation ($taskId: ID!) {
+    deleteTask(taskId: $taskId) {
+      ok
+    }
+  }
+`;
+
 export const PUBLISH_COURSE = gql`
   mutation ($courseId: ID!, $published: Boolean) {
     updateCourse(courseId: $courseId, published: $published) {
@@ -127,6 +148,28 @@ export const PUBLISH_COURSE = gql`
 export const PUBLISH_OLYMPIAD = gql`
   mutation ($olympiadId: ID!, $published: Boolean) {
     updateOlympiad(olympiadId: $olympiadId, published: $published) {
+      ok
+    }
+  }
+`;
+
+export const UPDATE_OLYMPIAD = gql`
+  mutation (
+    $olympiadId: ID!
+    $name: String
+    $description: String
+    $dateEnd: Date
+    $dateResult: Date
+    $percentToWin: Int
+  ) {
+    updateOlympiad(
+      olympiadId: $olympiadId
+      name: $name
+      description: $description
+      dateEnd: $dateEnd
+      dateResult: $dateResult
+      percentToWin: $percentToWin
+    ) {
       ok
     }
   }

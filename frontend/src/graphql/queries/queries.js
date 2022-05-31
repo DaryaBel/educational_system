@@ -268,6 +268,32 @@ export const OLYMPIAD_PROCESS = gql`
   }
 `;
 
+export const OLYMPIAD_FOR_ORGANIZERS = gql`
+  query ($olympiadId: ID!) {
+    olympiad(olympiadId: $olympiadId) {
+      id
+      name
+      description
+      published
+      percentToWin
+      dateResult
+      dateEnd
+      olympiadSubject {
+        subject {
+          id
+          name
+        }
+      }
+      olympiadTask {
+        id
+        task
+        maxScore
+        order
+      }
+    }
+  }
+`;
+
 export const OLYMPIAD_STATUS = gql`
   query ($olympiadId: ID!, $userId: ID!) {
     studentOlympiadResult(olympiadId: $olympiadId, userId: $userId) {

@@ -225,7 +225,6 @@ export default {
         dateResult: undefined,
         dateEnd: undefined,
         subjects: [],
-        tasks: [],
       },
       userId: 2,
       organizationId: 4,

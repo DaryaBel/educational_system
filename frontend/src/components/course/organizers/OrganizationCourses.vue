@@ -187,6 +187,7 @@ export default {
       this.$router.push({ name: "NewCourse" });
     },
     deleteCourse(courseId) {
+      console.log(courseId);
       this.$apollo
         .mutate({
           mutation: DELETE_COURSE,
