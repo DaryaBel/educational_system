@@ -61,6 +61,38 @@ export const ALL_MEMBER_COURSE = gql`
   }
 `;
 
+export const OLYMPIAD_RESULTS = gql`
+  query ($olympiadId: ID!) {
+    results(olympiadId: $olympiadId) {
+      id
+      status
+      olympiad {
+        id
+        resultPublished
+      }
+      won
+      score
+      student {
+        id
+        birthdate
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        patronymic
+      }
+    }
+  }
+`;
+
+export const NUMBER_NOT_CHECKED_RESULTS = gql`
+  query ($olympiadId: ID!) {
+    countNotCheckedResults(olympiadId: $olympiadId)
+  }
+`;
+
 export const NUMBER_MEMBER_COURSE = gql`
   query ($courseId: ID!) {
     countCourseMember(courseId: $courseId)
@@ -179,6 +211,7 @@ export const STUDENT_OLYMPIADS = gql`
       id
       name
       description
+      resultPublished
       organization {
         id
         fullname
@@ -220,6 +253,7 @@ export const OLYMPIAD = gql`
       }
       dateResult
       dateEnd
+      resultPublished
       olympiadSubject {
         subject {
           id

@@ -21,6 +21,7 @@ class Olympiad(models.Model):
     date_result = models.DateField("Дата оглашения результатов", null=True, blank=True)
     date_end = models.DateField("Дата окончания приема ответов", null=True, blank=True)
     published = models.BooleanField("Опубликовано", default=False)
+    result_published = models.BooleanField("Результаты опубликованы", default=False)
     
     def __str__(self):
         return self.name
@@ -52,7 +53,6 @@ class Result(models.Model):
     score = models.PositiveIntegerField("Балл", null=True, blank=True)
     status = models.CharField(verbose_name="Статус", max_length=20, choices=RESULT_STATUS, default='TAKEPART')
     won = models.BooleanField("Победил", null=True, blank=True) 
-    published = models.BooleanField("Опубликовано", default=False)    
     def __str__(self):
         return f"{self.student}. {self.olympiad}"
 

@@ -181,11 +181,12 @@ class UpdateOlympiad(graphene.Mutation):
         date_result = graphene.Date()
         date_end = graphene.Date()
         published = graphene.Boolean()
+        result_published = graphene.Boolean()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, olympiad_id, published=None, name=None, percent_to_win=None, description=None, date_result=None, date_end=None):
+    def mutate(cls, root, info, olympiad_id, published=None, result_published=None, name=None, percent_to_win=None, description=None, date_result=None, date_end=None):
         olympiad = Olympiad.objects.get(pk=olympiad_id)
         if name != None:
             olympiad.name = name
@@ -199,6 +200,8 @@ class UpdateOlympiad(graphene.Mutation):
             olympiad.date_end = date_end
         if published != None:
             olympiad.published = published
+        if result_published != None:
+            olympiad.result_published = result_published
         olympiad.save()
     
         return cls(ok=True)
@@ -231,12 +234,11 @@ class UpdateResult(graphene.Mutation):
         score = graphene.Int()
         status = graphene.String()
         won = graphene.Boolean()
-        published = graphene.Boolean()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, result_id, score=None, status=None, won=None, published=None):
+    def mutate(cls, root, info, result_id, score=None, status=None, won=None):
         result = Result.objects.get(pk=result_id)
         if score != None:
             result.score = score
@@ -244,8 +246,6 @@ class UpdateResult(graphene.Mutation):
             result.status = status
         if won != None:
             result.won = won
-        if published != None:
-            result.published = published
         result.save()
 
         return cls(ok=True)

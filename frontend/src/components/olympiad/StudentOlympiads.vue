@@ -195,7 +195,7 @@ export default {
       let userResult = olympiad.olympiadResult.find(
         (res) => res.student.user.id == this.userId
       );
-      return this.statusType(userResult.status, userResult.published);
+      return this.statusType(userResult.status, olympiad.resultPublished);
     },
     statusType(status, published) {
       switch (status) {

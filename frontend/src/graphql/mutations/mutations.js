@@ -153,6 +153,14 @@ export const PUBLISH_OLYMPIAD = gql`
   }
 `;
 
+export const PUBLISH_OLYMPIAD_RESULTS = gql`
+  mutation ($olympiadId: ID!, $resultPublished: Boolean) {
+    updateOlympiad(olympiadId: $olympiadId, resultPublished: $resultPublished) {
+      ok
+    }
+  }
+`;
+
 export const UPDATE_OLYMPIAD = gql`
   mutation (
     $olympiadId: ID!

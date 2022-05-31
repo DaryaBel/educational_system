@@ -8,7 +8,7 @@ from olympiads.models import Answer, Olympiad, OlympiadSubject, Result, Task
 
 class OlympiadAdmin(admin.ModelAdmin):
     """Олимпиады"""
-    list_display = ('__str__', 'organization', 'published',)
+    list_display = ('__str__', 'organization', 'published', 'result_published',)
     search_fields = ('name', 'organization', 'description',)
     # inlines = [OlympiadSubjectInline]
     
@@ -24,8 +24,8 @@ class AnswerAdmin(admin.ModelAdmin):
     
 class ResultAdmin(admin.ModelAdmin):
     """Результаты"""
-    list_display = ('__str__', 'status', 'published',)
-    list_filter = ('status', 'published')
+    list_display = ('__str__', 'status',)
+    list_filter = ('status',)
     search_fields = ('olympiad', 'student',)
     
 

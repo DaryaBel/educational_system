@@ -53,7 +53,7 @@
           v-if="
             studentOlympiadResult.status == 'SENT' ||
             (studentOlympiadResult.status == 'CHECKED' &&
-              !studentOlympiadResult.published)
+              !olympiad.resultPublished)
           "
         >
           Вы успешно отправили свои ответы на олимпиаду. После того, как
@@ -63,7 +63,7 @@
           @click="toGetResult"
           v-if="
             studentOlympiadResult.status == 'CHECKED' &&
-            studentOlympiadResult.published
+            olympiad.resultPublished
           "
         >
           Посмотреть результаты

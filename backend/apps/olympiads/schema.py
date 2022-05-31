@@ -12,6 +12,8 @@ class Query(graphene.ObjectType):
     published_olympiads = graphene.List(OlympiadType)
     student_olympiads = graphene.List(OlympiadType, user_id=graphene.ID(required=True))
     student_olympiad_result = graphene.Field(ResultType, user_id=graphene.ID(required=True), olympiad_id=graphene.ID(required=True))
+    results = graphene.List(ResultType, olympiad_id=graphene.ID(required=True))
+    count_not_checked_results = graphene.Int(olympiad_id=graphene.ID(required=True))
     organization_olympiads = graphene.List(OlympiadType, organization_id=graphene.ID(required=True))
     olympiad_students = graphene.List(ResultType, olympiad_id=graphene.ID(required=True))
     tasks = graphene.List(TaskType, olympiad_id=graphene.ID(required=True))
@@ -75,6 +77,20 @@ class Query(graphene.ObjectType):
             user = User.objects.get(pk=user_id)
             student = Student.objects.get(user=user)
             return Result.objects.get(olympiad=olympiad, student=student)
+        except Exception as e:
+            return None
+
+    def resolve_results(root, info, olympiad_id):
+        try:
+            olympiad = Olympiad.objects.get(pk=olympiad_id)
+            return Result.objects.filter(olympiad=olympiad)
+        except Exception as e:
+            return None
+    
+    def resolve_count_not_checked_results(root, info, olympiad_id):
+        try:
+            olympiad = Olympiad.objects.get(pk=olympiad_id)
+            return Result.objects.filter(olympiad=olympiad).exclude(status="CHECKED").count()
         except Exception as e:
             return None
 
