@@ -92,11 +92,11 @@
               </td>
             </tr>
           </table>
-          <modal-delete-olympiad
+          <modal-publish-result
             v-if="modal"
             @publish="toPublishResult"
             @close="modal = false"
-          ></modal-delete-olympiad>
+          ></modal-publish-result>
         </div>
       </div>
     </div>
