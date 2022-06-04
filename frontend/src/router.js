@@ -24,6 +24,7 @@ import OrganizationOlympiads from "@/components/olympiad/organizers/Organization
 import OrganizationOlympiad from "@/components/olympiad/organizers/OrganizationOlympiad.vue";
 import NewOlympiad from "@/components/olympiad/organizers/NewOlympiad.vue";
 import OlympiadMembers from "@/components/olympiad/organizers/OlympiadMembers.vue";
+import StudentAnswers from "@/components/olympiad/organizers/StudentAnswers.vue";
 
 const routes = [
   {
@@ -50,6 +51,11 @@ const routes = [
     path: "/organization/olympiad/:id/members",
     name: "OlympiadMembers",
     component: OlympiadMembers,
+  },
+  {
+    path: "/organization/olympiad/:id/members/:user/answers",
+    name: "StudentAnswers",
+    component: StudentAnswers,
   },
   {
     path: "/organization/olympiads/new",

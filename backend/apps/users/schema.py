@@ -14,7 +14,7 @@ class Query(object):
     employee = graphene.Field(EmployeeType, employee_id=graphene.ID(required=True))
     
     students = graphene.List(StudentType)
-    student = graphene.Field(StudentType, student_id=graphene.ID(required=True))
+    student = graphene.Field(StudentType, user_id=graphene.ID(required=True))
     
     subjects = graphene.List(SubjectType)
     subject = graphene.Field(SubjectType, subject_id=graphene.ID(required=True))
@@ -50,9 +50,10 @@ class Query(object):
         except Exception as e:
             return None
 
-    def resolve_student(root, info, student_id):
+    def resolve_student(root, info, user_id):
         try:
-            return Student.objects.get(pk=student_id)
+            user = User.objects.get(pk=user_id)          
+            return Student.objects.get(user=user)
         except Exception as e:
             return None
 

@@ -67,10 +67,18 @@
             </tr>
             <tr v-for="student in filterItems" :key="student.id">
               <td>
-                <span
+                <router-link
+                  tag="a"
+                  :to="{
+                    name: 'StudentAnswers',
+                    params: {
+                      id: $route.params.id,
+                      user: student.student.user.id,
+                    },
+                  }"
                   >{{ student.student.user.lastName }}
                   {{ student.student.user.firstName }}
-                  {{ student.student.patronymic }}</span
+                  {{ student.student.patronymic }}</router-link
                 >
               </td>
               <td>

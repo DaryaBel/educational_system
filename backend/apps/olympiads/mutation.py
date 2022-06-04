@@ -58,7 +58,7 @@ class CreateResult(graphene.Mutation):
         student = Student.objects.get(user=user)
         
         result = Result.objects.create(
-            olympiad=olympiad, published=False, status="TAKEPART", won=False, student=student, score=score)
+            olympiad=olympiad, status="TAKEPART", won=False, student=student, score=score)
 
         return cls(ok=True, result=result)
 

@@ -258,8 +258,6 @@
             Добавить
           </button>
         </div>
-        {{ tasks }} <br />
-        {{ olympiad.olympiadTask }}
         <p>* - обязательное поле</p>
         <button @click="onEdit">Сохранить</button>
       </div>

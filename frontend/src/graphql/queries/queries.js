@@ -288,6 +288,20 @@ export const STUDENT_ANSWERS = gql`
   }
 `;
 
+export const STUDENT_ANSWERS_WITH_TASK = gql`
+  query ($olympiadId: ID!, $userId: ID!) {
+    answers(olympiadId: $olympiadId, userId: $userId) {
+      id
+      answer
+      score
+      task {
+        id
+        maxScore
+      }
+    }
+  }
+`;
+
 export const OLYMPIAD_PROCESS = gql`
   query ($olympiadId: ID!) {
     olympiad(olympiadId: $olympiadId) {
@@ -302,12 +316,29 @@ export const OLYMPIAD_PROCESS = gql`
   }
 `;
 
+export const OLYMPIAD_TASK_CHECK = gql`
+  query ($olympiadId: ID!) {
+    olympiad(olympiadId: $olympiadId) {
+      id
+      percentToWin
+      resultPublished
+      olympiadTask {
+        id
+        task
+        maxScore
+        order
+      }
+    }
+  }
+`;
+
 export const OLYMPIAD_FOR_ORGANIZERS = gql`
   query ($olympiadId: ID!) {
     olympiad(olympiadId: $olympiadId) {
       id
       name
       description
+      resultPublished
       published
       percentToWin
       dateResult
@@ -330,10 +361,28 @@ export const OLYMPIAD_FOR_ORGANIZERS = gql`
 
 export const OLYMPIAD_STATUS = gql`
   query ($olympiadId: ID!, $userId: ID!) {
-    studentOlympiadResult(olympiadId: $olympiadId, userId: $userId) {
+    result(olympiadId: $olympiadId, userId: $userId) {
       id
       status
-      published
+    }
+  }
+`;
+
+export const RESULT_WITH_ANSWERS = gql`
+  query ($userId: ID!, $olympiadId: ID!) {
+    result(userId: $userId, olympiadId: $olympiadId) {
+      id
+      student {
+        id
+        user {
+          lastName
+          firstName
+        }
+        patronymic
+      }
+      score
+      status
+      won
     }
   }
 `;

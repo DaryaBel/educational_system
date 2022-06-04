@@ -4,7 +4,7 @@
       v-if="
         olympiad == undefined ||
         answers == undefined ||
-        studentOlympiadResult == undefined
+        result == undefined
       "
     >
       <p>Загрузка...</p>
@@ -77,7 +77,7 @@ export default {
     ModalOlympiad,
   },
   apollo: {
-    studentOlympiadResult: {
+    result: {
       query: OLYMPIAD_STATUS,
       variables() {
         return {
@@ -129,13 +129,13 @@ export default {
         .mutate({
           mutation: UPDATE_RESULT,
           variables: {
-            resultId: this.studentOlympiadResult.id,
+            resultId: this.result.id,
             status: "SENT",
           },
         })
         .then(() => {
-          this.$apollo.queries.studentOlympiadResult.refresh();
-          this.$apollo.queries.studentOlympiadResult.refetch();
+          this.$apollo.queries.result.refresh();
+          this.$apollo.queries.result.refetch();
           this.$router.push({ name: "StudentOlympiads" });
         })
         .catch((error) => {

@@ -27,32 +27,32 @@
         Результаты олимпиады будут объявлены
         {{ formatDate(olympiad.dateResult) }}.
       </p>
-      <button v-if="studentOlympiadResult == undefined" @click="toTakePart">
+      <button v-if="result == undefined" @click="toTakePart">
         Принять участие
       </button>
       <div v-else>
         <button
-          v-if="studentOlympiadResult.status == 'TAKEPART'"
+          v-if="result.status == 'TAKEPART'"
           @click="toBegin"
         >
           Начать выполнение
         </button>
         <button
           @click="toCancelParticipation"
-          v-if="studentOlympiadResult.status == 'TAKEPART'"
+          v-if="result.status == 'TAKEPART'"
         >
           Отменить участие
         </button>
         <button
           @click="toContinue"
-          v-if="studentOlympiadResult.status == 'BEGIN'"
+          v-if="result.status == 'BEGIN'"
         >
           Продолжить выполнение
         </button>
         <p
           v-if="
-            studentOlympiadResult.status == 'SENT' ||
-            (studentOlympiadResult.status == 'CHECKED' &&
+            result.status == 'SENT' ||
+            (result.status == 'CHECKED' &&
               !olympiad.resultPublished)
           "
         >
@@ -62,7 +62,7 @@
         <button
           @click="toGetResult"
           v-if="
-            studentOlympiadResult.status == 'CHECKED' &&
+            result.status == 'CHECKED' &&
             olympiad.resultPublished
           "
         >
@@ -92,7 +92,7 @@ export default {
         };
       },
     },
-    studentOlympiadResult: {
+    result: {
       query: OLYMPIAD_STATUS,
       variables() {
         return {
@@ -104,8 +104,8 @@ export default {
   },
   computed: {
     resultId() {
-      if (this.studentOlympiadResult == undefined) return 0;
-      else return this.studentOlympiadResult.id;
+      if (this.result == undefined) return 0;
+      else return this.result.id;
     },
   },
   methods: {
@@ -130,8 +130,8 @@ export default {
           },
         })
         .then(() => {
-          this.$apollo.queries.studentOlympiadResult.refresh();
-          this.$apollo.queries.studentOlympiadResult.refetch();
+          this.$apollo.queries.result.refresh();
+          this.$apollo.queries.result.refetch();
         })
         .catch((error) => {
           console.error(error);
@@ -153,8 +153,8 @@ export default {
           },
         })
         .then(() => {
-          this.$apollo.queries.studentOlympiadResult.refresh();
-          this.$apollo.queries.studentOlympiadResult.refetch();
+          this.$apollo.queries.result.refresh();
+          this.$apollo.queries.result.refetch();
         })
         .catch((error) => {
           console.error(error);

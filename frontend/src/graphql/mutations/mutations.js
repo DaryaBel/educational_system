@@ -31,6 +31,14 @@ export const UPDATE_ANSWER = gql`
   }
 `;
 
+export const SAVE_SCORE_FOR_ANSWER = gql`
+  mutation ($answerId: ID!, $score: Int) {
+    updateAnswer(answerId: $answerId, score: $score) {
+      ok
+    }
+  }
+`;
+
 export const DELETE_ANSWER = gql`
   mutation ($answerId: ID!) {
     deleteAnswer(answerId: $answerId) {
@@ -42,6 +50,19 @@ export const DELETE_ANSWER = gql`
 export const DELETE_RESULT = gql`
   mutation ($resultId: ID!) {
     deleteResult(resultId: $resultId) {
+      ok
+    }
+  }
+`;
+
+export const UPDATE_RESULT_WITH_SCORES = gql`
+  mutation ($resultId: ID!, $status: String, $score: Int, $won: Boolean) {
+    updateResult(
+      resultId: $resultId
+      status: $status
+      score: $score
+      won: $won
+    ) {
       ok
     }
   }

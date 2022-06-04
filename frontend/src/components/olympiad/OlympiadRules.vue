@@ -33,7 +33,7 @@ export default {
         };
       },
     },
-    studentOlympiadResult: {
+    result: {
       query: OLYMPIAD_STATUS,
       variables() {
         return {
@@ -45,8 +45,8 @@ export default {
   },
   computed: {
     resultId() {
-      if (this.studentOlympiadResult == undefined) return 0;
-      else return this.studentOlympiadResult.id;
+      if (this.result == undefined) return 0;
+      else return this.result.id;
     },
   },
   data() {
@@ -65,8 +65,8 @@ export default {
           },
         })
         .then(() => {
-          this.$apollo.queries.studentOlympiadResult.refresh();
-          this.$apollo.queries.studentOlympiadResult.refetch();
+          this.$apollo.queries.result.refresh();
+          this.$apollo.queries.result.refetch();
           this.$router.push({
             name: "OlympiadProcess",
             params: { id: this.$route.params.id },
