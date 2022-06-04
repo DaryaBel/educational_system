@@ -1,17 +1,22 @@
-from turtle import position
 import graphene
+import graphql_jwt
+from datetime import timezone, datetime
+from graphene_django import DjangoObjectType
 from uuid import uuid4
+from graphql_jwt.decorators import login_required
+from config.settings import GRAPHQL_JWT
 from django.contrib.auth import logout
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from organizations.models import Organization
 from users.models import Employee, Student, StudentSubject, Subject, User
-from users.types import EmployeeType, StudentSubjectType, StudentType, SubjectType
+from users.types import EmployeeType, StudentSubjectType, StudentType, SubjectType, UserType
 
 class Register(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
+    user = graphene.Field(UserType)
 
     class Arguments:
         email = graphene.String(required=True)
@@ -31,7 +36,7 @@ class Register(graphene.Mutation):
         )
         user.set_password(password)
         user.save()
-        return Register(success=True)
+        return Register(success=True, user=user)
 
 
 class Logout(graphene.Mutation):

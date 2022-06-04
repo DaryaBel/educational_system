@@ -76,6 +76,18 @@ export const UPDATE_RESULT = gql`
   }
 `;
 
+export const CREATE_STUDENT = gql`
+  mutation ($userId: ID!, $patronymic: String, $birthdate: Date) {
+    createStudent(
+      userId: $userId
+      patronymic: $patronymic
+      birthdate: $birthdate
+    ) {
+      ok
+    }
+  }
+`;
+
 export const CREATE_STUDENT_COURSE = gql`
   mutation ($courseId: ID!, $userId: ID!) {
     createStudentCourse(courseId: $courseId, userId: $userId) {

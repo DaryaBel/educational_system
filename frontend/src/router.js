@@ -3,7 +3,6 @@ import VueRouter from "vue-router";
 
 import CourseList from "@/components/course/CourseList.vue";
 import Course from "@/components/course/Course.vue";
-import ExampleComponent from "@/components/ExampleComponent.vue";
 import LogIn from "@/components/LogIn.vue";
 import Profile from "@/components/Profile.vue";
 import SignUp from "@/components/SignUp.vue";
@@ -144,7 +143,6 @@ const routes = [
     name: "SignUpEmployee",
     component: SignUpEmployee,
   },
-  { path: "/", component: ExampleComponent },
 ];
 
 Vue.use(VueRouter);

@@ -1,10 +1,12 @@
 <template>
   <div>
     <h1>Регистрация</h1>
+    <h2 v-if="isSuccess">Ура</h2>
     <div class="form-group">
-      <label class="form-name">Фамилия *</label><br />
+      <label for="lastName" class="form-name">Фамилия *</label><br />
       <input
         id="lastName"
+        name="lastName"
         :disabled="isLoading"
         type="text"
         v-model.trim="form.lastName"
@@ -15,9 +17,10 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-name">Имя *</label><br />
+      <label for="firstName" class="form-name">Имя *</label><br />
       <input
         id="firstName"
+        name="firstName"
         :disabled="isLoading"
         type="text"
         v-model.trim="form.firstName"
@@ -31,9 +34,10 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-name">Отчество</label><br />
+      <label for="patronymic" class="form-name">Отчество</label><br />
       <input
         id="patronymic"
+        name="patronymic"
         :disabled="isLoading"
         type="text"
         v-model.trim="form.patronymic"
@@ -41,9 +45,10 @@
       />
     </div>
     <div class="form-group">
-      <label class="form-name">Дата рождения</label><br />
+      <label for="birthdate" class="form-name">Дата рождения</label><br />
       <input
         id="birthdate"
+        name="birthdate"
         :disabled="isLoading"
         type="date"
         v-model="form.birthdate"
@@ -52,9 +57,10 @@
       />
     </div>
     <div class="form-group">
-      <label class="form-name">E-mail *</label><br />
+      <label for="email" class="form-name">E-mail *</label><br />
       <input
         id="email"
+        name="email"
         :disabled="isLoading"
         type="text"
         v-model.trim="form.email"
@@ -66,9 +72,10 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-name">Пароль *</label><br />
+      <label for="password" class="form-name">Пароль *</label><br />
       <input
         id="password"
+        name="password"
         :disabled="isLoading"
         :type="passShow ? 'text' : 'password'"
         v-model="form.password"
@@ -84,9 +91,11 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-name">Повторите пароль *</label><br />
+      <label for="confirmPassword" class="form-name">Повторите пароль *</label
+      ><br />
       <input
         id="confirmPassword"
+        name="confirmPassword"
         :disabled="isLoading"
         :type="passShow2 ? 'text' : 'password'"
         v-model="form.confirmPassword"
@@ -127,6 +136,14 @@
         >
       </div>
     </div>
+    <div class="errors">
+      <div class="error-message" v-if="errorsContain('emailAlreadyExists')">
+        Пользователь с указанным email уже существует.
+      </div>
+      <div class="error-message" v-if="errorsContain('commonError')">
+        Произошла ошибка. Повторите попытку позднее.
+      </div>
+    </div>
     <p>* - обязательное поле</p>
     <button @click="onSignUp">Зарегистрироваться</button>
     <p>
@@ -143,25 +160,29 @@
 </template>
 
 <script>
+import register from "@/graphql/mutations/register.gql";
+import { CREATE_STUDENT } from "@/graphql/mutations/mutations.js";
 import { required, email, minLength } from "vuelidate/lib/validators";
 export default {
   name: "SignUp",
   data() {
     return {
+      isSuccess: false,
       passShow: false,
       passShow2: false,
       form: {
-        firstName: "",
-        lastName: "",
-        patronymic: "",
-        birthdate: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        personalData: "",
+        firstName: undefined,
+        lastName: undefined,
+        patronymic: undefined,
+        birthdate: undefined,
+        email: undefined,
+        password: undefined,
+        confirmPassword: undefined,
+        personalData: undefined,
       },
       submitted: false,
       isLoading: false,
+      errors: [],
     };
   },
   validations: {
@@ -182,17 +203,63 @@ export default {
     },
   },
   methods: {
+    errorsContain(error) {
+      if (this.errors != null) return this.errors.includes(error);
+      else return false;
+    },
     passwordIsSame() {
       return this.form.password === this.form.confirmPassword;
     },
+    createStudent(userId) {
+      this.$apollo
+        .mutate({
+          mutation: CREATE_STUDENT,
+          variables: {
+            userId: userId,
+            patronymic: this.form.patronymic,
+            birthdate: this.form.birthdate,
+          },
+        })
+        .then(() => {
+          this.isLoading = false;
+          this.$router.push({
+            name: "LogIn",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+
     onSignUp() {
       this.isLoading = true;
       this.submitted = true;
       this.$v.$touch();
-      this.isLoading = false;
-      if (this.$v.$invalid) return;
-      // to form submit after this
-      console.log(this.form);
+      if (this.$v.form.$invalid) {
+        this.isLoading = false;
+        return;
+      }
+      this.$apollo
+        .mutate({
+          mutation: register,
+          variables: {
+            lastName: this.form.lastName,
+            firstName: this.form.firstName,
+            email: this.form.email,
+            password: this.form.password,
+          },
+        })
+        .then((result) => {
+          this.isSuccess = result.data.register.success;
+          this.errors = result.data.register.errors;
+          if (this.isSuccess) {
+            this.createStudent(result.data.register.user.id);
+          }
+        })
+        .catch((error) => {
+          console.log("error", error);
+          this.errors = ["commonError"];
+        });
     },
   },
 };
