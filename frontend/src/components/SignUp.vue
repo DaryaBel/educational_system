@@ -1,161 +1,173 @@
 <template>
   <div>
-    <h1>Регистрация</h1>
-    <h2 v-if="isSuccess">Ура</h2>
-    <div class="form-group">
-      <label for="lastName" class="form-name">Фамилия *</label><br />
-      <input
-        id="lastName"
-        name="lastName"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.lastName"
-        :class="{ 'is-invalid': submitted && $v.form.lastName.$error }"
-      />
-      <div v-if="submitted && $v.form.lastName.$error" class="invalid-feedback">
-        <span v-if="!$v.form.lastName.required">Данное поле обязательно</span>
+    <div v-if="isLoading || organizations == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Регистрация</h1>
+      <div class="form-group">
+        <label for="lastName" class="form-name">Фамилия *</label><br />
+        <input
+          id="lastName"
+          name="lastName"
+          :disabled="isLoading"
+          type="text"
+          v-model.trim="form.lastName"
+          :class="{ 'is-invalid': submitted && $v.form.lastName.$error }"
+        />
+        <div
+          v-if="submitted && $v.form.lastName.$error"
+          class="invalid-feedback"
+        >
+          <span v-if="!$v.form.lastName.required">Данное поле обязательно</span>
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="firstName" class="form-name">Имя *</label><br />
-      <input
-        id="firstName"
-        name="firstName"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.firstName"
-        :class="{ 'is-invalid': submitted && $v.form.firstName.$error }"
-      />
-      <div
-        v-if="submitted && $v.form.firstName.$error"
-        class="invalid-feedback"
-      >
-        <span v-if="!$v.form.firstName.required">Данное поле обязательно</span>
+      <div class="form-group">
+        <label for="firstName" class="form-name">Имя *</label><br />
+        <input
+          id="firstName"
+          name="firstName"
+          :disabled="isLoading"
+          type="text"
+          v-model.trim="form.firstName"
+          :class="{ 'is-invalid': submitted && $v.form.firstName.$error }"
+        />
+        <div
+          v-if="submitted && $v.form.firstName.$error"
+          class="invalid-feedback"
+        >
+          <span v-if="!$v.form.firstName.required"
+            >Данное поле обязательно</span
+          >
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="patronymic" class="form-name">Отчество</label><br />
-      <input
-        id="patronymic"
-        name="patronymic"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.patronymic"
-        :class="{ 'is-invalid': submitted && $v.form.patronymic.$error }"
-      />
-    </div>
-    <div class="form-group">
-      <label for="birthdate" class="form-name">Дата рождения</label><br />
-      <input
-        id="birthdate"
-        name="birthdate"
-        :disabled="isLoading"
-        type="date"
-        v-model="form.birthdate"
-        :max="new Date().toISOString().substr(0, 10)"
-        :class="{ 'is-invalid': submitted && $v.form.birthdate.$error }"
-      />
-    </div>
-    <div class="form-group">
-      <label for="email" class="form-name">E-mail *</label><br />
-      <input
-        id="email"
-        name="email"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.email"
-        :class="{ 'is-invalid': submitted && $v.form.email.$error }"
-      />
-      <div v-if="submitted && $v.form.email.$error" class="invalid-feedback">
-        <span v-if="!$v.form.email.required">Данное поле обязательно</span>
-        <span v-if="!$v.form.email.email">Некорректный email</span>
+      <div class="form-group">
+        <label for="patronymic" class="form-name">Отчество</label><br />
+        <input
+          id="patronymic"
+          name="patronymic"
+          :disabled="isLoading"
+          type="text"
+          v-model.trim="form.patronymic"
+          :class="{ 'is-invalid': submitted && $v.form.patronymic.$error }"
+        />
       </div>
-    </div>
-    <div class="form-group">
-      <label for="password" class="form-name">Пароль *</label><br />
-      <input
-        id="password"
-        name="password"
-        :disabled="isLoading"
-        :type="passShow ? 'text' : 'password'"
-        v-model="form.password"
-        :class="{ 'is-invalid': submitted && $v.form.password.$error }"
-      />
-      <button @click="passShow = !passShow">Показать/спрятать</button>
+      <div class="form-group">
+        <label for="birthdate" class="form-name">Дата рождения</label><br />
+        <input
+          id="birthdate"
+          name="birthdate"
+          :disabled="isLoading"
+          type="date"
+          v-model="form.birthdate"
+          :max="new Date().toISOString().substr(0, 10)"
+          :class="{ 'is-invalid': submitted && $v.form.birthdate.$error }"
+        />
+      </div>
+      <div class="form-group">
+        <label for="email" class="form-name">E-mail *</label><br />
+        <input
+          id="email"
+          name="email"
+          :disabled="isLoading"
+          type="text"
+          v-model.trim="form.email"
+          :class="{ 'is-invalid': submitted && $v.form.email.$error }"
+        />
+        <div v-if="submitted && $v.form.email.$error" class="invalid-feedback">
+          <span v-if="!$v.form.email.required">Данное поле обязательно</span>
+          <span v-if="!$v.form.email.email">Некорректный email</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-name">Пароль *</label><br />
+        <input
+          id="password"
+          name="password"
+          :disabled="isLoading"
+          :type="passShow ? 'text' : 'password'"
+          v-model="form.password"
+          :class="{ 'is-invalid': submitted && $v.form.password.$error }"
+        />
+        <button @click="passShow = !passShow">Показать/спрятать</button>
 
-      <div v-if="submitted && $v.form.password.$error" class="invalid-feedback">
-        <span v-if="!$v.form.password.required">Данное поле обязательно</span>
-        <span v-if="$v.form.password.minLength.$invalid"
-          >Пароль должен содержать не менее 6 символов</span
+        <div
+          v-if="submitted && $v.form.password.$error"
+          class="invalid-feedback"
         >
+          <span v-if="!$v.form.password.required">Данное поле обязательно</span>
+          <span v-if="$v.form.password.minLength.$invalid"
+            >Пароль должен содержать не менее 6 символов</span
+          >
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="confirmPassword" class="form-name">Повторите пароль *</label
-      ><br />
-      <input
-        id="confirmPassword"
-        name="confirmPassword"
-        :disabled="isLoading"
-        :type="passShow2 ? 'text' : 'password'"
-        v-model="form.confirmPassword"
-        :class="{ 'is-invalid': submitted && $v.form.confirmPassword.$error }"
-      />
-      <button @click="passShow2 = !passShow2">Показать/спрятать</button>
-      <div
-        v-if="
-          submitted && ($v.form.confirmPassword.$error || !passwordIsSame())
-        "
-        class="invalid-feedback"
-      >
-        <span v-if="!$v.form.confirmPassword.required"
-          >Данное поле обязательно</span
+      <div class="form-group">
+        <label for="confirmPassword" class="form-name">Повторите пароль *</label
+        ><br />
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          :disabled="isLoading"
+          :type="passShow2 ? 'text' : 'password'"
+          v-model="form.confirmPassword"
+          :class="{ 'is-invalid': submitted && $v.form.confirmPassword.$error }"
+        />
+        <button @click="passShow2 = !passShow2">Показать/спрятать</button>
+        <div
+          v-if="
+            submitted && ($v.form.confirmPassword.$error || !passwordIsSame())
+          "
+          class="invalid-feedback"
         >
-        <span v-else-if="!passwordIsSame()">Пароли не совпадают</span>
+          <span v-if="!$v.form.confirmPassword.required"
+            >Данное поле обязательно</span
+          >
+          <span v-else-if="!passwordIsSame()">Пароли не совпадают</span>
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <input
-        type="checkbox"
-        class="custom-checkbox"
-        id="personalData"
-        :disabled="isLoading"
-        v-model="form.personalData"
-        name="personalData"
-        :class="{ 'is-invalid': submitted && $v.form.personalData.$error }"
-      />
-      <label for="personalData"
-        >Согласен(на) на обработку персональных данных</label
-      >
-      <div
-        v-if="submitted && $v.form.personalData.$error"
-        class="invalid-feedback"
-      >
-        <span v-if="!$v.form.personalData.required"
-          >Данное поле обязательно</span
+      <div class="form-group">
+        <input
+          type="checkbox"
+          class="custom-checkbox"
+          id="personalData"
+          :disabled="isLoading"
+          v-model="form.personalData"
+          name="personalData"
+          :class="{ 'is-invalid': submitted && $v.form.personalData.$error }"
+        />
+        <label for="personalData"
+          >Согласен(на) на обработку персональных данных</label
         >
+        <div
+          v-if="submitted && $v.form.personalData.$error"
+          class="invalid-feedback"
+        >
+          <span v-if="!$v.form.personalData.required"
+            >Данное поле обязательно</span
+          >
+        </div>
       </div>
+      <div class="errors">
+        <div class="error-message" v-if="errorsContain('emailAlreadyExists')">
+          Пользователь с указанным email уже существует.
+        </div>
+        <div class="error-message" v-if="errorsContain('commonError')">
+          Произошла ошибка. Повторите попытку позднее.
+        </div>
+      </div>
+      <p>* - обязательное поле</p>
+      <button @click="onSignUp">Зарегистрироваться</button>
+      <p>
+        Есть аккаунт?
+        <router-link tag="a" :to="{ name: 'LogIn' }"
+          >Авторизируйся!</router-link
+        >
+      </p>
+      <p>
+        <router-link tag="a" :to="{ name: 'SignUpEmployee' }"
+          >Зарегистрироваться как представитель образовательной организации или
+          компании</router-link
+        >
+      </p>
     </div>
-    <div class="errors">
-      <div class="error-message" v-if="errorsContain('emailAlreadyExists')">
-        Пользователь с указанным email уже существует.
-      </div>
-      <div class="error-message" v-if="errorsContain('commonError')">
-        Произошла ошибка. Повторите попытку позднее.
-      </div>
-    </div>
-    <p>* - обязательное поле</p>
-    <button @click="onSignUp">Зарегистрироваться</button>
-    <p>
-      Есть аккаунт?
-      <router-link tag="a" :to="{ name: 'LogIn' }">Авторизируйся!</router-link>
-    </p>
-    <p>
-      <router-link tag="a" :to="{ name: 'SignUpEmployee' }"
-        >Зарегистрироваться как представитель образовательной организации или
-        компании</router-link
-      >
-    </p>
   </div>
 </template>
 
@@ -222,6 +234,16 @@ export default {
         })
         .then(() => {
           this.isLoading = false;
+          this.form = {
+            firstName: undefined,
+            lastName: undefined,
+            patronymic: undefined,
+            birthdate: undefined,
+            email: undefined,
+            password: undefined,
+            confirmPassword: undefined,
+            personalData: undefined,
+          };
           this.$router.push({
             name: "LogIn",
           });
@@ -230,7 +252,6 @@ export default {
           console.error(error);
         });
     },
-
     onSignUp() {
       this.isLoading = true;
       this.submitted = true;
@@ -252,6 +273,7 @@ export default {
         .then((result) => {
           this.isSuccess = result.data.register.success;
           this.errors = result.data.register.errors;
+          this.isLoading = false;
           if (this.isSuccess) {
             this.createStudent(result.data.register.user.id);
           }

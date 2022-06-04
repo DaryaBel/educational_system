@@ -88,6 +88,18 @@ export const CREATE_STUDENT = gql`
   }
 `;
 
+export const CREATE_EMPLOYEE = gql`
+  mutation ($userId: ID!, $organizationId: ID!, $position: String) {
+    createEmployee(
+      userId: $userId
+      organizationId: $organizationId
+      position: $position
+    ) {
+      ok
+    }
+  }
+`;
+
 export const CREATE_STUDENT_COURSE = gql`
   mutation ($courseId: ID!, $userId: ID!) {
     createStudentCourse(courseId: $courseId, userId: $userId) {
