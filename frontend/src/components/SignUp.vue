@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || organizations == undefined">Загрузка...</div>
+    <div v-if="isLoading">Загрузка...</div>
     <div v-else>
       <h1>Регистрация</h1>
       <div class="form-group">
