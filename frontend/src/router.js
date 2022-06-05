@@ -36,6 +36,7 @@ function verifyAuth(to, from) {
   let provider = createProvider();
   return new Promise(function (resolve, reject) {
     provider.defaultClient
+      // из локаласторджа кладем и передаем токен
       .mutate({ mutation: verifyToken })
       .then((result) => {
         let userId = result.data.verifyToken.payload.user_id;

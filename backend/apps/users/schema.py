@@ -1,9 +1,19 @@
 import graphene
 import graphql_jwt
+from datetime import timezone, datetime
+from config.settings import GRAPHQL_JWT
 
 from users.models import Employee, Student, Subject, User
 from users.mutation import CreateEmployee, CreateStudent, CreateStudentSubject, CreateSubject, DeleteEmployee, DeleteStudent, DeleteStudentSubject, DeleteSubject, Logout, Register, ResetPassword, ResetPasswordConfirm
 from users.types import EmployeeType, StudentType, SubjectType, UserType
+
+def jwt_payload(user, context=None):
+    username = user.get_username()
+    student_length = Student.objects.filter(user=user).count()
+    is_student = student_length > 0
+    organizer_length = Employee.objects.filter(user=user).count()
+    is_organizer = organizer_length > 0
+    return {user.USERNAME_FIELD: username, 'user_id': user.id, 'is_student': is_student, 'is_organizer': is_organizer, 'email': user.email, 'exp': datetime.now(timezone.utc) + GRAPHQL_JWT['JWT_EXPIRATION_DELTA']}
 
 class Query(object):
     user = graphene.Field(UserType, id=graphene.Int(required=True))

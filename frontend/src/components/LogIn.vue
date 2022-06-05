@@ -93,6 +93,10 @@ export default {
           },
         })
         .then((data) => {
+          // забрать токен
+          // положить в локал сторадж
+          // декодирую токен, понимаю кто он
+          console.log(data);
           this.$store.commit("SET_IS_AUTHENTICATED", true);
           this.$store.commit("SET_GOT_VERIFIED_AUTH", true);
           this.$router.push({ name: "OlympiadList" });

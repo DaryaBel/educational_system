@@ -227,4 +227,5 @@ GRAPHQL_JWT = {
     'JWT_EXPIRATION_DELTA': timedelta(days=30),
     'JWT_AUTH_HEADER': 'authorization',
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_PAYLOAD_HANDLER': 'apps.users.schema.jwt_payload',
 }
