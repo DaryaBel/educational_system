@@ -14,9 +14,12 @@ export default {
       this.$apollo
         .mutate({ mutation: logout })
         .then(() => {
-          clearInterval(logOutInterval);
+          localStorage.removeItem("token");
           this.$store.commit("SET_IS_AUTHENTICATED", false);
-          this.$router.push(AUTH_PATH);
+          this.$store.commit("SET_USER_ID", 0);
+          this.$store.commit("SET_ORGANIZER", false);
+          this.$store.commit("SET_STUDENT", false);
+          this.$router.push("LogIn");
           this.$store.commit("STOP_LOADING");
         })
         .catch(() => {});

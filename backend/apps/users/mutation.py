@@ -1,9 +1,5 @@
 import graphene
-# import graphql_jwt
-# from datetime import timezone, datetime
 from uuid import uuid4
-# from graphql_jwt.decorators import login_required
-# from config.settings import GRAPHQL_JWT
 from django.contrib.auth import logout
 from django.conf import settings
 from django.core.mail import send_mail

@@ -172,6 +172,8 @@
 </template>
 
 <script>
+import login from "@/graphql/mutations/login.gql";
+import jwt from "jsonwebtoken";
 import register from "@/graphql/mutations/register.gql";
 import { CREATE_STUDENT } from "@/graphql/mutations/mutations.js";
 import { required, email, minLength } from "vuelidate/lib/validators";
@@ -193,9 +195,13 @@ export default {
         personalData: undefined,
       },
       submitted: false,
-      isLoading: false,
       errors: [],
     };
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
   },
   validations: {
     form: {
@@ -222,18 +228,24 @@ export default {
     passwordIsSame() {
       return this.form.password === this.form.confirmPassword;
     },
-    createStudent(userId) {
+    onLogin() {
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
-          mutation: CREATE_STUDENT,
+          mutation: login,
           variables: {
-            userId: userId,
-            patronymic: this.form.patronymic,
-            birthdate: this.form.birthdate,
+            email: this.form.email,
+            password: this.form.password,
           },
         })
-        .then(() => {
-          this.isLoading = false;
+        .then((data) => {
+          localStorage.setItem("token", data.data.login.token);
+          let objJWT = jwt.decode(data.data.login.token);
+          this.$store.commit("SET_IS_AUTHENTICATED", true);
+          this.$store.commit("SET_GOT_VERIFIED_AUTH", true);
+          this.$store.commit("SET_USER_ID", objJWT.user_id);
+          this.$store.commit("SET_ORGANIZER", objJWT.is_organizer);
+          this.$store.commit("SET_STUDENT", objJWT.is_student);
           this.form = {
             firstName: undefined,
             lastName: undefined,
@@ -244,22 +256,43 @@ export default {
             confirmPassword: undefined,
             personalData: undefined,
           };
-          this.$router.push({
-            name: "LogIn",
-          });
+          this.$router.push({ name: "OlympiadList" });
+        })
+        .catch((error) => {
+          console.log("error", error);
+        })
+        .finally(() => {
+          this.$store.commit("STOP_LOADING");
+        });
+    },
+    createStudent(userId) {
+      this.$store.commit("START_LOADING");
+      this.$apollo
+        .mutate({
+          mutation: CREATE_STUDENT,
+          variables: {
+            userId: userId,
+            patronymic: this.form.patronymic,
+            birthdate: this.form.birthdate,
+          },
+        })
+        .then(() => {
+          this.onLogin();
         })
         .catch((error) => {
           console.error(error);
+        })
+        .finally(() => {
+          this.$store.commit("STOP_LOADING");
         });
     },
     onSignUp() {
-      this.isLoading = true;
       this.submitted = true;
       this.$v.$touch();
       if (this.$v.form.$invalid) {
-        this.isLoading = false;
         return;
       }
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
           mutation: register,
@@ -273,7 +306,6 @@ export default {
         .then((result) => {
           this.isSuccess = result.data.register.success;
           this.errors = result.data.register.errors;
-          this.isLoading = false;
           if (this.isSuccess) {
             this.createStudent(result.data.register.user.id);
           }
@@ -281,6 +313,9 @@ export default {
         .catch((error) => {
           console.log("error", error);
           this.errors = ["commonError"];
+        })
+        .finally(() => {
+          this.$store.commit("STOP_LOADING");
         });
     },
   },

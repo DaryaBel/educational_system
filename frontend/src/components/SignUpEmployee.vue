@@ -189,6 +189,8 @@
 </template>
 
 <script>
+import login from "@/graphql/mutations/login.gql";
+import jwt from "jsonwebtoken";
 import { SHORT_LIST_ORGANIZATIONS } from "@/graphql/queries/queries";
 import register from "@/graphql/mutations/register.gql";
 import { CREATE_EMPLOYEE } from "@/graphql/mutations/mutations.js";
@@ -220,11 +222,13 @@ export default {
         personalData: undefined,
       },
       submitted: false,
-      isLoading: false,
       errors: [],
     };
   },
   computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     organizationsOption() {
       if (this.organizations == undefined) return [];
       else return this.organizations;
@@ -252,18 +256,24 @@ export default {
       if (this.errors != null) return this.errors.includes(error);
       else return false;
     },
-    createEmployee(userId) {
+    onLogin() {
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
-          mutation: CREATE_EMPLOYEE,
+          mutation: login,
           variables: {
-            userId: userId,
-            organizationId: this.form.organization.id,
-            position: this.form.position,
+            email: this.form.email,
+            password: this.form.password,
           },
         })
-        .then(() => {
-          this.isLoading = false;
+        .then((data) => {
+          localStorage.setItem("token", data.data.login.token);
+          let objJWT = jwt.decode(data.data.login.token);
+          this.$store.commit("SET_IS_AUTHENTICATED", true);
+          this.$store.commit("SET_GOT_VERIFIED_AUTH", true);
+          this.$store.commit("SET_USER_ID", objJWT.user_id);
+          this.$store.commit("SET_ORGANIZER", objJWT.is_organizer);
+          this.$store.commit("SET_STUDENT", objJWT.is_student);
           this.form = {
             firstName: undefined,
             lastName: undefined,
@@ -274,25 +284,46 @@ export default {
             confirmPassword: undefined,
             personalData: undefined,
           };
-          this.$router.push({
-            name: "LogIn",
-          });
+          this.$router.push({ name: "OrganizationOlympiads" });
+        })
+        .catch((error) => {
+          console.log("error", error);
+        })
+        .finally(() => {
+          this.$store.commit("STOP_LOADING");
+        });
+    },
+    createEmployee(userId) {
+      this.$store.commit("START_LOADING");
+      this.$apollo
+        .mutate({
+          mutation: CREATE_EMPLOYEE,
+          variables: {
+            userId: userId,
+            organizationId: this.form.organization.id,
+            position: this.form.position,
+          },
+        })
+        .then(() => {
+          this.onLogin();
         })
         .catch((error) => {
           console.error(error);
+        })
+        .finally(() => {
+          this.$store.commit("STOP_LOADING");
         });
     },
     passwordIsSame() {
       return this.form.password === this.form.confirmPassword;
     },
     onSignUp() {
-      this.isLoading = true;
       this.submitted = true;
       this.$v.$touch();
       if (this.$v.form.$invalid) {
-        this.isLoading = false;
         return;
       }
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
           mutation: register,
@@ -306,7 +337,6 @@ export default {
         .then((result) => {
           this.isSuccess = result.data.register.success;
           this.errors = result.data.register.errors;
-          this.isLoading = false;
           if (this.isSuccess) {
             this.createEmployee(result.data.register.user.id);
           }
@@ -314,6 +344,9 @@ export default {
         .catch((error) => {
           console.log("error", error);
           this.errors = ["commonError"];
+        })
+        .finally(() => {
+          this.$store.commit("STOP_LOADING");
         });
     },
   },

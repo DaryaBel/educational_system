@@ -36,11 +36,19 @@ function verifyAuth(to, from) {
   let provider = createProvider();
   return new Promise(function (resolve, reject) {
     provider.defaultClient
-      // из локаласторджа кладем и передаем токен
-      .mutate({ mutation: verifyToken })
+      .mutate({
+        mutation: verifyToken,
+        variables: {
+          token: localStorage.getItem("token"),
+        },
+      })
       .then((result) => {
         let userId = result.data.verifyToken.payload.user_id;
+        let isStudent = result.data.verifyToken.payload.is_student;
+        let isOrganizer = result.data.verifyToken.payload.is_organizer;
         store.commit("SET_USER_ID", userId);
+        store.commit("SET_ORGANIZER", isOrganizer);
+        store.commit("SET_STUDENT", isStudent);
         store.commit("SET_IS_AUTHENTICATED", true);
       })
       .catch((error) => {
@@ -84,31 +92,37 @@ const ifNotAuthenticated = async (to, from, next) => {
   }
 };
 
-const isOrganizer = async (to, from, next) => {
+const ifAuthenticatedStudent = async (to, from, next) => {
   try {
     if (!store.state.gotVerifiedAuth) {
       await verifyAuth(to, from);
     }
-    if (store.state.isOrganizer) {
+    if (store.state.isAuthenticated && store.state.isStudent) {
       next();
       return;
+    } else if (store.state.isAuthenticated) {
+      next("/olympiads");
+      return;
     }
-    next("/olympiads");
+    next("/login");
   } catch (error) {
     console.log("ERROR TEST: ", error);
   }
 };
 
-const isStudent = async (to, from, next) => {
+const ifAuthenticatedOrganizer = async (to, from, next) => {
   try {
     if (!store.state.gotVerifiedAuth) {
       await verifyAuth(to, from);
     }
-    if (store.state.isStudent) {
+    if (store.state.isAuthenticated && store.state.isOrganizer) {
       next();
       return;
+    } else if (store.state.isAuthenticated) {
+      next("/olympiads");
+      return;
     }
-    next("/organization/olympiads");
+    next("/login");
   } catch (error) {
     console.log("ERROR TEST: ", error);
   }
@@ -133,7 +147,7 @@ const routes = [
     path: "/login",
     name: "LogIn",
     component: LogIn,
-    beforeEnter: ifNotAuthenticated,
+    // beforeEnter: ifNotAuthenticated,
     meta: { title: "Войти - Пора!" },
   },
   {
@@ -170,36 +184,35 @@ const routes = [
     path: "/my/courses",
     name: "StudentCourses",
     component: StudentCourses,
-    beforeEnter: [ifAuthenticated, isStudent],
+    beforeEnter: ifAuthenticatedStudent,
     meta: { title: "Мои курсы - Пора!" },
   },
   {
     path: "/organization/courses",
     name: "OrganizationCourses",
     component: OrganizationCourses,
-    beforeEnter: ifAuthenticated,
-    isOrganizer,
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Курсы организации - Пора!" },
   },
   {
     path: "/organization/courses/:id",
     name: "OrganizationCourse",
     component: OrganizationCourse,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Курс организации - Пора!" },
   },
   {
     path: "/organization/courses/:id/members",
     name: "CourseMembers",
     component: CourseMembers,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Записавшиеся на курс - Пора!" },
   },
   {
     path: "/organization/courses/new",
     name: "NewCourse",
     component: NewCourse,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Новый курс - Пора!" },
   },
 
@@ -221,42 +234,42 @@ const routes = [
     path: "/olympiads/:id/rules",
     name: "OlympiadRules",
     component: OlympiadRules,
-    beforeEnter: [ifAuthenticated, isStudent],
+    beforeEnter: ifAuthenticatedStudent,
     meta: { title: "Правила олимпиады - Пора!" },
   },
   {
     path: "/olympiads/:id/start",
     name: "OlympiadProcess",
     component: OlympiadProcess,
-    beforeEnter: [ifAuthenticated, isStudent],
+    beforeEnter: ifAuthenticatedStudent,
     meta: { title: "Олимпиада - Пора!" },
   },
   {
     path: "/olympiads/:id/result",
     name: "OlympiadResult",
     component: OlympiadResult,
-    beforeEnter: [ifAuthenticated, isStudent],
+    beforeEnter: ifAuthenticatedStudent,
     meta: { title: "Результаты олимпиады - Пора!" },
   },
   {
     path: "/my/olympiads",
     name: "StudentOlympiads",
     component: StudentOlympiads,
-    beforeEnter: [ifAuthenticated, isStudent],
+    beforeEnter: ifAuthenticatedStudent,
     meta: { title: "Мои олимпиады - Пора!" },
   },
   {
     path: "/organization/olympiads",
     name: "OrganizationOlympiads",
     component: OrganizationOlympiads,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Олимпиады организации - Пора!" },
   },
   {
     path: "/organization/olympiads/:id",
     name: "OrganizationOlympiad",
     component: OrganizationOlympiad,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Олимпиада - Пора!" },
   },
 
@@ -264,21 +277,21 @@ const routes = [
     path: "/organization/olympiads/:id/members",
     name: "OlympiadMembers",
     component: OlympiadMembers,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Участники олимпиады - Пора!" },
   },
   {
     path: "/organization/olympiads/:id/members/:user/answers",
     name: "StudentAnswers",
     component: StudentAnswers,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Решения школьника - Пора!" },
   },
   {
     path: "/organization/olympiads/new",
     name: "NewOlympiad",
     component: NewOlympiad,
-    beforeEnter: [ifAuthenticated, isOrganizer],
+    beforeEnter: ifAuthenticatedOrganizer,
     meta: { title: "Новая олимпиада - Пора!" },
   },
 ];

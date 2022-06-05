@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
 import { required } from "vuelidate/lib/validators";
 import login from "@/graphql/mutations/login.gql";
 export default {
@@ -61,7 +62,6 @@ export default {
         password: "",
       },
       submitted: false,
-      isLoading: false,
     };
   },
   validations: {
@@ -74,13 +74,16 @@ export default {
       },
     },
   },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
+  },
   methods: {
     onLogin() {
-      this.isLoading = true;
       this.submitted = true;
       this.$v.$touch();
       if (this.$v.form.$invalid) {
-        this.isLoading = false;
         return;
       }
       this.$store.commit("START_LOADING");
@@ -93,13 +96,16 @@ export default {
           },
         })
         .then((data) => {
-          // забрать токен
-          // положить в локал сторадж
-          // декодирую токен, понимаю кто он
-          console.log(data);
+          localStorage.setItem("token", data.data.login.token);
+          let objJWT = jwt.decode(data.data.login.token);
           this.$store.commit("SET_IS_AUTHENTICATED", true);
           this.$store.commit("SET_GOT_VERIFIED_AUTH", true);
-          this.$router.push({ name: "OlympiadList" });
+          this.$store.commit("SET_USER_ID", objJWT.user_id);
+          this.$store.commit("SET_ORGANIZER", objJWT.is_organizer);
+          this.$store.commit("SET_STUDENT", objJWT.is_student);
+          if (objJWT.is_organizer)
+            this.$router.push({ name: "OrganizationOlympiads" });
+          if (objJWT.is_student) this.$router.push({ name: "OlympiadList" });
         })
         .catch((error) => {
           console.log("error", error);
