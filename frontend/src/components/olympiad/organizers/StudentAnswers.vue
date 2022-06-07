@@ -135,13 +135,13 @@ export default {
   data() {
     return {
       points: [],
-      userId: 2,
-      organizationId: 4,
       submittedForm: false,
-      isLoading: false,
     };
   },
   computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     areScoresValid() {
       if (this.answers.length == this.points.length) {
         let flag = false;
@@ -212,16 +212,15 @@ export default {
       return d1.order > d2.order ? 1 : -1;
     },
     saveScore() {
-      this.isLoading = true;
       this.submittedForm = true;
       if (!this.areScoresValid) {
-        console.log("error");
-        this.isLoading = false;
         return;
       }
       let won =
         this.getPercent(this.totalLocalScore()) - this.olympiad.percentToWin >=
         0;
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: UPDATE_RESULT_WITH_SCORES,
@@ -248,7 +247,6 @@ export default {
                 this.$apollo.queries.result.refresh();
                 this.$apollo.queries.result.refetch();
                 this.submittedForm = false;
-                this.isLoading = false;
               })
               .catch((error) => {
                 console.error(error);
@@ -258,6 +256,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
   },
 };

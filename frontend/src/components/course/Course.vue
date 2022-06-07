@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="course == undefined">
+    <div v-if="isLoading || course == undefined">
       <p>Загрузка...</p>
     </div>
     <div v-else>
@@ -103,6 +103,8 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
+
 import {
   CREATE_STUDENT_COURSE,
   DELETE_STUDENT_COURSE,
@@ -142,12 +144,19 @@ export default {
     },
   },
   data() {
-    return {
-      userId: 2,
-    };
+    return {};
+  },
+  computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
   },
   methods: {
     toTakePart() {
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
           mutation: CREATE_STUDENT_COURSE,
@@ -169,8 +178,11 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     toCancelAppointment() {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: DELETE_STUDENT_COURSE,
@@ -188,6 +200,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     whatIsStudyingForm(studyingForm) {
       if (studyingForm == "ON") return "онлайн";

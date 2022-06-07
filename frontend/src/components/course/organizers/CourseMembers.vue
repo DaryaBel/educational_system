@@ -1,20 +1,20 @@
 <template>
   <div>
-    <h1>Записавшиеся на курс</h1>
-    <div>
-      <input
-        placeholder="Поиск по ФИО и email"
-        name="search"
-        id="search"
-        :disabled="courseStudents == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
-    </div>
+    <div v-if="courseStudents == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Записавшиеся на курс</h1>
+      <div>
+        <input
+          placeholder="Поиск по ФИО и email"
+          name="search"
+          id="search"
+          :disabled="courseStudents == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+      </div>
 
-    <div>
-      <p v-if="courseStudents == undefined">Загрузка...</p>
-      <div v-else>
+      <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
         <table v-else>
           <tr>

@@ -46,6 +46,7 @@ import {
   STUDENT_ANSWERS_WITH_TASK,
   OLYMPIAD_TASK_CHECK,
 } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "OlympiadResult",
@@ -78,12 +79,15 @@ export default {
     },
   },
   data() {
-    return {
-      userId: 2,
-      isLoading: false,
-    };
+    return {};
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     sortedTasks() {
       return this.olympiad.olympiadTask.sort(this.sortByOrder);
     },

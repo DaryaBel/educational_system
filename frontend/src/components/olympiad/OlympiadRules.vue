@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="olympiad == undefined">
+    <div v-if="isLoading || olympiad == undefined">
       <p>Загрузка...</p>
     </div>
     <div v-else>
@@ -21,6 +21,7 @@
 <script>
 import { UPDATE_RESULT } from "@/graphql/mutations/mutations";
 import { OLYMPIAD_RULES, OLYMPIAD_STATUS } from "@/graphql/queries/queries.js";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "OlympiadRules",
@@ -44,18 +45,24 @@ export default {
     },
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     resultId() {
       if (this.result == undefined) return 0;
       else return this.result.id;
     },
   },
   data() {
-    return {
-      userId: 2,
-    };
+    return {};
   },
   methods: {
     toStart() {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: UPDATE_RESULT,
@@ -75,6 +82,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
 
     formOfWord(length, word) {

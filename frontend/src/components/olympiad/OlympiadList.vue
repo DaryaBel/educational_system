@@ -1,57 +1,57 @@
 <template>
   <div>
-    <log-out-button></log-out-button>
-    <h1>Олимпиады</h1>
-    <div>
-      <input
-        placeholder="Поиск по названию и описанию"
-        name="search"
-        id="search"
-        :disabled="publishedOlympiads == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
-      <multiselect
-        :disabled="publishedOlympiads == undefined || subjects == undefined"
-        v-model="findSubject"
-        track-by="id"
-        label="name"
-        placeholder="Выберите школьные предметы"
-        :options="subjectsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
+    <div v-if="isLoading || publishedOlympiads == undefined">Загрузка...</div>
+    <div v-else>
+      <log-out-button></log-out-button>
+      <h1>Олимпиады</h1>
+      <div>
+        <input
+          placeholder="Поиск по названию и описанию"
+          name="search"
+          id="search"
+          :disabled="publishedOlympiads == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+        <multiselect
+          :disabled="publishedOlympiads == undefined || subjects == undefined"
+          v-model="findSubject"
+          track-by="id"
+          label="name"
+          placeholder="Выберите школьные предметы"
+          :options="subjectsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
 
-      <multiselect
-        :disabled="
-          publishedOlympiads == undefined || organizations == undefined
-        "
-        v-model="findOrganization"
-        track-by="id"
-        label="fullname"
-        placeholder="Выберите организатора"
-        :options="organizationsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-    </div>
-    <div>
-      <p v-if="publishedOlympiads == undefined">Загрузка...</p>
-      <div v-else>
+        <multiselect
+          :disabled="
+            publishedOlympiads == undefined || organizations == undefined
+          "
+          v-model="findOrganization"
+          track-by="id"
+          label="fullname"
+          placeholder="Выберите организатора"
+          :options="organizationsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
+      </div>
+      <div>
         <div v-for="olympiad in filterItems" :key="olympiad.id">
           <olympiad-element :olympiad="olympiad" :status="'-'">
           </olympiad-element>
@@ -95,14 +95,15 @@ export default {
       findString: "",
       findSubject: [],
       findOrganization: [],
-
-      userId: 2,
     };
   },
   computed: {
     subjectsOption() {
       if (this.subjects == undefined) return [];
       else return this.subjects;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
     },
     organizationsOption() {
       if (this.organizations == undefined) return [];

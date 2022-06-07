@@ -1,67 +1,69 @@
 <template>
   <div>
-    <h1>Мои олимпиады</h1>
-    <div>
-      <input
-        placeholder="Поиск по названию олимпиады и ее описанию"
-        name="search"
-        id="search"
-        :disabled="studentOlympiads == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
+    <div v-if="isLoading || studentOlympiads == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Мои олимпиады</h1>
+      <div>
+        <input
+          placeholder="Поиск по названию олимпиады и ее описанию"
+          name="search"
+          id="search"
+          :disabled="studentOlympiads == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
 
-      <select
-        placeholder="Статус"
-        :disabled="studentOlympiads == undefined"
-        name="status"
-        id="status"
-        v-model.trim="findStatus"
-      >
-        <option value="TAKEPART">Участвую</option>
-        <option value="BEGIN">В процессе выполнения</option>
-        <option value="SENT">Отправлено на проверку</option>
-        <option value="CHECKED">Проверено</option>
-      </select>
-      <multiselect
-        :disabled="studentOlympiads == undefined"
-        track-by="id"
-        label="name"
-        v-model="findSubject"
-        placeholder="Выберите школьные предметы"
-        :options="subjectsOption"
-        :showLabels="false"
-        :searchable="true"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-        :allow-empty="true"
-        :showPointer="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-      <multiselect
-        :disabled="studentOlympiads == undefined || organizations == undefined"
-        v-model="findOrganization"
-        track-by="id"
-        label="fullname"
-        placeholder="Выберите организатора"
-        :options="organizationsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-    </div>
+        <select
+          placeholder="Статус"
+          :disabled="studentOlympiads == undefined"
+          name="status"
+          id="status"
+          v-model.trim="findStatus"
+        >
+          <option value="TAKEPART">Участвую</option>
+          <option value="BEGIN">В процессе выполнения</option>
+          <option value="SENT">Отправлено на проверку</option>
+          <option value="CHECKED">Проверено</option>
+        </select>
+        <multiselect
+          :disabled="studentOlympiads == undefined"
+          track-by="id"
+          label="name"
+          v-model="findSubject"
+          placeholder="Выберите школьные предметы"
+          :options="subjectsOption"
+          :showLabels="false"
+          :searchable="true"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+          :allow-empty="true"
+          :showPointer="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
+        <multiselect
+          :disabled="
+            studentOlympiads == undefined || organizations == undefined
+          "
+          v-model="findOrganization"
+          track-by="id"
+          label="fullname"
+          placeholder="Выберите организатора"
+          :options="organizationsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
+      </div>
 
-    <div>
-      <p v-if="studentOlympiads == undefined">Загрузка...</p>
-      <div v-else>
+      <div>
         <div v-for="olympiad in filterItems" :key="olympiad.id">
           <olympiad-element
             :olympiad="olympiad"
@@ -83,6 +85,8 @@ import {
 } from "@/graphql/queries/queries";
 import Multiselect from "vue-multiselect";
 import OlympiadElement from "@/components/olympiad/OlympiadElement.vue";
+import jwt from "jsonwebtoken";
+
 export default {
   name: "StudentOlympiads",
   apollo: {
@@ -108,11 +112,15 @@ export default {
       findStatus: "",
       findSubject: [],
       findOrganization: [],
-
-      userId: 2,
     };
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     subjectsOption() {
       if (this.subjects == undefined) return [];
       else return this.subjects;

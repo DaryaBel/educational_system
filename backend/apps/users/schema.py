@@ -14,9 +14,11 @@ def jwt_payload(user, context=None):
     organizer_length = Employee.objects.filter(user=user).count()
     is_organizer = organizer_length > 0
     moderated = True
+    organization_id = 0
     if is_organizer:
-        moderated = Employee.objects.filter(user=user).moderated
-    return {user.USERNAME_FIELD: username, 'user_id': user.id, 'moderated': moderated, 'is_student': is_student, 'is_organizer': is_organizer, 'email': user.email, 'exp': datetime.now(timezone.utc) + GRAPHQL_JWT['JWT_EXPIRATION_DELTA']}
+        moderated = Employee.objects.filter(user=user)[0].moderated
+        organization_id = Employee.objects.filter(user=user)[0].organization.id
+    return {user.USERNAME_FIELD: username, 'organization_id': organization_id, 'user_id': user.id, 'moderated': moderated, 'is_student': is_student, 'is_organizer': is_organizer, 'email': user.email, 'exp': datetime.now(timezone.utc) + GRAPHQL_JWT['JWT_EXPIRATION_DELTA']}
 
 class Query(object):
     user = graphene.Field(UserType, id=graphene.Int(required=True))

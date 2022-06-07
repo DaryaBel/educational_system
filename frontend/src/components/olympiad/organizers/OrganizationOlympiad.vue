@@ -291,6 +291,7 @@ import { required, integer, between } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { OLYMPIAD_FOR_ORGANIZERS, SUBJECTS } from "@/graphql/queries/queries";
 import ModalDeleteOlympiad from "@/components/olympiad/organizers/ModalDeleteOlympiad.vue";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "OrganizationOlympiad",
@@ -326,10 +327,8 @@ export default {
         subjects: [],
       },
       edit: false,
-      userId: 2,
-      organizationId: 4,
+
       submittedForm: false,
-      isLoading: false,
     };
   },
   validations: {
@@ -355,6 +354,9 @@ export default {
     },
   },
   computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     subjectsOption() {
       if (this.subjects == undefined) return [];
       else return this.subjects;
@@ -387,6 +389,8 @@ export default {
       this.tasks[i2].order = order;
     },
     deleteOlympiad() {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: DELETE_OLYMPIAD,
@@ -402,11 +406,14 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     sortByOrder(d1, d2) {
       return d1.order > d2.order ? 1 : -1;
     },
     toPublish(olympiadId, published) {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: PUBLISH_OLYMPIAD,
@@ -422,6 +429,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     onLink() {
       this.$router.push({
@@ -436,18 +444,17 @@ export default {
     },
     onEdit() {
       if (this.edit) {
-        this.isLoading = true;
         this.submittedForm = true;
         this.$v.form.$touch();
         this.$v.tasks.$touch();
         if (this.$v.form.$invalid) {
-          this.isLoading = false;
           return;
         }
         if (this.$v.tasks.$invalid) {
-          this.isLoading = false;
           return;
         }
+        this.$store.commit("START_LOADING");
+
         let subjectsArr = [];
         if (
           this.olympiad.olympiadSubject != null &&
@@ -573,13 +580,14 @@ export default {
             this.$apollo.queries.olympiad.refetch();
             this.edit = false;
             this.submittedForm = false;
-            this.isLoading = false;
           })
           .catch((error) => {
             console.error(error);
           });
+        this.$store.commit("STOP_LOADING");
       } else {
-        this.isLoading = true;
+        this.$store.commit("START_LOADING");
+
         this.edit = true;
         this.form.name = this.olympiad.name;
         this.form.description = this.olympiad.description;
@@ -605,7 +613,7 @@ export default {
           });
           this.tasks = taskArr;
         }
-        this.isLoading = false;
+        this.$store.commit("STOP_LOADING");
       }
     },
   },

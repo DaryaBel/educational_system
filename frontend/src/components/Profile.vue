@@ -79,10 +79,10 @@
 </template>
 
 <script>
-import { UPDATE_EMPLOYEE, UPDATE_STUDENT } from "@/graphql/mutations/mutations";
 import Multiselect from "vue-multiselect";
 import { EMPLOYEE, STUDENT } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
+import { UPDATE_EMPLOYEE, UPDATE_STUDENT } from "@/graphql/mutations/mutations";
 
 export default {
   name: "Profile",
@@ -122,6 +122,9 @@ export default {
   },
 
   computed: {
+    organizationId() {
+      return jwt.decode(localStorage.getItem("token")).organization_id;
+    },
     userId() {
       return jwt.decode(localStorage.getItem("token")).user_id;
     },

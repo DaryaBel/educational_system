@@ -25,9 +25,7 @@ export default {
   name: "OlympiadElement",
   props: ["olympiad", "status"],
   data() {
-    return {
-      userId: 2,
-    };
+    return {};
   },
   methods: {},
 };

@@ -1,71 +1,71 @@
 <template>
   <div>
-    <h1>Мои курсы</h1>
-    <div>
-      <input
-        placeholder="Поиск по названию и описанию"
-        name="search"
-        id="search"
-        :disabled="studentCourses == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
-      <multiselect
-        :disabled="studentCourses == undefined || subjects == undefined"
-        v-model="findSubject"
-        track-by="id"
-        label="name"
-        placeholder="Выберите школьные предметы"
-        :options="subjectsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
+    <div v-if="isLoading || studentCourses == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Мои курсы</h1>
+      <div>
+        <input
+          placeholder="Поиск по названию и описанию"
+          name="search"
+          id="search"
+          :disabled="studentCourses == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+        <multiselect
+          :disabled="studentCourses == undefined || subjects == undefined"
+          v-model="findSubject"
+          track-by="id"
+          label="name"
+          placeholder="Выберите школьные предметы"
+          :options="subjectsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
 
-      <multiselect
-        :disabled="studentCourses == undefined"
-        v-model="findFormat"
-        track-by="value"
-        label="text"
-        placeholder="Выберите формат проведения"
-        :options="formats"
-        :showLabels="false"
-        :searchable="false"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
+        <multiselect
+          :disabled="studentCourses == undefined"
+          v-model="findFormat"
+          track-by="value"
+          label="text"
+          placeholder="Выберите формат проведения"
+          :options="formats"
+          :showLabels="false"
+          :searchable="false"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
 
-      <multiselect
-        :disabled="studentCourses == undefined || organizations == undefined"
-        v-model="findOrganization"
-        track-by="id"
-        label="fullname"
-        placeholder="Выберите организатора"
-        :options="organizationsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-    </div>
-    <div>
-      <p v-if="studentCourses == undefined">Загрузка...</p>
-      <div v-else>
+        <multiselect
+          :disabled="studentCourses == undefined || organizations == undefined"
+          v-model="findOrganization"
+          track-by="id"
+          label="fullname"
+          placeholder="Выберите организатора"
+          :options="organizationsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
+      </div>
+      <div>
         <div v-for="course in filterItems" :key="course.id">
           <course-element
             :course="course"
@@ -86,6 +86,7 @@ import {
   SHORT_LIST_ORGANIZATIONS,
   SUBJECTS,
 } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
 import CourseElement from "@/components/course/CourseElement.vue";
 import Multiselect from "vue-multiselect";
 
@@ -123,10 +124,15 @@ export default {
         { value: "OFF", text: "Оффлайн" },
         { value: "BOTH", text: "В смешанном формате" },
       ],
-      userId: 2,
     };
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     subjectsOption() {
       if (this.subjects == undefined) return [];
       else return this.subjects;

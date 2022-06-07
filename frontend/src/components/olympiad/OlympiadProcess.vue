@@ -2,6 +2,7 @@
   <div>
     <div
       v-if="
+        isLoading ||
         olympiad == undefined ||
         answers == undefined ||
         result == undefined
@@ -70,6 +71,8 @@ import {
   STUDENT_ANSWERS,
   OLYMPIAD_STATUS,
 } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
+
 export default {
   name: "OlympiadProcess",
   components: {
@@ -107,11 +110,17 @@ export default {
   data() {
     return {
       modal: false,
-      userId: 2,
+
       chosenTaskOrder: 1,
     };
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     sortedTasks() {
       if (Array.isArray(this.olympiad.olympiadTask))
         return this.olympiad.olympiadTask.sort(this.sortByOrder);
@@ -125,6 +134,7 @@ export default {
   },
   methods: {
     finishOlympiad() {
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
           mutation: UPDATE_RESULT,
@@ -141,11 +151,13 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     saveAnswer(event) {
       let neededAnswer = this.answers.find((el) => el.task.id == event.id);
       if (event.answer.trim() == "") {
         if (neededAnswer) {
+          this.$store.commit("START_LOADING");
           this.$apollo
             .mutate({
               mutation: DELETE_ANSWER,
@@ -160,9 +172,11 @@ export default {
             .catch((error) => {
               console.error(error);
             });
+          this.$store.commit("STOP_LOADING");
         }
       } else {
         if (neededAnswer) {
+          this.$store.commit("START_LOADING");
           this.$apollo
             .mutate({
               mutation: UPDATE_ANSWER,
@@ -178,7 +192,9 @@ export default {
             .catch((error) => {
               console.error(error);
             });
+          this.$store.commit("STOP_LOADING");
         } else {
+          this.$store.commit("START_LOADING");
           this.$apollo
             .mutate({
               mutation: CREATE_ANSWER,
@@ -196,6 +212,7 @@ export default {
             .catch((error) => {
               console.error(error);
             });
+          this.$store.commit("STOP_LOADING");
         }
       }
     },

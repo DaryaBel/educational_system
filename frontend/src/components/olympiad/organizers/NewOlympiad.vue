@@ -202,6 +202,7 @@ import {
 import { required, integer, between } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { SUBJECTS } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "NewOlympiad",
@@ -226,10 +227,8 @@ export default {
         dateEnd: undefined,
         subjects: [],
       },
-      userId: 2,
-      organizationId: 4,
+
       submittedForm: false,
-      isLoading: false,
     };
   },
   validations: {
@@ -255,6 +254,15 @@ export default {
     },
   },
   computed: {
+    organizationId() {
+      return jwt.decode(localStorage.getItem("token")).organization_id;
+    },
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     sortedTasks() {
       return this.tasks.sort(this.sortByOrder);
     },
@@ -287,18 +295,17 @@ export default {
       this.tasks[i2].order = order;
     },
     onAdd() {
-      this.isLoading = true;
       this.submittedForm = true;
       this.$v.form.$touch();
       this.$v.tasks.$touch();
       if (this.$v.form.$invalid) {
-        this.isLoading = false;
         return;
       }
       if (this.$v.tasks.$invalid) {
-        this.isLoading = false;
         return;
       }
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: CREATE_OLYMPIAD,
@@ -355,7 +362,7 @@ export default {
           this.tasks = [{ task: undefined, maxScore: undefined, order: 1 }];
 
           this.submittedForm = false;
-          this.isLoading = false;
+          this.$store.commit("STOP_LOADING");
         })
         .catch((error) => {
           console.error(error);

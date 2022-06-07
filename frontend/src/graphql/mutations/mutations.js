@@ -42,6 +42,13 @@ export const UPDATE_STUDENT = gql`
     }
   }
 `;
+export const DELETE_USER = gql`
+  mutation ($userId: ID!) {
+    deleteUser(userId: $userId) {
+      ok
+    }
+  }
+`;
 
 export const UPDATE_ANSWER = gql`
   mutation ($answerId: ID!, $answer: String) {

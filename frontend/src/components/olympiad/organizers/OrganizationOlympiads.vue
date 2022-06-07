@@ -1,26 +1,28 @@
 <template>
   <div>
-    <h1>Олимпиады организации</h1>
-    <button @click="onLink()">Добавить новую олимпиаду</button>
-    <div>
-      <input
-        placeholder="Поиск по названию и описанию"
-        name="search"
-        id="search"
-        :disabled="organizationOlympiads == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
+    <div v-if="isLoading || organizationOlympiads == undefined">
+      Загрузка...
     </div>
-    <span>Опубликована?</span>
-    <select name="published" id="published" v-model="published">
-      <option value="all">Все</option>
-      <option value="yes">Да</option>
-      <option value="no">Нет</option>
-    </select>
-    <div>
-      <p v-if="organizationOlympiads == undefined">Загрузка...</p>
-      <div v-else>
+    <div v-else>
+      <h1>Олимпиады организации</h1>
+      <button @click="onLink()">Добавить новую олимпиаду</button>
+      <div>
+        <input
+          placeholder="Поиск по названию и описанию"
+          name="search"
+          id="search"
+          :disabled="organizationOlympiads == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+      </div>
+      <span>Опубликована?</span>
+      <select name="published" id="published" v-model="published">
+        <option value="all">Все</option>
+        <option value="yes">Да</option>
+        <option value="no">Нет</option>
+      </select>
+      <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
         <table v-else>
           <tr>
@@ -93,6 +95,8 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
+
 import {
   PUBLISH_OLYMPIAD,
   DELETE_OLYMPIAD,
@@ -121,11 +125,15 @@ export default {
       modalName: "",
       findString: "",
       published: "all",
-      organizationId: 4,
-      userId: 2,
     };
   },
   computed: {
+    organizationId() {
+      return jwt.decode(localStorage.getItem("token")).organization_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     filterItems() {
       let olympiads;
       if (
@@ -167,6 +175,8 @@ export default {
 
   methods: {
     toPublish(olympiadId, published) {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: PUBLISH_OLYMPIAD,
@@ -182,11 +192,14 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     onLink() {
       this.$router.push({ name: "NewOlympiad" });
     },
     deleteOlympiad(olympiadId) {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: DELETE_OLYMPIAD,
@@ -201,6 +214,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
   },
 };

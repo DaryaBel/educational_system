@@ -1,45 +1,45 @@
 <template>
   <div>
-    <h1>Участники олимпиады</h1>
-    <div>
-      <input
-        placeholder="Поиск по ФИО и email"
-        name="search"
-        id="search"
+    <div v-if="isLoading || results == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Участники олимпиады</h1>
+      <div>
+        <input
+          placeholder="Поиск по ФИО и email"
+          name="search"
+          id="search"
+          :disabled="results == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+      </div>
+      <multiselect
         :disabled="results == undefined"
-        type="text"
-        v-model.trim="findString"
+        v-model="findStatus"
+        track-by="status"
+        label="name"
+        placeholder="Выберите статус:"
+        :options="statusOption"
+        :showLabels="false"
+        :searchable="false"
+        :allow-empty="true"
+        :showPointer="false"
+        :multiple="true"
+        :close-on-select="false"
+        :clear-on-select="false"
+      >
+        <span slot="noResult">Не найдено</span>
+      </multiselect>
+      <input
+        type="checkbox"
+        class="custom-checkbox"
+        id="winner"
+        :disabled="results == undefined"
+        v-model="won"
+        name="winner"
       />
-    </div>
-    <multiselect
-      :disabled="results == undefined"
-      v-model="findStatus"
-      track-by="status"
-      label="name"
-      placeholder="Выберите статус:"
-      :options="statusOption"
-      :showLabels="false"
-      :searchable="false"
-      :allow-empty="true"
-      :showPointer="false"
-      :multiple="true"
-      :close-on-select="false"
-      :clear-on-select="false"
-    >
-      <span slot="noResult">Не найдено</span>
-    </multiselect>
-    <input
-      type="checkbox"
-      class="custom-checkbox"
-      id="winner"
-      :disabled="results == undefined"
-      v-model="won"
-      name="winner"
-    />
-    <label for="winner">Только победители</label>
-    <div>
-      <p v-if="results == undefined">Загрузка...</p>
-      <div v-else>
+      <label for="winner">Только победители</label>
+      <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
         <div v-else>
           <p>
@@ -151,6 +151,9 @@ export default {
     };
   },
   computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     filterItems() {
       let students;
       if (
@@ -212,6 +215,7 @@ export default {
 
   methods: {
     toPublishResult() {
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
           mutation: PUBLISH_OLYMPIAD_RESULTS,
@@ -227,6 +231,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     getStatus(status, won) {
       let str = "";

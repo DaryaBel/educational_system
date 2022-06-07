@@ -1,26 +1,26 @@
 <template>
   <div>
-    <h1>Курсы организации</h1>
-    <button @click="onLink()">Добавить новый курс</button>
-    <div>
-      <input
-        placeholder="Поиск по названию и описанию"
-        name="search"
-        id="search"
-        :disabled="organizationCourses == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
-    </div>
-    <span>Опубликован?</span>
-    <select name="published" id="published" v-model="published">
-      <option value="all">Все</option>
-      <option value="yes">Да</option>
-      <option value="no">Нет</option>
-    </select>
-    <div>
-      <p v-if="organizationCourses == undefined">Загрузка...</p>
-      <div v-else>
+    <div v-if="isLoading || organizationCourses == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Курсы организации</h1>
+      <button @click="onLink()">Добавить новый курс</button>
+      <div>
+        <input
+          placeholder="Поиск по названию и описанию"
+          name="search"
+          id="search"
+          :disabled="organizationCourses == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+      </div>
+      <span>Опубликован?</span>
+      <select name="published" id="published" v-model="published">
+        <option value="all">Все</option>
+        <option value="yes">Да</option>
+        <option value="no">Нет</option>
+      </select>
+      <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
         <table v-else>
           <tr>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
 import { PUBLISH_COURSE, DELETE_COURSE } from "@/graphql/mutations/mutations";
 import { ORGANIZATION_COURSES } from "@/graphql/queries/queries";
 import ModalDeleteCourse from "@/components/course/organizers/ModalDeleteCourse.vue";
@@ -115,11 +116,16 @@ export default {
       modalName: "",
       findString: "",
       published: "all",
-      organizationId: 4,
-      userId: 2,
     };
   },
   computed: {
+    organizationId() {
+      return jwt.decode(localStorage.getItem("token")).organization_id;
+    },
+
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     filterItems() {
       let courses;
       if (
@@ -167,6 +173,8 @@ export default {
       return "";
     },
     toPublish(courseId, published) {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: PUBLISH_COURSE,
@@ -182,12 +190,14 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     onLink() {
       this.$router.push({ name: "NewCourse" });
     },
     deleteCourse(courseId) {
-      console.log(courseId);
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: DELETE_COURSE,
@@ -202,6 +212,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
   },
 };

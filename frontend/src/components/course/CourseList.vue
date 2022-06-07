@@ -1,93 +1,95 @@
 <template>
   <div>
-    <h1>Образовательные курсы</h1>
-    <div>
-      <input
-        placeholder="Поиск по названию и описанию"
-        name="search"
-        id="search"
-        :disabled="publishedCourses == undefined"
-        type="text"
-        v-model.trim="findString"
-      />
-      <multiselect
-        :disabled="publishedCourses == undefined || subjects == undefined"
-        v-model="findSubject"
-        track-by="id"
-        label="name"
-        placeholder="Выберите школьные предметы"
-        :options="subjectsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
+    <div v-if="isLoading || publishedCourses == undefined">Загрузка...</div>
+    <div v-else>
+      <h1>Образовательные курсы</h1>
+      <div>
+        <input
+          placeholder="Поиск по названию и описанию"
+          name="search"
+          id="search"
+          :disabled="publishedCourses == undefined"
+          type="text"
+          v-model.trim="findString"
+        />
+        <multiselect
+          :disabled="publishedCourses == undefined || subjects == undefined"
+          v-model="findSubject"
+          track-by="id"
+          label="name"
+          placeholder="Выберите школьные предметы"
+          :options="subjectsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
 
-      <multiselect
-        :disabled="publishedCourses == undefined"
-        v-model="findFormat"
-        track-by="value"
-        label="text"
-        placeholder="Выберите формат проведения"
-        :options="formats"
-        :showLabels="false"
-        :searchable="false"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
+        <multiselect
+          :disabled="publishedCourses == undefined"
+          v-model="findFormat"
+          track-by="value"
+          label="text"
+          placeholder="Выберите формат проведения"
+          :options="formats"
+          :showLabels="false"
+          :searchable="false"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
 
-      <multiselect
-        :disabled="publishedCourses == undefined || organizations == undefined"
-        v-model="findOrganization"
-        track-by="id"
-        label="fullname"
-        placeholder="Выберите организатора"
-        :options="organizationsOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-      <multiselect
-        :disabled="
-          publishedCourses == undefined ||
-          cities == undefined ||
-          !offlineFormat()
-        "
-        v-model="findCities"
-        track-by="id"
-        label="name"
-        placeholder="Выберите город проведения"
-        :options="citiesOption"
-        :showLabels="false"
-        :searchable="true"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-        <span slot="noOptions">Не найдено</span>
-      </multiselect>
-    </div>
-    <div>
-      <p v-if="publishedCourses == undefined">Загрузка...</p>
-      <div v-else>
+        <multiselect
+          :disabled="
+            publishedCourses == undefined || organizations == undefined
+          "
+          v-model="findOrganization"
+          track-by="id"
+          label="fullname"
+          placeholder="Выберите организатора"
+          :options="organizationsOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+        </multiselect>
+        <multiselect
+          :disabled="
+            publishedCourses == undefined ||
+            cities == undefined ||
+            !offlineFormat()
+          "
+          v-model="findCities"
+          track-by="id"
+          label="name"
+          placeholder="Выберите город проведения"
+          :options="citiesOption"
+          :showLabels="false"
+          :searchable="true"
+          :allow-empty="true"
+          :showPointer="false"
+          :multiple="true"
+          :close-on-select="false"
+          :clear-on-select="false"
+        >
+          <span slot="noResult">Не найдено</span>
+          <span slot="noOptions">Не найдено</span>
+        </multiselect>
+      </div>
+      <div>
         <div v-for="course in filterItems" :key="course.id">
           <course-element :course="course" :canDelete="false"> </course-element>
         </div>
@@ -106,6 +108,7 @@ import {
 } from "@/graphql/queries/queries";
 import CourseElement from "@/components/course/CourseElement.vue";
 import Multiselect from "vue-multiselect";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "CourseList",
@@ -139,7 +142,6 @@ export default {
         { value: "OFF", text: "Оффлайн" },
         { value: "BOTH", text: "В смешанном формате" },
       ],
-      userId: 2,
     };
   },
   computed: {
@@ -154,6 +156,12 @@ export default {
     citiesOption() {
       if (this.cities == undefined) return [];
       else return this.cities;
+    },
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
     },
     filterItems() {
       let courses;

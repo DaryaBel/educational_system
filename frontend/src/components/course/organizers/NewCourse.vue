@@ -159,6 +159,7 @@ import {
 import { required, integer } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { CITIES, SUBJECTS } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "NewCourse",
@@ -187,10 +188,7 @@ export default {
         city: undefined,
         maxNumberMember: undefined,
       },
-      userId: 2,
-      organizationId: 4,
       submittedForm: false,
-      isLoading: false,
     };
   },
   validations: {
@@ -207,6 +205,15 @@ export default {
     },
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    organizationId() {
+      return jwt.decode(localStorage.getItem("token")).organization_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     subjectsOption() {
       if (this.subjects == undefined) return [];
       else return this.subjects;
@@ -218,14 +225,13 @@ export default {
   },
   methods: {
     onAdd() {
-      this.isLoading = true;
       this.submittedForm = true;
       this.$v.form.$touch();
       if (this.$v.form.$invalid) {
-        this.isLoading = false;
         return;
       }
       let cityId = this.form.city == undefined ? undefined : this.form.city.id;
+      this.$store.commit("START_LOADING");
       this.$apollo
         .mutate({
           mutation: CREATE_COURSE,
@@ -271,11 +277,11 @@ export default {
           };
 
           this.submittedForm = false;
-          this.isLoading = false;
         })
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
   },
 };

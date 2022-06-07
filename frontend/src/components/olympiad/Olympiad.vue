@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="olympiad == undefined">
+    <div v-if="isLoading || olympiad == undefined">
       <p>Загрузка...</p>
     </div>
     <div v-else>
@@ -31,10 +31,7 @@
         Принять участие
       </button>
       <div v-else>
-        <button
-          v-if="result.status == 'TAKEPART'"
-          @click="toBegin"
-        >
+        <button v-if="result.status == 'TAKEPART'" @click="toBegin">
           Начать выполнение
         </button>
         <button
@@ -43,17 +40,13 @@
         >
           Отменить участие
         </button>
-        <button
-          @click="toContinue"
-          v-if="result.status == 'BEGIN'"
-        >
+        <button @click="toContinue" v-if="result.status == 'BEGIN'">
           Продолжить выполнение
         </button>
         <p
           v-if="
             result.status == 'SENT' ||
-            (result.status == 'CHECKED' &&
-              !olympiad.resultPublished)
+            (result.status == 'CHECKED' && !olympiad.resultPublished)
           "
         >
           Вы успешно отправили свои ответы на олимпиаду. После того, как
@@ -61,10 +54,7 @@
         </p>
         <button
           @click="toGetResult"
-          v-if="
-            result.status == 'CHECKED' &&
-            olympiad.resultPublished
-          "
+          v-if="result.status == 'CHECKED' && olympiad.resultPublished"
         >
           Посмотреть результаты
         </button>
@@ -74,14 +64,13 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
 import { CREATE_RESULT, DELETE_RESULT } from "@/graphql/mutations/mutations";
 import { OLYMPIAD, OLYMPIAD_STATUS } from "@/graphql/queries/queries.js";
 export default {
   name: "Olympiad",
   data() {
-    return {
-      userId: 2,
-    };
+    return {};
   },
   apollo: {
     olympiad: {
@@ -103,6 +92,12 @@ export default {
     },
   },
   computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     resultId() {
       if (this.result == undefined) return 0;
       else return this.result.id;
@@ -122,6 +117,8 @@ export default {
       });
     },
     toCancelParticipation() {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: DELETE_RESULT,
@@ -136,6 +133,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     toGetResult() {
       this.$router.push({
@@ -144,6 +142,8 @@ export default {
       });
     },
     toTakePart() {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: CREATE_RESULT,
@@ -159,6 +159,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     organizationType() {
       if (this.olympiad.organization.kind == "UNIVERSITY")

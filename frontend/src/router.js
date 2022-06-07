@@ -267,9 +267,7 @@ const routes = [
   },
   {
     path: "/",
-    name: "OlympiadList",
-    component: OlympiadList,
-    meta: { title: "Олимпиады - Пора!" },
+    redirect: "/olympiads",
   },
   {
     path: "/olympiads/:id",

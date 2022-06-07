@@ -247,6 +247,7 @@ import ModalDeleteCourse from "@/components/course/organizers/ModalDeleteCourse.
 import { required, integer } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { CITIES, COURSE, SUBJECTS } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "OrganizationCourse",
@@ -287,10 +288,8 @@ export default {
         maxNumberMember: undefined,
       },
       edit: false,
-      userId: 2,
-      organizationId: 4,
+
       submittedForm: false,
-      isLoading: false,
     };
   },
   validations: {
@@ -315,9 +314,15 @@ export default {
       if (this.cities == undefined) return [];
       else return this.cities;
     },
+
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
   },
   methods: {
     deleteCourse() {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: DELETE_COURSE,
@@ -333,8 +338,11 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     toPublish(courseId, published) {
+      this.$store.commit("START_LOADING");
+
       this.$apollo
         .mutate({
           mutation: PUBLISH_COURSE,
@@ -350,6 +358,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+      this.$store.commit("STOP_LOADING");
     },
     onLink() {
       this.$router.push({
@@ -378,11 +387,9 @@ export default {
     },
     onEdit() {
       if (this.edit) {
-        this.isLoading = true;
         this.submittedForm = true;
         this.$v.form.$touch();
         if (this.$v.form.$invalid) {
-          this.isLoading = false;
           return;
         }
         let cityId =
@@ -403,6 +410,8 @@ export default {
         let deletedSubjects = subjectsArr.filter((sub) =>
           this.form.subjects.every((item) => item.id !== sub.id)
         );
+        this.$store.commit("START_LOADING");
+
         this.$apollo
           .mutate({
             mutation: UPDATE_COURSE,
@@ -453,13 +462,14 @@ export default {
 
             this.edit = false;
             this.submittedForm = false;
-            this.isLoading = false;
           })
           .catch((error) => {
             console.error(error);
           });
+        this.$store.commit("STOP_LOADING");
       } else {
-        this.isLoading = true;
+        this.$store.commit("START_LOADING");
+
         this.edit = true;
         this.form.name = this.course.name;
         this.form.form = this.course.form;
@@ -482,8 +492,8 @@ export default {
             subjectsArr.push(element.subject);
           });
           this.form.subjects = subjectsArr;
+          this.$store.commit("STOP_LOADING");
         }
-        this.isLoading = false;
       }
     },
   },

@@ -20,14 +20,19 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
+
 import { DELETE_STUDENT_COURSE } from "@/graphql/mutations/mutations.js";
 export default {
   name: "CourseElement",
   props: ["course", "canDelete"],
   data() {
-    return {
-      userId: 2,
-    };
+    return {};
+  },
+  computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
+    },
   },
   methods: {
     toCancelAppointment() {
