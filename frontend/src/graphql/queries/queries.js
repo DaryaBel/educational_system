@@ -61,6 +61,41 @@ export const ALL_MEMBER_COURSE = gql`
   }
 `;
 
+export const STUDENT = gql`
+  query ($userId: ID!) {
+    student(userId: $userId) {
+      id
+      birthdate
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+      patronymic
+    }
+  }
+`;
+
+export const EMPLOYEE = gql`
+  query ($userId: ID!) {
+    employee(userId: $userId) {
+      id
+      organization {
+        id
+        fullname
+      }
+      position
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
 export const OLYMPIAD_RESULTS = gql`
   query ($olympiadId: ID!) {
     results(olympiadId: $olympiadId) {

@@ -35,6 +35,11 @@
           Данное поле обязательно
         </p>
       </div>
+      <div class="errors">
+        <div class="error-message" v-if="errors">
+          Неправильный логин или пароль
+        </div>
+      </div>
       <p>* - обязательное поле</p>
       <button @click="onLogin">Войти</button>
       <p>
@@ -62,6 +67,7 @@ export default {
         password: "",
       },
       submitted: false,
+      errors: false,
     };
   },
   validations: {
@@ -102,6 +108,7 @@ export default {
           this.$store.commit("SET_GOT_VERIFIED_AUTH", true);
           this.$store.commit("SET_USER_ID", objJWT.user_id);
           this.$store.commit("SET_ORGANIZER", objJWT.is_organizer);
+          this.$store.commit("MODERATE_ORGANIZER", objJWT.moderated);
           this.$store.commit("SET_STUDENT", objJWT.is_student);
           if (objJWT.is_organizer)
             this.$router.push({ name: "OrganizationOlympiads" });
@@ -109,6 +116,7 @@ export default {
         })
         .catch((error) => {
           console.log("error", error);
+          this.errors = true;
         })
         .finally(() => {
           this.$store.commit("STOP_LOADING");

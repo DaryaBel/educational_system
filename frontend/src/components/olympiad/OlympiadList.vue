@@ -1,5 +1,6 @@
 <template>
   <div>
+    <log-out-button></log-out-button>
     <h1>Олимпиады</h1>
     <div>
       <input
@@ -68,6 +69,7 @@ import {
   SUBJECTS,
 } from "@/graphql/queries/queries";
 import OlympiadElement from "@/components/olympiad/OlympiadElement.vue";
+import LogOutButton from "@/components/LogOutButton.vue";
 import Multiselect from "vue-multiselect";
 
 export default {
@@ -84,6 +86,7 @@ export default {
     },
   },
   components: {
+    LogOutButton,
     OlympiadElement,
     Multiselect,
   },

@@ -7,6 +7,7 @@ import SignUpEmployee from "@/components/SignUpEmployee.vue";
 import LogIn from "@/components/LogIn.vue";
 import Profile from "@/components/Profile.vue";
 import DeleteAccount from "@/components/DeleteAccount.vue";
+import Moderation from "@/components/Moderation.vue";
 
 import CourseList from "@/components/course/CourseList.vue";
 import Course from "@/components/course/Course.vue";
@@ -46,8 +47,10 @@ function verifyAuth(to, from) {
         let userId = result.data.verifyToken.payload.user_id;
         let isStudent = result.data.verifyToken.payload.is_student;
         let isOrganizer = result.data.verifyToken.payload.is_organizer;
+        let moderated = result.data.verifyToken.payload.moderated;
         store.commit("SET_USER_ID", userId);
         store.commit("SET_ORGANIZER", isOrganizer);
+        store.commit("MODERATE_ORGANIZER", moderated);
         store.commit("SET_STUDENT", isStudent);
         store.commit("SET_IS_AUTHENTICATED", true);
       })
@@ -115,14 +118,46 @@ const ifAuthenticatedOrganizer = async (to, from, next) => {
     if (!store.state.gotVerifiedAuth) {
       await verifyAuth(to, from);
     }
-    if (store.state.isAuthenticated && store.state.isOrganizer) {
+    if (
+      store.state.isAuthenticated &&
+      store.state.isOrganizer &&
+      store.state.isModerated
+    ) {
       next();
       return;
-    } else if (store.state.isAuthenticated) {
-      next("/olympiads");
+    }
+    if (!store.state.isModerated) {
+      next("/moderation");
       return;
     }
-    next("/login");
+    if (!store.state.isAuthenticated) {
+      next("/login");
+      return;
+    }
+    next("/olympiads");
+  } catch (error) {
+    console.log("ERROR TEST: ", error);
+  }
+};
+
+const ifModeration = async (to, from, next) => {
+  try {
+    if (!store.state.gotVerifiedAuth) {
+      await verifyAuth(to, from);
+    }
+    if (
+      store.state.isAuthenticated &&
+      store.state.isOrganizer &&
+      !store.state.isModerated
+    ) {
+      next();
+      return;
+    }
+    if (!store.state.isAuthenticated) {
+      next("/login");
+      return;
+    }
+    next("/olympiads");
   } catch (error) {
     console.log("ERROR TEST: ", error);
   }
@@ -147,7 +182,7 @@ const routes = [
     path: "/login",
     name: "LogIn",
     component: LogIn,
-    // beforeEnter: ifNotAuthenticated,
+    beforeEnter: ifNotAuthenticated,
     meta: { title: "Войти - Пора!" },
   },
   {
@@ -165,6 +200,13 @@ const routes = [
     meta: { title: "Удалить аккаунт - Пора!" },
   },
 
+  {
+    path: "/moderation",
+    name: "Moderation",
+    component: Moderation,
+    beforeEnter: ifModeration,
+    meta: { title: "Ваш аккаунт не подтвержден - Пора!" },
+  },
   // КУРСЫ
 
   {
@@ -219,6 +261,12 @@ const routes = [
   // ОЛИМПИАДЫ
   {
     path: "/olympiads",
+    name: "OlympiadList",
+    component: OlympiadList,
+    meta: { title: "Олимпиады - Пора!" },
+  },
+  {
+    path: "/",
     name: "OlympiadList",
     component: OlympiadList,
     meta: { title: "Олимпиады - Пора!" },

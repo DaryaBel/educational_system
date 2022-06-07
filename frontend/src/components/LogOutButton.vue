@@ -18,6 +18,7 @@ export default {
           this.$store.commit("SET_IS_AUTHENTICATED", false);
           this.$store.commit("SET_USER_ID", 0);
           this.$store.commit("SET_ORGANIZER", false);
+          this.$store.commit("MODERATE_ORGANIZER", false);
           this.$store.commit("SET_STUDENT", false);
           this.$router.push("LogIn");
           this.$store.commit("STOP_LOADING");

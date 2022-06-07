@@ -8,6 +8,7 @@ const store = new Vuex.Store({
   state: {
     isStudent: false,
     isOrganizer: false,
+    isModerated: false,
     userId: false,
     isAuthenticated: false,
     isLoading: false,
@@ -34,6 +35,9 @@ const store = new Vuex.Store({
     },
     SET_ORGANIZER(state, boolean) {
       state.isOrganizer = boolean;
+    },
+    MODERATE_ORGANIZER(state, boolean) {
+      state.isModerated = boolean;
     },
   },
   actions: {},

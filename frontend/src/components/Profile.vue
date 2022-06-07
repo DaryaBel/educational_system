@@ -1,347 +1,195 @@
 <template>
   <div>
-    <h1>Личный кабинет</h1>
-    <div class="form-group">
-      <label class="form-name"
-        >Фамилия <span v-if="edit && isStudent()">*</span></label
-      ><br />
-      <p v-if="!edit || !isStudent()">{{ user.lastName }}</p>
-      <input
-        v-else-if="isStudent()"
-        id="lastName"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.lastName"
-        :class="{ 'is-invalid': submittedForm && $v.form.lastName.$error }"
-      />
-      <div
-        v-if="submittedForm && $v.form.lastName.$error && isStudent()"
-        class="invalid-feedback"
-      >
-        <span v-if="!$v.form.lastName.required">Данное поле обязательно</span>
+    <div v-if="isLoading || (student == undefined && employee == undefined)">
+      Загрузка...
+    </div>
+    <div v-else>
+      <h1>Личный кабинет</h1>
+      <div class="form-group">
+        <label class="form-name">Фамилия </label><br />
+        <p v-if="isStudent && student != undefined">
+          {{ student.user.lastName }}
+        </p>
+        <p v-if="!isStudent && employee != undefined">
+          {{ employee.user.lastName }}
+        </p>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="form-name"
-        >Имя <span v-if="edit && isStudent()">*</span></label
-      ><br />
-      <p v-if="!edit || !isStudent()">{{ user.firstName }}</p>
-      <input
-        v-else-if="isStudent()"
-        id="firstName"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.firstName"
-        :class="{ 'is-invalid': submittedForm && $v.form.firstName.$error }"
-      />
-      <div
-        v-if="submittedForm && $v.form.firstName.$error && isStudent()"
-        class="invalid-feedback"
-      >
-        <span v-if="!$v.form.firstName.required">Данное поле обязательно</span>
+      <div class="form-group">
+        <label class="form-name">Имя </label><br />
+        <p v-if="isStudent && student != undefined">
+          {{ student.user.firstName }}
+        </p>
+        <p v-if="!isStudent && employee != undefined">
+          {{ employee.user.firstName }}
+        </p>
       </div>
-    </div>
-    <div class="form-group" v-if="isStudent()">
-      <label class="form-name">Отчество</label><br />
-      <p v-if="!edit">{{ user.patronymic }}</p>
-      <input
-        v-else
-        id="patronymic"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.patronymic"
-        :class="{ 'is-invalid': submittedForm && $v.form.patronymic.$error }"
-      />
-    </div>
-    <div class="form-group" v-if="isStudent()">
-      <label class="form-name">Дата рождения</label><br />
-      <p v-if="!edit">{{ user.birthdate }}</p>
-      <input
-        v-else
-        id="birthdate"
-        :disabled="isLoading"
-        type="date"
-        v-model="form.birthdate"
-        :max="new Date().toISOString().substr(0, 10)"
-        :class="{ 'is-invalid': submittedForm && $v.form.birthdate.$error }"
-      />
-    </div>
-    <div class="form-group" v-if="isStudent()">
-      <label class="form-name">Город проживания </label><br />
-      <p v-if="!edit">{{ user.city.name }}</p>
-      <multiselect
-        v-else
-        :disabled="isLoading"
-        v-model="form.city"
-        track-by="id"
-        :value="{ id: user.city.id, name: user.city.name }"
-        label="name"
-        placeholder="Выберите город"
-        :options="cityList"
-        :showLabels="false"
-        :searchable="true"
-        :close-on-select="true"
-        :allow-empty="true"
-        :showPointer="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
+      <div class="form-group" v-if="isStudent && student != undefined">
+        <label class="form-name">Отчество</label><br />
+        <p v-if="!edit">{{ student.patronymic }}</p>
+        <input
+          v-else
+          id="patronymic"
+          type="text"
+          v-model.trim="formStudent.patronymic"
+        />
+      </div>
+      <div class="form-group" v-if="isStudent && student != undefined">
+        <label class="form-name">Дата рождения</label><br />
+        <p v-if="!edit">{{ formatDate(student.birthdate) }}</p>
+        <input
+          v-else
+          id="birthdate"
+          type="date"
+          v-model="formStudent.birthdate"
+          :max="new Date().toISOString().substr(0, 10)"
+        />
+      </div>
 
-      <!-- <model-select
-        :isError="submittedForm && $v.form.city.$error"
-      ></model-select> -->
-    </div>
-    <div class="form-group" v-if="!isStudent()">
-      <label class="form-name">Организация </label><br />
-      <p>{{ user.organization }}</p>
-    </div>
-    <div class="form-group" v-if="!isStudent()">
-      <label class="form-name">Должность</label><br />
-      <p v-if="!edit">{{ user.position }}</p>
-      <input
-        v-else
-        id="position"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="formEmployee.position"
-      />
-    </div>
-    <div class="form-group">
-      <label class="form-name"
-        >E-mail <span v-if="edit && isStudent()">*</span></label
-      ><br />
-      <p v-if="!edit || !isStudent()">{{ user.email }}</p>
-      <input
-        v-else-if="isStudent()"
-        id="email"
-        :disabled="isLoading"
-        type="text"
-        v-model.trim="form.email"
-        :class="{ 'is-invalid': submittedForm && $v.form.email.$error }"
-      />
-      <div
-        v-if="submittedForm && $v.form.email.$error && isStudent()"
-        class="invalid-feedback"
-      >
-        <span v-if="!$v.form.email.required">Данное поле обязательно</span>
-        <span v-if="!$v.form.email.email">Некорректный email</span>
+      <div class="form-group" v-if="!isStudent && employee != undefined">
+        <label class="form-name">Организация </label><br />
+        <p>{{ employee.organization.fullname }}</p>
       </div>
-    </div>
-    <div v-if="edit">
-      <p v-if="!changePassword" @click="changePassword = true">
-        Изменить пароль
+      <div class="form-group" v-if="!isStudent && employee != undefined">
+        <label class="form-name">Должность</label><br />
+        <p v-if="!edit">{{ employee.position }}</p>
+        <input
+          v-else
+          id="position"
+          type="text"
+          v-model.trim="formEmployee.position"
+        />
+      </div>
+      <div class="form-group">
+        <label class="form-name">E-mail </label><br />
+        <p v-if="!isStudent && employee != undefined">
+          {{ employee.user.email }}
+        </p>
+        <p v-if="isStudent && student != undefined">{{ student.user.email }}</p>
+      </div>
+
+      <button v-if="edit" @click="onEdit">Сохранить</button>
+      <button v-if="!edit" @click="onEdit">Изменить</button>
+      <p>
+        <router-link tag="a" :to="{ name: 'DeleteAccount' }"
+          >Удалить аккаунт</router-link
+        >
       </p>
-      <div v-else>
-        <div class="form-group">
-          <label class="form-name">Пароль</label><br />
-          <input
-            id="password"
-            :disabled="isLoading"
-            :type="passShow ? 'text' : 'password'"
-            v-model="password.password"
-            :class="{
-              'is-invalid': submittedPassword && $v.password.password.$error,
-            }"
-          />
-          <button @click="passShow = !passShow">Показать/спрятать</button>
-
-          <div
-            v-if="submittedPassword && $v.password.password.$error"
-            class="invalid-feedback"
-          >
-            <span v-if="!$v.password.password.minLength"
-              >Пароль должен содержать не менее 6 символов</span
-            >
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-name">Повторите пароль</label><br />
-          <input
-            id="confirmPassword"
-            :disabled="isLoading"
-            :type="passShow2 ? 'text' : 'password'"
-            v-model="password.confirmPassword"
-            :class="{
-              'is-invalid':
-                submittedPassword && $v.password.confirmPassword.$error,
-            }"
-          />
-          <button @click="passShow2 = !passShow2">Показать/спрятать</button>
-          <div
-            v-if="submittedPassword && !passwordIsSame()"
-            class="invalid-feedback"
-          >
-            <span>Пароли не совпадают</span>
-          </div>
-        </div>
-      </div>
     </div>
-
-    <p v-if="edit">* - обязательное поле</p>
-    <button v-if="edit" @click="onEdit">Сохранить</button>
-    <button v-if="!edit" @click="onEdit">Изменить</button>
-    <p>
-      <router-link tag="a" :to="{ name: 'DeleteAccount' }"
-        >Удалить аккаунт</router-link
-      >
-    </p>
   </div>
 </template>
 
 <script>
-import { required, email, minLength } from "vuelidate/lib/validators";
+import { UPDATE_EMPLOYEE, UPDATE_STUDENT } from "@/graphql/mutations/mutations";
 import Multiselect from "vue-multiselect";
+import { EMPLOYEE, STUDENT } from "@/graphql/queries/queries";
+import jwt from "jsonwebtoken";
 
 export default {
   name: "Profile",
   components: {
     Multiselect,
   },
+  apollo: {
+    student: {
+      query: STUDENT,
+      variables() {
+        return {
+          userId: this.userId,
+        };
+      },
+    },
+    employee: {
+      query: EMPLOYEE,
+      variables() {
+        return {
+          userId: this.userId,
+        };
+      },
+    },
+  },
   data() {
     return {
-      user: {
-        firstName: "Дарья",
-        lastName: "Беляева",
-        patronymic: "Владиславовна",
-        birthdate: "2000-11-24",
-        email: "d.belyaeva@gmail.com",
-        password: "",
-        confirmPassword: "",
-        city: {
-          id: 2,
-          name: "Два",
-        },
-        role: 1,
-        position: "Отдел кадров",
-        organization: "CUSTIS",
-      },
-      form: {
-        firstName: "",
-        lastName: "",
-        patronymic: "",
-        birthdate: "",
-        email: "",
-        city: {
-          id: 0,
-          name: "",
-        },
+      formStudent: {
+        patronymic: undefined,
+        birthdate: undefined,
       },
       formEmployee: {
-        position: "",
-      },
-      password: {
-        password: "",
-        confirmPassword: "",
+        position: undefined,
       },
       edit: false,
-      changePassword: false,
-      passShow: false,
-      passShow2: false,
       submittedForm: false,
-      submittedPassword: false,
-      isLoading: false,
-      cityList: [
-        { name: "Один", id: "1" },
-        { name: "Два", id: "2" },
-        { name: "Три", id: "5" },
-      ],
     };
   },
-  validations: {
-    form: {
-      firstName: { required },
-      lastName: { required },
-      patronymic: {},
-      birthdate: {},
-      email: {
-        required,
-        email,
-      },
-      city: {},
+
+  computed: {
+    userId() {
+      return jwt.decode(localStorage.getItem("token")).user_id;
     },
-    password: {
-      password: { minLength: minLength(6) },
-      confirmPassword: {},
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
+    isStudent() {
+      return this.$store.state.isStudent;
     },
   },
   methods: {
-    passwordIsSame() {
-      return this.password.password === this.password.confirmPassword;
-    },
-    isStudent() {
-      return this.user.role == 1;
+    formatDate(date) {
+      if (!date) return null;
+      const [year, month, day] = date.split("-");
+      return `${day}.${month}.${year}`;
     },
 
     onEdit() {
-      if (this.isStudent()) {
+      if (this.isStudent) {
         if (!this.edit) {
-          // Если нажата кнопка редактировать, значения полей переносится в форму
           this.edit = true;
-          this.form.lastName = this.user.lastName;
-          this.form.firstName = this.user.firstName;
-          this.form.patronymic = this.user.patronymic;
-          this.form.birthdate = this.user.birthdate;
-          this.form.city.id = this.user.city.id;
-          this.form.city.name = this.user.city.name;
-          this.form.email = this.user.email;
+          this.formStudent.patronymic = this.student.patronymic;
+          this.formStudent.birthdate = this.student.birthdate;
         } else {
-          // Поставить загрузку
-          this.isLoading = true;
-          // Основная форма была отправлена
           this.submittedForm = true;
-          this.$v.form.$touch();
-          // Проверка: корректно ли заполнена основная форма
-          if (this.$v.form.$invalid) {
-            this.isLoading = false;
-            return;
-          }
-          // Если была нажата кнопка Изменить пароль
-          if (this.changePassword) {
-            // Форма пароля была отправлена
-            this.submittedPassword = true;
-            this.$v.password.$touch();
-            // Корректно ли заполнена форма
-            if (this.$v.password.$invalid || !this.passwordIsSame()) {
-              this.isLoading = false;
-              return;
-            }
-          }
-          console.log(this.form.city);
-          this.user.lastName = this.form.lastName;
-          this.user.firstName = this.form.firstName;
-          this.user.patronymic = this.form.patronymic;
-          this.user.birthdate = this.form.birthdate;
-          this.user.city.id = this.form.city.id;
-          this.user.city.name = this.form.city.name;
-          this.user.email = this.form.email;
-          this.changePassword = false;
+          this.$store.commit("START_LOADING");
+          this.$apollo
+            .mutate({
+              mutation: UPDATE_STUDENT,
+              variables: {
+                userId: this.userId,
+                patronymic: this.formStudent.patronymic,
+                birthdate: this.formStudent.birthdate,
+              },
+            })
+            .then(() => {
+              this.$apollo.queries.student.refresh();
+              this.$apollo.queries.student.refetch();
+            })
+            .catch((error) => {
+              console.error(error);
+            });
           this.edit = false;
-          this.isLoading = false;
+          this.$store.commit("STOP_LOADING");
         }
       } else {
         if (!this.edit) {
-          // Если нажата кнопка редактировать, значения полей переносится в форму
           this.edit = true;
           this.formEmployee.position = this.user.position;
         } else {
-          // Поставить загрузку
-          this.isLoading = true;
-          // Если была нажата кнопка Изменить пароль
-          if (this.changePassword) {
-            // Форма пароля была отправлена
-            this.submittedPassword = true;
-            this.$v.password.$touch();
-            // Корректно ли заполнена форма
-            if (this.$v.password.$invalid || !this.passwordIsSame()) {
-              this.isLoading = false;
-              return;
-            }
-          }
-
-          this.user.position = this.formEmployee.position;
-          this.changePassword = false;
+          this.$store.commit("START_LOADING");
+          this.$apollo
+            .mutate({
+              mutation: UPDATE_EMPLOYEE,
+              variables: {
+                employeeId: this.employee.id,
+                position: this.formEmployee.position,
+              },
+            })
+            .then(() => {
+              this.$apollo.queries.employee.refresh();
+              this.$apollo.queries.employee.refetch();
+            })
+            .catch((error) => {
+              console.error(error);
+            });
           this.edit = false;
-          this.isLoading = false;
+          this.$store.commit("STOP_LOADING");
         }
       }
     },

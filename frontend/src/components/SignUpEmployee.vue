@@ -273,6 +273,7 @@ export default {
           this.$store.commit("SET_GOT_VERIFIED_AUTH", true);
           this.$store.commit("SET_USER_ID", objJWT.user_id);
           this.$store.commit("SET_ORGANIZER", objJWT.is_organizer);
+          this.$store.commit("MODERATE_ORGANIZER", false);
           this.$store.commit("SET_STUDENT", objJWT.is_student);
           this.form = {
             firstName: undefined,

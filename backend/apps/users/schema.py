@@ -4,7 +4,7 @@ from datetime import timezone, datetime
 from config.settings import GRAPHQL_JWT
 
 from users.models import Employee, Student, Subject, User
-from users.mutation import CreateEmployee, CreateStudent, CreateStudentSubject, CreateSubject, DeleteEmployee, DeleteStudent, DeleteStudentSubject, DeleteSubject, Logout, Register, ResetPassword, ResetPasswordConfirm
+from users.mutation import CreateEmployee, CreateStudent, CreateStudentSubject, CreateSubject, DeleteEmployee, DeleteStudent, DeleteStudentSubject, DeleteSubject, Logout, Register, ResetPassword, ResetPasswordConfirm, UpdateEmployee, UpdateStudent, UpdateSubject
 from users.types import EmployeeType, StudentType, SubjectType, UserType
 
 def jwt_payload(user, context=None):
@@ -13,7 +13,10 @@ def jwt_payload(user, context=None):
     is_student = student_length > 0
     organizer_length = Employee.objects.filter(user=user).count()
     is_organizer = organizer_length > 0
-    return {user.USERNAME_FIELD: username, 'user_id': user.id, 'is_student': is_student, 'is_organizer': is_organizer, 'email': user.email, 'exp': datetime.now(timezone.utc) + GRAPHQL_JWT['JWT_EXPIRATION_DELTA']}
+    moderated = True
+    if is_organizer:
+        moderated = Employee.objects.filter(user=user).moderated
+    return {user.USERNAME_FIELD: username, 'user_id': user.id, 'moderated': moderated, 'is_student': is_student, 'is_organizer': is_organizer, 'email': user.email, 'exp': datetime.now(timezone.utc) + GRAPHQL_JWT['JWT_EXPIRATION_DELTA']}
 
 class Query(object):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
@@ -21,7 +24,7 @@ class Query(object):
     profile = graphene.Field(UserType)
 
     employees = graphene.List(EmployeeType)
-    employee = graphene.Field(EmployeeType, employee_id=graphene.ID(required=True))
+    employee = graphene.Field(EmployeeType, user_id=graphene.ID(required=True))
     
     students = graphene.List(StudentType)
     student = graphene.Field(StudentType, user_id=graphene.ID(required=True))
@@ -48,9 +51,10 @@ class Query(object):
         except Exception as e:
             return None
 
-    def resolve_employee(root, info, employee_id):
+    def resolve_employee(root, info, user_id):
         try:
-            return Employee.objects.get(pk=employee_id)
+            user = User.objects.get(pk=user_id)          
+            return Employee.objects.get(user=user)
         except Exception as e:
             return None
 
@@ -95,6 +99,6 @@ class Mutation(object):
     delete_student = DeleteStudent.Field()
     delete_subject = DeleteSubject.Field()
     delete_student_subject = DeleteStudentSubject.Field()
-    update_employee = DeleteEmployee.Field()
-    update_student = DeleteStudent.Field()
-    update_subject = DeleteSubject.Field()
+    update_employee = UpdateEmployee.Field()
+    update_student = UpdateStudent.Field()
+    update_subject = UpdateSubject.Field()

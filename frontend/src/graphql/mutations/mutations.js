@@ -23,6 +23,26 @@ export const CREATE_ANSWER = gql`
   }
 `;
 
+export const UPDATE_EMPLOYEE = gql`
+  mutation ($employeeId: ID!, $position: String) {
+    updateEmployee(employeeId: $employeeId, position: $position) {
+      ok
+    }
+  }
+`;
+
+export const UPDATE_STUDENT = gql`
+  mutation ($userId: ID!, $patronymic: String, $birthdate: Date) {
+    updateStudent(
+      userId: $userId
+      patronymic: $patronymic
+      birthdate: $birthdate
+    ) {
+      ok
+    }
+  }
+`;
+
 export const UPDATE_ANSWER = gql`
   mutation ($answerId: ID!, $answer: String) {
     updateAnswer(answerId: $answerId, answer: $answer) {
