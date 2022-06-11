@@ -95,7 +95,7 @@
 
       <p>* - обязательное поле</p>
       <div>
-        <button class="text-gradient" @click="onLogin">
+        <button class="text-gradient to-block" @click="onLogin">
           Войти
           <span class="text">Войти</span>
         </button>
