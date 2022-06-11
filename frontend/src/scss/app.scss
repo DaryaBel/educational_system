@@ -31,13 +31,16 @@ h6 {
 
 h1 {
   font-size: 5rem;
+  margin-bottom: 3rem;
 }
 
 p,
 span {
   color: #1a1a1a;
 }
-
+a {
+  color: #004e93;
+}
 button {
   padding: 8px 48px;
   font-size: 18px;
@@ -50,12 +53,12 @@ button {
 }
 button.text-gradient {
   background: #1f1e1e;
-  transition: 1s;
+  transition: 0.8s;
   position: relative;
-  -webkit-transition: 1s;
-  -moz-transition: 1s;
-  -ms-transition: 1s;
-  -o-transition: 1s;
+  -webkit-transition: 0.8s;
+  -moz-transition: 0.8s;
+  -ms-transition: 0.8s;
+  -o-transition: 0.8s;
   color: white;
   & .text {
     font-weight: normal;
@@ -85,11 +88,11 @@ button.text-gradient {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    transition: 1s;
-    -webkit-transition: 1s;
-    -moz-transition: 1s;
-    -ms-transition: 1s;
-    -o-transition: 1s;
+    transition: 0.8s;
+    -webkit-transition: 0.8s;
+    -moz-transition: 0.8s;
+    -ms-transition: 0.8s;
+    -o-transition: 0.8s;
   }
   &:hover {
     color: #1f1e1e;
