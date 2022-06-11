@@ -27,37 +27,39 @@
         Результаты олимпиады будут объявлены
         {{ formatDate(olympiad.dateResult) }}.
       </p>
-      <button v-if="result == undefined" @click="toTakePart">
-        Принять участие
-      </button>
-      <div v-else>
-        <button v-if="result.status == 'TAKEPART'" @click="toBegin">
-          Начать выполнение
+      <div v-if="isStudent">
+        <button v-if="result == undefined" @click="toTakePart">
+          Принять участие
         </button>
-        <button
-          @click="toCancelParticipation"
-          v-if="result.status == 'TAKEPART'"
-        >
-          Отменить участие
-        </button>
-        <button @click="toContinue" v-if="result.status == 'BEGIN'">
-          Продолжить выполнение
-        </button>
-        <p
-          v-if="
-            result.status == 'SENT' ||
-            (result.status == 'CHECKED' && !olympiad.resultPublished)
-          "
-        >
-          Вы успешно отправили свои ответы на олимпиаду. После того, как
-          организаторы проверят все решения, будут вывешны результаты.
-        </p>
-        <button
-          @click="toGetResult"
-          v-if="result.status == 'CHECKED' && olympiad.resultPublished"
-        >
-          Посмотреть результаты
-        </button>
+        <div v-else>
+          <button v-if="result.status == 'TAKEPART'" @click="toBegin">
+            Начать выполнение
+          </button>
+          <button
+            @click="toCancelParticipation"
+            v-if="result.status == 'TAKEPART'"
+          >
+            Отменить участие
+          </button>
+          <button @click="toContinue" v-if="result.status == 'BEGIN'">
+            Продолжить выполнение
+          </button>
+          <p
+            v-if="
+              result.status == 'SENT' ||
+              (result.status == 'CHECKED' && !olympiad.resultPublished)
+            "
+          >
+            Вы успешно отправили свои ответы на олимпиаду. После того, как
+            организаторы проверят все решения, будут вывешны результаты.
+          </p>
+          <button
+            @click="toGetResult"
+            v-if="result.status == 'CHECKED' && olympiad.resultPublished"
+          >
+            Посмотреть результаты
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -97,6 +99,9 @@ export default {
     },
     isLoading() {
       return this.$store.state.isLoading;
+    },
+    isStudent() {
+      return this.$store.state.isStudent;
     },
     resultId() {
       if (this.result == undefined) return 0;

@@ -50,12 +50,11 @@
           в городе {{ course.city.name }}</span
         >.
       </p>
-      <div>
-        <div
-          v-if="
-            countCourseMember == undefined || isStudentCourseMember == undefined
-          "
-        >
+      <div v-if="isStudent">
+        <b-toast id="success-toast" title="" static>
+          Вы успешно записались на курс!
+        </b-toast>
+        <div v-if="countCourseMember == undefined">
           <p>Загрузка...</p>
         </div>
         <div v-else>
@@ -104,7 +103,6 @@
 
 <script>
 import jwt from "jsonwebtoken";
-
 import {
   CREATE_STUDENT_COURSE,
   DELETE_STUDENT_COURSE,
@@ -153,6 +151,9 @@ export default {
     isLoading() {
       return this.$store.state.isLoading;
     },
+    isStudent() {
+      return this.$store.state.isStudent;
+    },
   },
   methods: {
     toTakePart() {
@@ -168,17 +169,21 @@ export default {
         .then(() => {
           this.$apollo.queries.isStudentCourseMember.refresh();
           this.$apollo.queries.isStudentCourseMember.refetch();
-          // this.$toast.success("Вы успешно записались на курс!", {
-          //   position: "bottom-right",
-          //   duration: 5000,
-          //   dismissible: false,
-          //   pauseOnHover: false,
-          // });
+          this.makeToast(true);
         })
         .catch((error) => {
           console.error(error);
         });
       this.$store.commit("STOP_LOADING");
+    },
+    makeToast(flag) {
+      let text = "Вы успешно записались на курс!";
+      if (!flag) text = "Запись на курс успешно отменена";
+      this.$bvToast.toast(text, {
+        title: "",
+        autoHideDelay: 5000,
+        appendToast: true,
+      });
     },
     toCancelAppointment() {
       this.$store.commit("START_LOADING");
@@ -196,6 +201,7 @@ export default {
           this.$apollo.queries.isStudentCourseMember.refetch();
           this.$apollo.queries.countCourseMember.refresh();
           this.$apollo.queries.countCourseMember.refetch();
+          this.makeToast(false);
         })
         .catch((error) => {
           console.error(error);

@@ -1,0 +1,132 @@
+// @font-face {
+//   font-family: "Raleway";
+//   src: local("Raleway"),
+//     url("src/assets/fonts/Raleway/Raleway-Bold.ttf") format("truetype");
+//   font-weight: bold;
+// }
+
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+* {
+  //   font-family: "Inter";
+  font-weight: 300;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  //   font-family: "Raleway", sans-serif;
+  font-weight: bold;
+  background: linear-gradient(
+    89.81deg,
+    #9845e8 -1.72%,
+    #33d2ff 54.05%,
+    #dd5789 99.78%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: table;
+}
+
+h1 {
+  font-size: 5rem;
+}
+
+p,
+span {
+  color: #1a1a1a;
+}
+
+button {
+  padding: 8px 48px;
+  font-size: 18px;
+  border: none;
+  font-weight: normal;
+  outline: none;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  border-radius: 5px;
+}
+button.text-gradient {
+  background: #1f1e1e;
+  transition: 1s;
+  position: relative;
+  -webkit-transition: 1s;
+  -moz-transition: 1s;
+  -ms-transition: 1s;
+  -o-transition: 1s;
+  color: white;
+  & .text {
+    font-weight: normal;
+    position: absolute;
+    left: 48px;
+    top: 8px;
+    opacity: 0;
+    background-image: linear-gradient(
+      51.06deg,
+      #9358f7 0.87%,
+      #9259f7 7.31%,
+      #8e5df6 13.75%,
+      #8862f5 20.19%,
+      #806bf4 26.63%,
+      #7575f2 33.07%,
+      #6882f0 39.51%,
+      #5990ee 45.95%,
+      #4a9feb 52.39%,
+      #3bade9 58.84%,
+      #2ebae7 65.28%,
+      #23c4e5 71.72%,
+      #1bcde4 78.16%,
+      #15d2e3 84.6%,
+      #11d6e2 91.04%,
+      #10d7e2 97.48%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: 1s;
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    -ms-transition: 1s;
+    -o-transition: 1s;
+  }
+  &:hover {
+    color: #1f1e1e;
+    & .text {
+      opacity: 1;
+    }
+  }
+}
+
+button.gradient {
+  background-size: 200% auto;
+  color: white;
+  background-image: linear-gradient(
+    51.06deg,
+    #9358f7 0.87%,
+    #9259f7 7.31%,
+    #8e5df6 13.75%,
+    #8862f5 20.19%,
+    #806bf4 26.63%,
+    #7575f2 33.07%,
+    #6882f0 39.51%,
+    #5990ee 45.95%,
+    #4a9feb 52.39%,
+    #3bade9 58.84%,
+    #2ebae7 65.28%,
+    #23c4e5 71.72%,
+    #1bcde4 78.16%,
+    #15d2e3 84.6%,
+    #11d6e2 91.04%,
+    #10d7e2 97.48%
+  );
+  transition: 1s;
+  -webkit-transition: 1s;
+  -moz-transition: 1s;
+  -ms-transition: 1s;
+  -o-transition: 1s;
+  &:hover {
+    background-position: center;
+  }
+}

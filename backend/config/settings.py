@@ -30,6 +30,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'graphene_django',
     'django_extensions',
+    #  'import_export',
 ]
 
 LOCAL_APPS = [

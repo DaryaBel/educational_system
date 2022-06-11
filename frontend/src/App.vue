@@ -1,17 +1,23 @@
 <template lang="html">
   <div>
-    <router-view />
+    <div class="container py-3">
+      <topbar></topbar>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
+import Topbar from "@/components/parts/Topbar.vue";
+
 export default {
   name: "App",
+  components: {
+    Topbar,
+  },
 };
 </script>
 
 <style lang="scss">
-* {
-  font-family: sans-serif;
-}
+@import "@/scss/app.scss";
 </style>

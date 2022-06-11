@@ -1,6 +1,10 @@
 <template>
   <div>
-    <button @click="logOut">Выйти</button>
+    <button class="text-gradient" @click="logOut">
+      Выйти
+      <span class="text">Выйти</span>
+    </button>
+    <button class="gradient" @click="logOut">Выйти</button>
   </div>
 </template>
 
