@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if="isLoading || course == undefined">Загрузка...</p>
+    <loader v-if="isLoading || course == undefined"></loader>
     <div v-else>
       <div v-if="!edit">
         <h1>{{ course.name }}</h1>
@@ -248,6 +248,7 @@ import { required, integer } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { CITIES, COURSE, SUBJECTS } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "OrganizationCourse",
@@ -270,6 +271,7 @@ export default {
   components: {
     Multiselect,
     ModalDeleteCourse,
+    Loader,
   },
   data() {
     return {

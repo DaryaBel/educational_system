@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || results == undefined">Загрузка...</div>
+    <loader v-if="isLoading || results == undefined"></loader>
     <div v-else>
       <h1>Участники олимпиады</h1>
       <div>
@@ -111,6 +111,7 @@ import {
 import { PUBLISH_OLYMPIAD_RESULTS } from "@/graphql/mutations/mutations";
 import ModalPublishResult from "@/components/olympiad/organizers/ModalPublishResult.vue";
 import Multiselect from "vue-multiselect";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "OlympiadMembers",
@@ -135,6 +136,7 @@ export default {
   components: {
     Multiselect,
     ModalPublishResult,
+    Loader,
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div
+    <loader
       v-if="
         isLoading ||
         olympiad == undefined ||
@@ -8,8 +8,7 @@
         result == undefined
       "
     >
-      <p>Загрузка...</p>
-    </div>
+    </loader>
     <div v-else>
       <h1>{{ olympiad.name }}</h1>
       <p>
@@ -72,13 +71,16 @@ import {
   OLYMPIAD_STATUS,
 } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "OlympiadProcess",
   components: {
     Task,
     ModalOlympiad,
+    Loader,
   },
+
   apollo: {
     result: {
       query: OLYMPIAD_STATUS,

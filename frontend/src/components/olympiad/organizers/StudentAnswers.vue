@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p
+    <loader
       v-if="
         isLoading ||
         result == undefined ||
@@ -8,8 +8,7 @@
         olympiad == undefined
       "
     >
-      Загрузка...
-    </p>
+    </loader>
     <div v-else>
       <div>
         <h1>Решение</h1>
@@ -101,9 +100,11 @@ import {
   STUDENT_ANSWERS_WITH_TASK,
   OLYMPIAD_TASK_CHECK,
 } from "@/graphql/queries/queries";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "StudentAnswers",
+  components: { Loader },
   apollo: {
     result: {
       query: RESULT_WITH_ANSWERS,

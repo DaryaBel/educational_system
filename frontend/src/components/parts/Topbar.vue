@@ -26,7 +26,7 @@
           v-if="!isAuthenticated"
           tag="a"
           :to="{ name: 'LogIn' }"
-          class="me-3 py-2 text-dark text-decoration-none mr-5 fs-4"
+          class="me-3 py-2 text-dark text-decoration-none fs-4"
         >
           Войти
         </router-link>

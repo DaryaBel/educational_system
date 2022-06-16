@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || organizations == undefined">Загрузка...</div>
+    <loader v-if="isLoading || organizations == undefined"></loader>
     <div v-else>
       <h1>
         Регистрация для представителей компаний и образовательных организаций
@@ -196,10 +196,13 @@ import register from "@/graphql/mutations/register.gql";
 import { CREATE_EMPLOYEE } from "@/graphql/mutations/mutations.js";
 import { required, email, minLength } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
+import Loader from "@/components/parts/Loader.vue";
+
 export default {
   name: "SignUpEmployee",
   components: {
     Multiselect,
+    Loader,
   },
   apollo: {
     organizations: {

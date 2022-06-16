@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || organizationCourses == undefined">Загрузка...</div>
+    <loader v-if="isLoading || organizationCourses == undefined"></loader>
     <div v-else>
       <h1>Курсы организации</h1>
       <button @click="onLink()">Добавить новый курс</button>
@@ -94,6 +94,7 @@ import jwt from "jsonwebtoken";
 import { PUBLISH_COURSE, DELETE_COURSE } from "@/graphql/mutations/mutations";
 import { ORGANIZATION_COURSES } from "@/graphql/queries/queries";
 import ModalDeleteCourse from "@/components/course/organizers/ModalDeleteCourse.vue";
+import Loader from "@/components/parts/Loader.vue";
 export default {
   name: "OrganizationCourses",
   apollo: {
@@ -108,7 +109,9 @@ export default {
   },
   components: {
     ModalDeleteCourse,
+    Loader,
   },
+
   data() {
     return {
       modal: false,

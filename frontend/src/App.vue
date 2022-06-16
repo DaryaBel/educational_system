@@ -2,7 +2,9 @@
   <div>
     <div class="container pt-3">
       <topbar></topbar>
-      <router-view></router-view>
+      <div class="my-view">
+        <router-view></router-view>
+      </div>
 
       <bottombar></bottombar>
     </div>
@@ -24,4 +26,8 @@ export default {
 
 <style lang="scss">
 @import "@/scss/app.scss";
+
+.my-view {
+  min-height: calc(100vh - 285px);
+}
 </style>

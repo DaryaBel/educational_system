@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if="isLoading">Загрузка...</p>
+    <loader v-if="isLoading"></loader>
     <div v-else>
       <h1>Создать олимпиаду</h1>
       <div class="form-group">
@@ -203,6 +203,7 @@ import { required, integer, between } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { SUBJECTS } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "NewOlympiad",
@@ -214,7 +215,9 @@ export default {
   },
   components: {
     Multiselect,
+    Loader,
   },
+
   data() {
     return {
       tasks: [{ task: undefined, maxScore: undefined, order: 1 }],

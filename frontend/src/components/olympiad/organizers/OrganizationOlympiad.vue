@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if="isLoading || olympiad == undefined">Загрузка...</p>
+    <loader v-if="isLoading || olympiad == undefined"></loader>
     <div v-else>
       <div v-if="!edit">
         <h1>{{ olympiad.name }}</h1>
@@ -292,6 +292,7 @@ import Multiselect from "vue-multiselect";
 import { OLYMPIAD_FOR_ORGANIZERS, SUBJECTS } from "@/graphql/queries/queries";
 import ModalDeleteOlympiad from "@/components/olympiad/organizers/ModalDeleteOlympiad.vue";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "OrganizationOlympiad",
@@ -311,6 +312,7 @@ export default {
   components: {
     Multiselect,
     ModalDeleteOlympiad,
+    Loader
   },
   data() {
     return {

@@ -1,8 +1,7 @@
 <template>
   <div>
-    <div v-if="isLoading || (student == undefined && employee == undefined)">
-      Загрузка...
-    </div>
+    <loader v-if="isLoading || (student == undefined && employee == undefined)">
+    </loader>
     <div v-else>
       <h1>Личный кабинет</h1>
       <div class="form-group">
@@ -83,11 +82,13 @@ import Multiselect from "vue-multiselect";
 import { EMPLOYEE, STUDENT } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
 import { UPDATE_EMPLOYEE, UPDATE_STUDENT } from "@/graphql/mutations/mutations";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "Profile",
   components: {
     Multiselect,
+    Loader,
   },
   apollo: {
     student: {

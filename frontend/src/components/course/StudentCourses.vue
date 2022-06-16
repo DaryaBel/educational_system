@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || studentCourses == undefined">Загрузка...</div>
+    <loader v-if="isLoading || studentCourses == undefined"></loader>
     <div v-else>
       <h1>Мои курсы</h1>
       <div>
@@ -89,6 +89,7 @@ import {
 import jwt from "jsonwebtoken";
 import CourseElement from "@/components/course/CourseElement.vue";
 import Multiselect from "vue-multiselect";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "StudentCourses",
@@ -112,6 +113,7 @@ export default {
   components: {
     CourseElement,
     Multiselect,
+    Loader,
   },
   data() {
     return {

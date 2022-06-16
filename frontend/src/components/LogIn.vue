@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading">Загрузка...</div>
+    <loader v-if="isLoading"></loader>
 
     <div v-else>
       <h1>Авторизация</h1>
@@ -118,6 +118,8 @@
 import jwt from "jsonwebtoken";
 import { required } from "vuelidate/lib/validators";
 import login from "@/graphql/mutations/login.gql";
+import Loader from "@/components/parts/Loader.vue";
+
 export default {
   name: "LogIn",
   data() {
@@ -131,6 +133,7 @@ export default {
       errors: false,
     };
   },
+  components: { Loader },
   validations: {
     form: {
       email: {

@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || olympiad == undefined">
-      <p>Загрузка...</p>
-    </div>
+    <loader v-if="isLoading || olympiad == undefined"> </loader>
     <div v-else>
       <h1>{{ olympiad.name }}</h1>
       <p>
@@ -22,9 +20,11 @@
 import { UPDATE_RESULT } from "@/graphql/mutations/mutations";
 import { OLYMPIAD_RULES, OLYMPIAD_STATUS } from "@/graphql/queries/queries.js";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "OlympiadRules",
+  components: { Loader },
   apollo: {
     olympiad: {
       query: OLYMPIAD_RULES,

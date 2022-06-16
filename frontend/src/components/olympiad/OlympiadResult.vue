@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p
+    <loader
       v-if="
         isLoading ||
         result == undefined ||
@@ -8,8 +8,7 @@
         olympiad == undefined
       "
     >
-      Загрузка...
-    </p>
+    </loader>
     <div v-else>
       <h1>Результаты</h1>
       <p v-if="result.won">Победитель!</p>
@@ -47,8 +46,10 @@ import {
   OLYMPIAD_TASK_CHECK,
 } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
+  components: { Loader },
   name: "OlympiadResult",
   apollo: {
     result: {

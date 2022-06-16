@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || course == undefined">
-      <p>Загрузка...</p>
-    </div>
+    <loader v-if="isLoading || course == undefined"> </loader>
     <div v-else>
       <h1>{{ course.name }}</h1>
       <p>
@@ -55,7 +53,7 @@
           Вы успешно записались на курс!
         </b-toast>
         <div v-if="countCourseMember == undefined">
-          <p>Загрузка...</p>
+          <loader></loader>
         </div>
         <div v-else>
           <div v-if="!isStudentCourseMember">
@@ -102,6 +100,8 @@
 </template>
 
 <script>
+import Loader from "@/components/parts/Loader.vue";
+
 import jwt from "jsonwebtoken";
 import {
   CREATE_STUDENT_COURSE,
@@ -141,6 +141,7 @@ export default {
       },
     },
   },
+  components: { Loader },
   data() {
     return {};
   },

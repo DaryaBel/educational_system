@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || organizationOlympiads == undefined">
-      Загрузка...
-    </div>
+    <loader v-if="isLoading || organizationOlympiads == undefined"> </loader>
     <div v-else>
       <h1>Олимпиады организации</h1>
       <button @click="onLink()">Добавить новую олимпиаду</button>
@@ -96,6 +94,7 @@
 
 <script>
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 import {
   PUBLISH_OLYMPIAD,
@@ -117,6 +116,7 @@ export default {
   },
   components: {
     ModalDeleteOlympiad,
+    Loader
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if="isLoading">Загрузка...</p>
+    <loader v-if="isLoading"></loader>
     <div v-else>
       <h1>Создать курс</h1>
       <div class="form-group">
@@ -160,6 +160,7 @@ import { required, integer } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { CITIES, SUBJECTS } from "@/graphql/queries/queries";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "NewCourse",
@@ -173,7 +174,9 @@ export default {
   },
   components: {
     Multiselect,
+    Loader,
   },
+
   data() {
     return {
       createdId: undefined,

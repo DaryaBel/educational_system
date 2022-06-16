@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="courseStudents == undefined">Загрузка...</div>
+    <loader v-if="courseStudents == undefined"></loader>
     <div v-else>
       <h1>Записавшиеся на курс</h1>
       <div>
@@ -42,9 +42,11 @@
 </template>
 
 <script>
+import Loader from "@/components/parts/Loader.vue";
 import { ALL_MEMBER_COURSE } from "@/graphql/queries/queries";
 export default {
   name: "CourseMembers",
+  components: { Loader },
   apollo: {
     courseStudents: {
       query: ALL_MEMBER_COURSE,

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading">Загрузка...</div>
+    <loader v-if="isLoading"></loader>
     <div v-else>
       <h1>Вы действительно хотите удалить аккаунт?</h1>
       <button @click="backToProfile()">Нет</button>
@@ -11,9 +11,11 @@
 <script>
 import jwt from "jsonwebtoken";
 import { DELETE_USER } from "@/graphql/mutations/mutations";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "DeleteAccount",
+  components: { Loader },
   computed: {
     userId() {
       return jwt.decode(localStorage.getItem("token")).user_id;

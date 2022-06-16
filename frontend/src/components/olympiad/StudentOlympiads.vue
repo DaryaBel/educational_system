@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || studentOlympiads == undefined">Загрузка...</div>
+    <loader v-if="isLoading || studentOlympiads == undefined"></loader>
     <div v-else>
       <h1>Мои олимпиады</h1>
       <div>
@@ -86,6 +86,7 @@ import {
 import Multiselect from "vue-multiselect";
 import OlympiadElement from "@/components/olympiad/OlympiadElement.vue";
 import jwt from "jsonwebtoken";
+import Loader from "@/components/parts/Loader.vue";
 
 export default {
   name: "StudentOlympiads",
@@ -105,7 +106,7 @@ export default {
       query: SHORT_LIST_ORGANIZATIONS,
     },
   },
-  components: { OlympiadElement, Multiselect },
+  components: { OlympiadElement, Multiselect, Loader },
   data() {
     return {
       findString: "",

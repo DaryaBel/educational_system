@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading">Загрузка...</div>
+    <loader v-if="isLoading"></loader>
     <div v-else>
       <h1>Регистрация</h1>
       <div class="form-group">
@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import Loader from "@/components/parts/Loader.vue";
 import login from "@/graphql/mutations/login.gql";
 import jwt from "jsonwebtoken";
 import register from "@/graphql/mutations/register.gql";
@@ -179,6 +180,7 @@ import { CREATE_STUDENT } from "@/graphql/mutations/mutations.js";
 import { required, email, minLength } from "vuelidate/lib/validators";
 export default {
   name: "SignUp",
+  components: { Loader },
   data() {
     return {
       isSuccess: false,

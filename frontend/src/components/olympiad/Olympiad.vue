@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div v-if="isLoading || olympiad == undefined">
-      <p>Загрузка...</p>
-    </div>
+    <loader v-if="isLoading || olympiad == undefined"> </loader>
     <div v-else>
       <h1>{{ olympiad.name }}</h1>
       <p>
@@ -69,7 +67,10 @@
 import jwt from "jsonwebtoken";
 import { CREATE_RESULT, DELETE_RESULT } from "@/graphql/mutations/mutations";
 import { OLYMPIAD, OLYMPIAD_STATUS } from "@/graphql/queries/queries.js";
+import Loader from "@/components/parts/Loader.vue";
+
 export default {
+  components: { Loader },
   name: "Olympiad",
   data() {
     return {};

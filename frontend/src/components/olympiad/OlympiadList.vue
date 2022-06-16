@@ -1,8 +1,7 @@
 <template>
   <div>
-    <div v-if="isLoading || publishedOlympiads == undefined">Загрузка...</div>
+    <loader v-if="isLoading || publishedOlympiads == undefined"></loader>
     <div v-else>
-      <log-out-button></log-out-button>
       <h1>Олимпиады</h1>
       <div>
         <input
@@ -69,7 +68,7 @@ import {
   SUBJECTS,
 } from "@/graphql/queries/queries";
 import OlympiadElement from "@/components/olympiad/OlympiadElement.vue";
-import LogOutButton from "@/components/LogOutButton.vue";
+import Loader from "@/components/parts/Loader.vue";
 import Multiselect from "vue-multiselect";
 
 export default {
@@ -86,8 +85,8 @@ export default {
     },
   },
   components: {
-    LogOutButton,
     OlympiadElement,
+    Loader,
     Multiselect,
   },
   data() {
