@@ -2,151 +2,210 @@
   <div>
     <loader v-if="isLoading"></loader>
     <div v-else>
-      <h1>Создать курс</h1>
-      <div class="form-group">
-        <label for="name">Название *</label><br />
-        <input
-          id="name"
-          name="name"
-          type="text"
-          v-model.trim="form.name"
-          :class="{ 'is-invalid': submittedForm && $v.form.name.$error }"
-        />
-        <div
-          v-if="submittedForm && $v.form.name.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.name.required">Данное поле обязательно</span>
+      <h1>Создание курса</h1>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="name">Название *</label><br />
+            <input
+              id="name"
+              name="name"
+              type="text"
+              class="form-control"
+              v-model.trim="form.name"
+              :class="{ 'is-invalid': submittedForm && $v.form.name.$error }"
+            />
+            <p
+              v-if="submittedForm && !$v.form.name.required"
+              class="invalid-feedback"
+            >
+              Данное поле обязательно
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="description">Описание </label><br />
-        <textarea
-          name="description"
-          id="description"
-          cols="30"
-          rows="10"
-          v-model.trim="form.description"
-          :class="{ 'is-invalid': submittedForm && $v.form.description.$error }"
-        ></textarea>
-      </div>
-      <div class="form-group">
-        <label for="subjects">Предметы *</label><br />
-        <multiselect
-          :disabled="subjects == undefined"
-          v-model="form.subjects"
-          track-by="id"
-          label="name"
-          placeholder="Выберите школьные предметы"
-          :options="subjectsOption"
-          :showLabels="false"
-          :searchable="true"
-          :allow-empty="true"
-          :showPointer="false"
-          :multiple="true"
-          :close-on-select="false"
-          :clear-on-select="false"
-        >
-          <span slot="noResult">Не найдено</span>
-        </multiselect>
-        <div
-          v-if="submittedForm && $v.form.subjects.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.subjects.required">Данное поле обязательно</span>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="description">Описание </label><br />
+            <textarea
+              class="form-control"
+              name="description"
+              id="description"
+              cols="30"
+              rows="10"
+              v-model.trim="form.description"
+              :class="{
+                'is-invalid': submittedForm && $v.form.description.$error,
+              }"
+            ></textarea>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="duration">Длительность</label><br />
-        <select
-          v-model="form.duration"
-          name="duration"
-          id="duration"
-          :class="{ 'is-invalid': submittedForm && $v.form.duration.$error }"
-        >
-          <option value="LESSMONTH">Меньше месяца</option>
-          <option value="MONTH">1-2 месяца</option>
-          <option value="FEWMONTH">От двух месяцев до полугода</option>
-          <option value="HALFYEAR">От полугода до года</option>
-          <option value="YEARANDMORE">Год и более</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="form">Формат проведения *</label><br />
-        <select
-          v-model="form.form"
-          name="form"
-          id="form"
-          :class="{ 'is-invalid': submittedForm && $v.form.form.$error }"
-        >
-          <option value="ON">Онлайн</option>
-          <option value="OFF">Оффлайн</option>
-          <option value="BOTH">Смешанный</option>
-        </select>
-        <div
-          v-if="submittedForm && $v.form.form.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.form.required">Данное поле обязательно</span>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="subjects">Предметы *</label><br />
+            <multiselect
+              :disabled="subjects == undefined"
+              v-model="form.subjects"
+              track-by="id"
+              label="name"
+              placeholder="Выберите школьные предметы"
+              :options="subjectsOption"
+              :showLabels="false"
+              :searchable="true"
+              :allow-empty="true"
+              :showPointer="false"
+              :multiple="true"
+              :close-on-select="false"
+              :clear-on-select="false"
+              :class="{
+                'is-invalid': submittedForm && !$v.form.subjects.required,
+              }"
+            >
+              <span slot="noResult">Не найдено</span>
+            </multiselect>
+            <div class="is-invalid"></div>
+            <p
+              v-if="submittedForm && !$v.form.subjects.required"
+              class="invalid-feedback"
+            >
+              Данное поле обязательно
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="dateStart">Дата начала</label><br />
-        <input
-          id="dateStart"
-          name="dateStart"
-          type="date"
-          v-model="form.dateStart"
-          :class="{ 'is-invalid': submittedForm && $v.form.dateStart.$error }"
-        />
-      </div>
-      <div class="form-group">
-        <label for="dateEnd">Дата окончания</label><br />
-        <input
-          id="dateEnd"
-          name="dateEnd"
-          type="date"
-          v-model="form.dateEnd"
-          :class="{ 'is-invalid': submittedForm && $v.form.dateEnd.$error }"
-        />
-      </div>
-      <div class="form-group">
-        <label class="form-name">Город проведения </label><br />
-        <multiselect
-          v-model="form.city"
-          track-by="id"
-          label="name"
-          placeholder="Выберите город"
-          :options="citiesOption"
-          :showLabels="false"
-          :searchable="true"
-          :allow-empty="true"
-          :showPointer="false"
-          :multiple="false"
-          :close-on-select="true"
-          :class="{ 'is-invalid': submittedForm && $v.form.city.$error }"
-        >
-          <span slot="noResult">Не найдено</span>
-        </multiselect>
-      </div>
-      <div class="form-group">
-        <label for="maxNumberMember">Максимальное количество слушателей </label
-        ><br />
-        <input
-          name="maxNumberMember"
-          id="maxNumberMember"
-          type="number"
-          min="1"
-          step="1"
-          v-model.trim="form.maxNumberMember"
-          :class="{
-            'is-invalid': submittedForm && $v.form.maxNumberMember.$error,
-          }"
-        />
-      </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="duration">Длительность</label><br />
+            <select
+              v-model="form.duration"
+              name="duration"
+              class="form-control"
+              id="duration"
+              :class="{
+                'is-invalid': submittedForm && $v.form.duration.$error,
+              }"
+            >
+              <option value="LESSMONTH">Меньше месяца</option>
+              <option value="MONTH">1-2 месяца</option>
+              <option value="FEWMONTH">От двух месяцев до полугода</option>
+              <option value="HALFYEAR">От полугода до года</option>
+              <option value="YEARANDMORE">Год и более</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="form">Формат проведения *</label
+            ><br />
+            <select
+              class="form-control"
+              v-model="form.form"
+              name="form"
+              id="form"
+              :class="{ 'is-invalid': submittedForm && $v.form.form.$error }"
+            >
+              <option value="ON">Онлайн</option>
+              <option value="OFF">Оффлайн</option>
+              <option value="BOTH">Смешанный</option>
+            </select>
+            <p
+              v-if="submittedForm && !$v.form.form.required"
+              class="invalid-feedback"
+            >
+              Данное поле обязательно
+            </p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="dateStart">Дата начала</label><br />
+            <input
+              class="form-control"
+              id="dateStart"
+              name="dateStart"
+              type="date"
+              v-model="form.dateStart"
+              :class="{
+                'is-invalid': submittedForm && $v.form.dateStart.$error,
+              }"
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="dateEnd">Дата окончания</label><br />
+            <input
+              class="form-control"
+              id="dateEnd"
+              name="dateEnd"
+              type="date"
+              v-model="form.dateEnd"
+              :class="{ 'is-invalid': submittedForm && $v.form.dateEnd.$error }"
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name">Город проведения </label><br />
+            <multiselect
+              v-model="form.city"
+              track-by="id"
+              label="name"
+              placeholder="Выберите город"
+              :options="citiesOption"
+              :showLabels="false"
+              :searchable="true"
+              :allow-empty="true"
+              :showPointer="false"
+              :multiple="false"
+              :close-on-select="true"
+              :class="{ 'is-invalid': submittedForm && $v.form.city.$error }"
+            >
+              <span slot="noResult">Не найдено</span>
+            </multiselect>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name" for="maxNumberMember"
+              >Максимальное количество слушателей </label
+            ><br />
+            <input
+              name="maxNumberMember"
+              id="maxNumberMember"
+              type="number"
+              min="1"
+              class="form-control"
+              step="1"
+              v-model.trim="form.maxNumberMember"
+              :class="{
+                'is-invalid': submittedForm && $v.form.maxNumberMember.$error,
+              }"
+            />
+          </div>
+        </div>
+      </form>
 
       <p>* - обязательное поле</p>
-      <button @click="onAdd">Добавить</button>
+      <button class="text-gradient to-block" @click="onAdd">
+        Добавить
+        <span class="text">Добавить</span>
+      </button>
+      <Transition name="fade">
+        <div
+          v-if="newObj"
+          class="position-fixed my-sticker bottom-0 right-0 p-3"
+          style="z-index: 1000; width: 300px; right: 0; bottom: 140px"
+        >
+          <div class="alert alert-primary" role="alert">
+            Вы успешно создали курс!
+            <router-link
+              tag="a"
+              class="text-decoration-none"
+              :to="{ name: 'OrganizationCourses' }"
+              >Перейти к списку курсов организации</router-link
+            >.
+          </div>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -192,6 +251,7 @@ export default {
         maxNumberMember: undefined,
       },
       submittedForm: false,
+      newObj: false,
     };
   },
   validations: {
@@ -280,6 +340,10 @@ export default {
           };
 
           this.submittedForm = false;
+          this.newObj = true;
+          setTimeout(() => {
+            this.newObj = false;
+          }, 5000);
         })
         .catch((error) => {
           console.error(error);
@@ -290,4 +354,28 @@ export default {
 };
 </script>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-<style lang="scss"></style>
+<style lang="scss">
+div.multiselect
+  div.multiselect__tags
+  div.multiselect__tags-wrap
+  span.multiselect__tag {
+  background: #924de9 !important;
+  & .multiselect__tag-icon:focus,
+  .multiselect__tag-icon:hover {
+    background: #924de9 !important;
+  }
+  & span {
+    color: white !important;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.8s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

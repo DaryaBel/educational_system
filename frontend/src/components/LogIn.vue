@@ -38,6 +38,12 @@
                 v-model="form.password"
                 :class="{ 'is-invalid': submitted && $v.form.password.$error }"
               />
+              <p
+                v-if="submitted && !$v.form.password.required"
+                class="invalid-feedback"
+              >
+                Данное поле обязательно
+              </p>
               <svg
                 v-if="!passShow"
                 @click="passShow = !passShow"
@@ -80,13 +86,6 @@
                 />
               </svg>
             </div>
-
-            <p
-              v-if="submitted && !$v.form.password.required"
-              class="invalid-feedback"
-            >
-              Данное поле обязательно
-            </p>
           </div>
         </div>
       </form>

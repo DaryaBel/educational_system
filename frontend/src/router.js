@@ -65,6 +65,17 @@ function verifyAuth(to, from) {
   });
 }
 
+const checkToken = async (to, from, next) => {
+  try {
+    if (!store.state.gotVerifiedAuth) {
+      await verifyAuth(to, from);
+    }
+    next();
+  } catch (error) {
+    console.log("ERROR TEST: ", error);
+  }
+};
+
 const ifAuthenticated = async (to, from, next) => {
   try {
     if (!store.state.gotVerifiedAuth) {
@@ -213,6 +224,7 @@ const routes = [
     path: "/courses",
     name: "CourseList",
     component: CourseList,
+    beforeEnter: checkToken,
     meta: { title: "Курсы - Пора!" },
   },
   {
@@ -262,11 +274,13 @@ const routes = [
   {
     path: "/olympiads",
     name: "OlympiadList",
+    beforeEnter: checkToken,
     component: OlympiadList,
     meta: { title: "Олимпиады - Пора!" },
   },
   {
     path: "/",
+    beforeEnter: checkToken,
     redirect: "/olympiads",
   },
   {

@@ -43,6 +43,6 @@ Werkzeug==1.0.1
 django-graphql-jwt
 graphene==2.1.8
 graphene-django
-
+django-import-export
 
 

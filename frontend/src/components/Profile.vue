@@ -4,72 +4,109 @@
     </loader>
     <div v-else>
       <h1>Личный кабинет</h1>
-      <div class="form-group">
-        <label class="form-name">Фамилия </label><br />
-        <p v-if="isStudent && student != undefined">
-          {{ student.user.lastName }}
-        </p>
-        <p v-if="!isStudent && employee != undefined">
-          {{ employee.user.lastName }}
-        </p>
-      </div>
-      <div class="form-group">
-        <label class="form-name">Имя </label><br />
-        <p v-if="isStudent && student != undefined">
-          {{ student.user.firstName }}
-        </p>
-        <p v-if="!isStudent && employee != undefined">
-          {{ employee.user.firstName }}
-        </p>
-      </div>
-      <div class="form-group" v-if="isStudent && student != undefined">
-        <label class="form-name">Отчество</label><br />
-        <p v-if="!edit">{{ student.patronymic }}</p>
-        <input
-          v-else
-          id="patronymic"
-          type="text"
-          v-model.trim="formStudent.patronymic"
-        />
-      </div>
-      <div class="form-group" v-if="isStudent && student != undefined">
-        <label class="form-name">Дата рождения</label><br />
-        <p v-if="!edit">{{ formatDate(student.birthdate) }}</p>
-        <input
-          v-else
-          id="birthdate"
-          type="date"
-          v-model="formStudent.birthdate"
-          :max="new Date().toISOString().substr(0, 10)"
-        />
-      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name">Фамилия: </label><br />
+            <p v-if="isStudent && student != undefined">
+              {{ student.user.lastName }}
+            </p>
+            <p v-if="!isStudent && employee != undefined">
+              {{ employee.user.lastName }}
+            </p>
+          </div>
+        </div>
 
-      <div class="form-group" v-if="!isStudent && employee != undefined">
-        <label class="form-name">Организация </label><br />
-        <p>{{ employee.organization.fullname }}</p>
-      </div>
-      <div class="form-group" v-if="!isStudent && employee != undefined">
-        <label class="form-name">Должность</label><br />
-        <p v-if="!edit">{{ employee.position }}</p>
-        <input
-          v-else
-          id="position"
-          type="text"
-          v-model.trim="formEmployee.position"
-        />
-      </div>
-      <div class="form-group">
-        <label class="form-name">E-mail </label><br />
-        <p v-if="!isStudent && employee != undefined">
-          {{ employee.user.email }}
-        </p>
-        <p v-if="isStudent && student != undefined">{{ student.user.email }}</p>
-      </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name">Имя: </label><br />
+            <p v-if="isStudent && student != undefined">
+              {{ student.user.firstName }}
+            </p>
+            <p v-if="!isStudent && employee != undefined">
+              {{ employee.user.firstName }}
+            </p>
+          </div>
+        </div>
 
-      <button v-if="edit" @click="onEdit">Сохранить</button>
-      <button v-if="!edit" @click="onEdit">Изменить</button>
+        <div class="form-row" v-if="isStudent && student != undefined">
+          <div class="form-group col-md-6">
+            <label class="form-name">Отчество:</label><br />
+            <p v-if="!edit">{{ isNullOrEmpty(student.patronymic) }}</p>
+            <input
+              v-else
+              id="patronymic"
+              type="text"
+              class="form-control"
+              v-model.trim="formStudent.patronymic"
+            />
+          </div>
+        </div>
+        <div class="form-row" v-if="isStudent && student != undefined">
+          <div class="form-group col-md-6">
+            <label class="form-name">Дата рождения:</label><br />
+            <p v-if="!edit">
+              {{ isNullOrEmpty(formatDate(student.birthdate)) }}
+            </p>
+            <input
+              v-else
+              class="form-control"
+              id="birthdate"
+              type="date"
+              v-model="formStudent.birthdate"
+              :max="new Date().toISOString().substr(0, 10)"
+            />
+          </div>
+        </div>
+        <div class="form-row" v-if="!isStudent && employee != undefined">
+          <div class="form-group col-md-6">
+            <label class="form-name">Организация: </label><br />
+            <p>{{ employee.organization.fullname }}</p>
+          </div>
+        </div>
+        <div class="form-row" v-if="!isStudent && employee != undefined">
+          <div class="form-group col-md-6">
+            <label class="form-name">Должность:</label><br />
+            <p v-if="!edit">{{ isNullOrEmpty(employee.position) }}</p>
+            <input
+              v-else
+              id="position"
+              class="form-control"
+              type="text"
+              v-model.trim="formEmployee.position"
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="form-name">E-mail </label><br />
+            <p v-if="!isStudent && employee != undefined">
+              {{ employee.user.email }}
+            </p>
+            <p v-if="isStudent && student != undefined">
+              {{ student.user.email }}
+            </p>
+          </div>
+        </div>
+      </form>
+      <div v-if="edit" @click="onEdit">
+        <button class="text-gradient to-block">
+          Сохранить
+          <span class="text">Сохранить</span>
+        </button>
+      </div>
+      <div v-if="!edit" @click="onEdit">
+        <button class="text-gradient to-block">
+          Изменить
+          <span class="text">Изменить</span>
+        </button>
+      </div>
+      <br />
       <p>
-        <router-link tag="a" :to="{ name: 'DeleteAccount' }"
+        <router-link
+          tag="a"
+          class="text-decoration-none"
+          :to="{ name: 'DeleteAccount' }"
           >Удалить аккаунт</router-link
         >
       </p>
@@ -137,6 +174,10 @@ export default {
     },
   },
   methods: {
+    isNullOrEmpty(str) {
+      if (str == null || str == undefined || str == "") return "-";
+      else return str;
+    },
     formatDate(date) {
       if (!date) return null;
       const [year, month, day] = date.split("-");
@@ -174,7 +215,7 @@ export default {
       } else {
         if (!this.edit) {
           this.edit = true;
-          this.formEmployee.position = this.user.position;
+          this.formEmployee.position = this.employee.position;
         } else {
           this.$store.commit("START_LOADING");
           this.$apollo

@@ -4,7 +4,7 @@ from datetime import timezone, datetime
 from config.settings import GRAPHQL_JWT
 
 from users.models import Employee, Student, Subject, User
-from users.mutation import CreateEmployee, CreateStudent, CreateStudentSubject, CreateSubject, DeleteEmployee, DeleteStudent, DeleteStudentSubject, DeleteSubject, Logout, Register, ResetPassword, ResetPasswordConfirm, UpdateEmployee, UpdateStudent, UpdateSubject
+from users.mutation import CreateEmployee, CreateStudent, CreateStudentSubject, CreateSubject, DeleteEmployee, DeleteStudent, DeleteStudentSubject, DeleteSubject, DeleteUser, Logout, Register, ResetPassword, ResetPasswordConfirm, UpdateEmployee, UpdateStudent, UpdateSubject
 from users.types import EmployeeType, StudentType, SubjectType, UserType
 
 def jwt_payload(user, context=None):
@@ -98,6 +98,7 @@ class Mutation(object):
     create_subject = CreateSubject.Field()
     create_student_subject = CreateStudentSubject.Field()
     delete_employee = DeleteEmployee.Field()
+    delete_user = DeleteUser.Field()
     delete_student = DeleteStudent.Field()
     delete_subject = DeleteSubject.Field()
     delete_student_subject = DeleteStudentSubject.Field()

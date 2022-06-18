@@ -5,6 +5,7 @@
       <div class="my-view">
         <router-view></router-view>
       </div>
+      <div style="height: 100px; width: 100px"></div>
 
       <bottombar></bottombar>
     </div>

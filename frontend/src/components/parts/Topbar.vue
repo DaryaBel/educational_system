@@ -1,7 +1,8 @@
 <template>
   <header>
     <div
-      class="d-flex flex-column flex-md-row align-items-center justify-content-between pb-3 mb-4 mt-1"
+      class="d-flex flex-column flex-md-row align-items-center justify-content-between pb-3 mb-5 mt-1"
+      style="margin-bottom: 5rem !important"
     >
       <router-link tag="a" :to="{ name: 'OlympiadList' }">
         <img src="@/assets/logo.png" alt="Пора!" />

@@ -20,6 +20,13 @@ Vue.config.productionTip = false;
 //   router
 // })
 
+const DEFAULT_TITLE = "Пора!";
+router.afterEach((to, from) => {
+  Vue.nextTick(() => {
+    document.title = to.meta.title || DEFAULT_TITLE;
+  });
+});
+
 new Vue({
   router,
   store,

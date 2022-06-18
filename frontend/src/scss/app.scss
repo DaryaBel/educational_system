@@ -34,38 +34,12 @@ h1 {
   margin-bottom: 3rem;
 }
 
-@media (max-width: 1400px) {
-  h1 {
-    font-size: 4.5rem;
-    margin-bottom: 3rem;
-  }
+h2 {
+  font-size: 3rem;
 }
 
-@media (max-width: 990px) {
-  h1 {
-    font-size: 4rem;
-    margin-bottom: 2rem;
-  }
-}
-
-@media (max-width: 770px) {
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
-  }
-}
-
-@media (max-width: 580px) {
-  h1 {
-    width: 100%;
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-  }
-  button.to-block {
-    display: block;
-    width: 100%;
-  }
+.fs-2 {
+  font-size: 1.5rem !important;
 }
 
 p,
@@ -82,7 +56,6 @@ button {
   font-weight: normal;
   outline: none;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
-
   border-radius: 5px;
 }
 button.text-gradient {
@@ -95,6 +68,7 @@ button.text-gradient {
   -o-transition: 0.8s;
   color: white;
   & .text {
+    text-align: center;
     font-weight: normal;
     position: absolute;
     left: 48px;
@@ -119,6 +93,7 @@ button.text-gradient {
       #11d6e2 91.04%,
       #10d7e2 97.48%
     );
+
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -127,6 +102,10 @@ button.text-gradient {
     -moz-transition: 0.8s;
     -ms-transition: 0.8s;
     -o-transition: 0.8s;
+  }
+  &.btn-sm .text {
+    left: 8px !important;
+    top: 4px !important;
   }
   &:hover {
     color: #1f1e1e;
@@ -165,5 +144,47 @@ button.gradient {
   -o-transition: 1s;
   &:hover {
     background-position: center;
+  }
+}
+
+@media (max-width: 1400px) {
+  h1 {
+    font-size: 4.5rem;
+    margin-bottom: 3rem;
+  }
+}
+
+@media (max-width: 990px) {
+  h1 {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 770px) {
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 581px) {
+  h1 {
+    width: 100%;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  button.to-block {
+    display: block;
+    width: 100%;
+  }
+  button.text-gradient {
+    & .text {
+      display: none;
+    }
+    &:hover {
+      color: white;
+    }
   }
 }

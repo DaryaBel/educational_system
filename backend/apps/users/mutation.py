@@ -226,14 +226,15 @@ class DeleteStudentSubject(graphene.Mutation):
 class UpdateEmployee(graphene.Mutation):
     class Arguments:
         employee_id = graphene.ID(required=True)
-        position = graphene.String(required=True)
+        position = graphene.String()
         
     ok = graphene.Boolean()
     
     @classmethod
-    def mutate(cls, root, info, employee_id, position):
+    def mutate(cls, root, info, employee_id, position=None):
         employee = Employee.objects.get(pk=employee_id)
-        employee.position = position  
+        if position != None:
+            employee.position = position
         employee.save()
 
         return cls(ok=True)

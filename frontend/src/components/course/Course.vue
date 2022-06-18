@@ -3,20 +3,28 @@
     <loader v-if="isLoading || course == undefined"> </loader>
     <div v-else>
       <h1>{{ course.name }}</h1>
+      <img class="rounded img-fluid" src="https://picsum.photos/200" alt="" />
+
       <p>
-        <span v-for="subject in course.courseSubject" :key="subject.subject.id">
+        <span
+          class="badge my-badge badge-secondary mr-2"
+          v-for="subject in course.courseSubject"
+          :key="subject.subject.id"
+        >
           {{ subject.subject.name }}
         </span>
       </p>
-      <img src="https://picsum.photos/200" alt="" />
       <p>{{ course.description }}</p>
+
       <p>
         Организатор: {{ organizationType() }}
         {{ course.organization.shortname }}.
       </p>
+
       <p v-if="whatIsStudyingForm(course.form) != ''">
         Курс проводится {{ whatIsStudyingForm(course.form) }}.
       </p>
+
       <p
         v-if="
           whatIsDurationType(course.duration) != '' &&
@@ -25,6 +33,7 @@
       >
         Длительность: {{ whatIsDurationType(course.duration) }}.
       </p>
+
       <p
         v-if="
           formatDate(course.dateEnd) != null ||
@@ -49,9 +58,6 @@
         >.
       </p>
       <div v-if="isStudent">
-        <b-toast id="success-toast" title="" static>
-          Вы успешно записались на курс!
-        </b-toast>
         <div v-if="countCourseMember == undefined">
           <loader></loader>
         </div>
@@ -81,16 +87,20 @@
             <p v-if="course.maxNumberMember - countCourseMember == 0">
               К сожалению, мест не осталось.
             </p>
+
             <button
               v-if="course.maxNumberMember - countCourseMember != 0"
               @click="toTakePart"
+              class="text-gradient to-block"
             >
               Записаться на курс
+              <span class="text">Записаться на курс</span>
             </button>
           </div>
           <div v-if="isStudentCourseMember">
-            <button @click="toCancelAppointment">
+            <button @click="toCancelAppointment" class="text-gradient to-block">
               Отменить запись на курс
+              <span class="text">Отменить запись на курс</span>
             </button>
           </div>
         </div>
@@ -237,4 +247,9 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+span.my-badge {
+  padding: 4px 8px;
+  background: linear-gradient(132.33deg, #d24074 -0.67%, #6518b4 102.54%);
+}
+</style>

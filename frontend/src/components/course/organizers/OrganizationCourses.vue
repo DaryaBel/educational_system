@@ -3,38 +3,55 @@
     <loader v-if="isLoading || organizationCourses == undefined"></loader>
     <div v-else>
       <h1>Курсы организации</h1>
-      <button @click="onLink()">Добавить новый курс</button>
-      <div>
-        <input
-          placeholder="Поиск по названию и описанию"
-          name="search"
-          id="search"
-          :disabled="organizationCourses == undefined"
-          type="text"
-          v-model.trim="findString"
-        />
+      <button @click="onLink()" class="mb-3 text-gradient to-block">
+        Добавить новый курс
+        <span class="text">Добавить новый курс</span>
+      </button>
+      <div class="row mb-3">
+        <div class="col-lg-4 mb-2 d-flex align-items-center">
+          <input
+            placeholder="Поиск по названию и описанию"
+            name="search"
+            id="search"
+            class="form-control"
+            :disabled="organizationCourses == undefined"
+            type="text"
+            v-model.trim="findString"
+          />
+        </div>
+        <div class="col-lg-4 mb-2 d-flex align-items-center">
+          <span class="mr-2">Опубликован?</span>
+          <select
+            name="published"
+            class="form-control"
+            id="published"
+            v-model="published"
+          >
+            <option value="all">Все</option>
+            <option value="yes">Да</option>
+            <option value="no">Нет</option>
+          </select>
+        </div>
       </div>
-      <span>Опубликован?</span>
-      <select name="published" id="published" v-model="published">
-        <option value="all">Все</option>
-        <option value="yes">Да</option>
-        <option value="no">Нет</option>
-      </select>
       <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
-        <table v-else>
+        <table v-else class="table">
           <tr>
-            <th>Название</th>
-            <th>Предметы</th>
-            <th>Форма проведения</th>
-            <th>Опубликовано</th>
-            <th></th>
+            <th scope="col">Название</th>
+            <th scope="col">Предметы</th>
+            <th scope="col">Форма проведения</th>
+            <th scope="col">Опубликовано</th>
+            <th scope="col"></th>
           </tr>
           <tr v-for="course in filterItems" :key="course.id">
             <td>
               <router-link
                 tag="a"
-                :to="{ name: 'OrganizationCourse', params: { id: course.id } }"
+                class="text-decoration-none"
+                :to="{
+                  name: 'OrganizationCourse',
+                  params: { id: course.id },
+                }"
                 >{{ course.name }}</router-link
               >
             </td>
@@ -50,21 +67,27 @@
             <td>{{ course.published ? "Да" : "Нет" }}</td>
             <td>
               <button
+                class="mb-2 btn-sm text-gradient"
                 @click="
+                  openModal();
                   modal = true;
                   modalId = course.id;
                   modalName = course.name;
                 "
               >
-                Удалить</button
-              ><br />
+                Удалить
+                <span class="text">Удалить</span>
+              </button>
+              <br />
               <button
+                class="gradient btn-sm"
                 v-if="!course.published"
                 @click="toPublish(course.id, true)"
               >
                 Опубликовать
               </button>
               <button
+                class="gradient btn-sm"
                 v-if="course.published"
                 @click="toPublish(course.id, false)"
               >
@@ -80,6 +103,7 @@
             modal = false;
             modalId = 0;
             modalName = '';
+            closeModal();
           "
           :courseId="modalId"
           :courseName="modalName"
@@ -194,6 +218,12 @@ export default {
           console.error(error);
         });
       this.$store.commit("STOP_LOADING");
+    },
+    openModal() {
+      document.documentElement.style.overflow = "hidden";
+    },
+    closeModal() {
+      document.documentElement.style.overflow = "auto";
     },
     onLink() {
       this.$router.push({ name: "NewCourse" });

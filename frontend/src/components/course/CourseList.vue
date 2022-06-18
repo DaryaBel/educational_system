@@ -2,94 +2,104 @@
   <div>
     <loader v-if="isLoading || publishedCourses == undefined"></loader>
     <div v-else>
-      <h1>Образовательные курсы</h1>
-      <div>
-        <input
-          placeholder="Поиск по названию и описанию"
-          name="search"
-          id="search"
-          :disabled="publishedCourses == undefined"
-          type="text"
-          v-model.trim="findString"
-        />
-        <multiselect
-          :disabled="publishedCourses == undefined || subjects == undefined"
-          v-model="findSubject"
-          track-by="id"
-          label="name"
-          placeholder="Выберите школьные предметы"
-          :options="subjectsOption"
-          :showLabels="false"
-          :searchable="true"
-          :allow-empty="true"
-          :showPointer="false"
-          :multiple="true"
-          :close-on-select="false"
-          :clear-on-select="false"
-        >
-          <span slot="noResult">Не найдено</span>
-        </multiselect>
-
-        <multiselect
-          :disabled="publishedCourses == undefined"
-          v-model="findFormat"
-          track-by="value"
-          label="text"
-          placeholder="Выберите формат проведения"
-          :options="formats"
-          :showLabels="false"
-          :searchable="false"
-          :allow-empty="true"
-          :showPointer="false"
-          :multiple="true"
-          :close-on-select="false"
-        >
-          <span slot="noResult">Не найдено</span>
-        </multiselect>
-
-        <multiselect
-          :disabled="
-            publishedCourses == undefined || organizations == undefined
-          "
-          v-model="findOrganization"
-          track-by="id"
-          label="fullname"
-          placeholder="Выберите организатора"
-          :options="organizationsOption"
-          :showLabels="false"
-          :searchable="true"
-          :allow-empty="true"
-          :showPointer="false"
-          :multiple="true"
-          :close-on-select="false"
-          :clear-on-select="false"
-        >
-          <span slot="noResult">Не найдено</span>
-        </multiselect>
-        <multiselect
-          :disabled="
-            publishedCourses == undefined ||
-            cities == undefined ||
-            !offlineFormat()
-          "
-          v-model="findCities"
-          track-by="id"
-          label="name"
-          placeholder="Выберите город проведения"
-          :options="citiesOption"
-          :showLabels="false"
-          :searchable="true"
-          :allow-empty="true"
-          :showPointer="false"
-          :multiple="true"
-          :close-on-select="false"
-          :clear-on-select="false"
-        >
-          <span slot="noResult">Не найдено</span>
-          <span slot="noOptions">Не найдено</span>
-        </multiselect>
+      <h1>Курсы</h1>
+      <div class="row mb-5">
+        <div class="col-lg-3 mb-2 d-flex align-items-center">
+          <input
+            placeholder="Поиск по названию и описанию"
+            name="search"
+            class="form-control"
+            id="search"
+            :disabled="publishedCourses == undefined"
+            type="text"
+            v-model.trim="findString"
+          />
+        </div>
+        <div class="col-lg-3 mb-2">
+          <multiselect
+            :disabled="publishedCourses == undefined || subjects == undefined"
+            v-model="findSubject"
+            track-by="id"
+            label="name"
+            placeholder="Школьные предметы"
+            :options="subjectsOption"
+            :showLabels="false"
+            :searchable="true"
+            :allow-empty="true"
+            :showPointer="false"
+            :multiple="true"
+            :close-on-select="false"
+            :clear-on-select="false"
+          >
+            <span slot="noResult">Не найдено</span>
+          </multiselect>
+        </div>
+        <div class="col-lg-2 mb-2">
+          <multiselect
+            :disabled="publishedCourses == undefined"
+            v-model="findFormat"
+            track-by="value"
+            label="text"
+            placeholder="Формат"
+            :options="formats"
+            :showLabels="false"
+            :searchable="false"
+            :allow-empty="true"
+            :showPointer="false"
+            :multiple="true"
+            :close-on-select="false"
+          >
+            <span slot="noResult">Не найдено</span>
+          </multiselect>
+        </div>
+        <div class="col-lg-2 mb-2">
+          <multiselect
+            :disabled="
+              publishedCourses == undefined || organizations == undefined
+            "
+            v-model="findOrganization"
+            track-by="id"
+            label="fullname"
+            placeholder="Организатор"
+            :options="organizationsOption"
+            :showLabels="false"
+            :searchable="true"
+            :allow-empty="true"
+            :showPointer="false"
+            :multiple="true"
+            :close-on-select="false"
+            :clear-on-select="false"
+          >
+            <span slot="noResult">Не найдено</span>
+          </multiselect>
+        </div>
+        <div class="col-lg-2 mb-2">
+          <multiselect
+            :disabled="
+              publishedCourses == undefined ||
+              cities == undefined ||
+              !offlineFormat()
+            "
+            v-model="findCities"
+            track-by="id"
+            label="name"
+            placeholder="Город"
+            :options="citiesOption"
+            :showLabels="false"
+            :searchable="true"
+            :allow-empty="true"
+            :showPointer="false"
+            :multiple="true"
+            :close-on-select="false"
+            :clear-on-select="false"
+          >
+            <span slot="noResult">Не найдено</span>
+            <span slot="noOptions">Не найдено</span>
+          </multiselect>
+        </div>
       </div>
-      <div>
+
+      <div class="mb-5">
         <div v-for="course in filterItems" :key="course.id">
           <course-element :course="course" :canDelete="false"> </course-element>
         </div>
@@ -259,4 +269,37 @@ export default {
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-<style lang="scss"></style>
+<style lang="scss">
+div.col-lg-2 div.multiselect__tags,
+div.col-lg-4 div.multiselect__tags,
+div.col-lg-3 div.multiselect__tags {
+  border: 1px solid #ced4da;
+  color: #495057;
+  font-weight: 400;
+}
+
+div.col-lg-2
+  div.multiselect
+  div.multiselect__tags
+  div.multiselect__tags-wrap
+  span.multiselect__tag,
+div.col-lg-3
+  div.multiselect
+  div.multiselect__tags
+  div.multiselect__tags-wrap
+  span.multiselect__tag,
+div.col-lg-4
+  div.multiselect
+  div.multiselect__tags
+  div.multiselect__tags-wrap
+  span.multiselect__tag {
+  background: #924de9 !important;
+  & .multiselect__tag-icon:focus,
+  .multiselect__tag-icon:hover {
+    background: #924de9 !important;
+  }
+  & span {
+    color: white !important;
+  }
+}
+</style>

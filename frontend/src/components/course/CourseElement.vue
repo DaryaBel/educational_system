@@ -1,21 +1,36 @@
 <template>
-  <div class="border-line">
-    <p>
-      <router-link
-        tag="a"
-        :to="{ name: 'Course', params: { id: course.id } }"
-        >{{ course.name }}</router-link
+  <div class="col-md-6 mr-4 p-0" style="width: 100% !important">
+    <img
+      src="https://picsum.photos/200"
+      class="rounded img-fluid my-img"
+      alt=""
+    /><br />
+
+    <router-link
+      tag="a"
+      class="text-decoration-none fs-2"
+      :to="{ name: 'Course', params: { id: course.id } }"
+      >{{ course.name }}</router-link
+    >
+
+    <p class="mb-1">
+      <span
+        class="badge my-badge badge-secondary mr-2"
+        v-for="subject in course.courseSubject"
+        :key="subject.subject.id"
       >
-    </p>
-    <p>
-      <span v-for="subject in course.courseSubject" :key="subject.subject.id">
         {{ subject.subject.name }}
       </span>
     </p>
-    <p>{{ course.description }}</p>
-    <button v-if="canDelete" @click="toCancelAppointment">
+    <p class="mb-1">{{ course.description }}</p>
+    <span
+      v-if="canDelete"
+      @click="toCancelAppointment"
+      class="text-danger"
+      style="cursor: pointer"
+    >
       Отменить запись на курс
-    </button>
+    </span>
   </div>
 </template>
 
@@ -56,7 +71,11 @@ export default {
 </script>
 
 <style lang="scss">
-.border-line {
-  border: 1px solid seagreen;
+img.my-img {
+  width: 100% !important;
+}
+span.my-badge {
+  padding: 4px 8px;
+  background: linear-gradient(132.33deg, #d24074 -0.67%, #6518b4 102.54%);
 }
 </style>

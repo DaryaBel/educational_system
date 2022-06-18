@@ -3,166 +3,319 @@
     <loader v-if="isLoading"></loader>
     <div v-else>
       <h1>Регистрация</h1>
-      <div class="form-group">
-        <label for="lastName" class="form-name">Фамилия *</label><br />
-        <input
-          id="lastName"
-          name="lastName"
-          :disabled="isLoading"
-          type="text"
-          v-model.trim="form.lastName"
-          :class="{ 'is-invalid': submitted && $v.form.lastName.$error }"
-        />
-        <div
-          v-if="submitted && $v.form.lastName.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.lastName.required">Данное поле обязательно</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="firstName" class="form-name">Имя *</label><br />
-        <input
-          id="firstName"
-          name="firstName"
-          :disabled="isLoading"
-          type="text"
-          v-model.trim="form.firstName"
-          :class="{ 'is-invalid': submitted && $v.form.firstName.$error }"
-        />
-        <div
-          v-if="submitted && $v.form.firstName.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.firstName.required"
-            >Данное поле обязательно</span
-          >
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="patronymic" class="form-name">Отчество</label><br />
-        <input
-          id="patronymic"
-          name="patronymic"
-          :disabled="isLoading"
-          type="text"
-          v-model.trim="form.patronymic"
-          :class="{ 'is-invalid': submitted && $v.form.patronymic.$error }"
-        />
-      </div>
-      <div class="form-group">
-        <label for="birthdate" class="form-name">Дата рождения</label><br />
-        <input
-          id="birthdate"
-          name="birthdate"
-          :disabled="isLoading"
-          type="date"
-          v-model="form.birthdate"
-          :max="new Date().toISOString().substr(0, 10)"
-          :class="{ 'is-invalid': submitted && $v.form.birthdate.$error }"
-        />
-      </div>
-      <div class="form-group">
-        <label for="email" class="form-name">E-mail *</label><br />
-        <input
-          id="email"
-          name="email"
-          :disabled="isLoading"
-          type="text"
-          v-model.trim="form.email"
-          :class="{ 'is-invalid': submitted && $v.form.email.$error }"
-        />
-        <div v-if="submitted && $v.form.email.$error" class="invalid-feedback">
-          <span v-if="!$v.form.email.required">Данное поле обязательно</span>
-          <span v-if="!$v.form.email.email">Некорректный email</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="password" class="form-name">Пароль *</label><br />
-        <input
-          id="password"
-          name="password"
-          :disabled="isLoading"
-          :type="passShow ? 'text' : 'password'"
-          v-model="form.password"
-          :class="{ 'is-invalid': submitted && $v.form.password.$error }"
-        />
-        <button @click="passShow = !passShow">Показать/спрятать</button>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="lastName" class="form-name">Фамилия *</label><br />
+            <input
+              id="lastName"
+              name="lastName"
+              class="form-control"
+              :disabled="isLoading"
+              type="text"
+              v-model.trim="form.lastName"
+              :class="{ 'is-invalid': submitted && $v.form.lastName.$error }"
+            />
 
-        <div
-          v-if="submitted && $v.form.password.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.password.required">Данное поле обязательно</span>
-          <span v-if="$v.form.password.minLength.$invalid"
-            >Пароль должен содержать не менее 6 символов</span
-          >
+            <p
+              v-if="submitted && !$v.form.lastName.required"
+              class="invalid-feedback"
+            >
+              Данное поле обязательно
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="confirmPassword" class="form-name">Повторите пароль *</label
-        ><br />
-        <input
-          id="confirmPassword"
-          name="confirmPassword"
-          :disabled="isLoading"
-          :type="passShow2 ? 'text' : 'password'"
-          v-model="form.confirmPassword"
-          :class="{ 'is-invalid': submitted && $v.form.confirmPassword.$error }"
-        />
-        <button @click="passShow2 = !passShow2">Показать/спрятать</button>
-        <div
-          v-if="
-            submitted && ($v.form.confirmPassword.$error || !passwordIsSame())
-          "
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.confirmPassword.required"
-            >Данное поле обязательно</span
-          >
-          <span v-else-if="!passwordIsSame()">Пароли не совпадают</span>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="firstName" class="form-name">Имя *</label><br />
+            <input
+              id="firstName"
+              name="firstName"
+              class="form-control"
+              :disabled="isLoading"
+              type="text"
+              v-model.trim="form.firstName"
+              :class="{ 'is-invalid': submitted && $v.form.firstName.$error }"
+            />
+            <p
+              v-if="submitted && !$v.form.firstName.required"
+              class="invalid-feedback"
+            >
+              Данное поле обязательно
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <input
-          type="checkbox"
-          class="custom-checkbox"
-          id="personalData"
-          :disabled="isLoading"
-          v-model="form.personalData"
-          name="personalData"
-          :class="{ 'is-invalid': submitted && $v.form.personalData.$error }"
-        />
-        <label for="personalData"
-          >Согласен(на) на обработку персональных данных</label
-        >
-        <div
-          v-if="submitted && $v.form.personalData.$error"
-          class="invalid-feedback"
-        >
-          <span v-if="!$v.form.personalData.required"
-            >Данное поле обязательно</span
-          >
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="patronymic" class="form-name">Отчество</label><br />
+            <input
+              id="patronymic"
+              name="patronymic"
+              :disabled="isLoading"
+              class="form-control"
+              type="text"
+              v-model.trim="form.patronymic"
+            />
+          </div>
         </div>
-      </div>
-      <div class="errors">
-        <div class="error-message" v-if="errorsContain('emailAlreadyExists')">
-          Пользователь с указанным email уже существует.
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="birthdate" class="form-name">Дата рождения</label><br />
+            <input
+              id="birthdate"
+              name="birthdate"
+              class="form-control"
+              :disabled="isLoading"
+              type="date"
+              v-model="form.birthdate"
+              :max="new Date().toISOString().substr(0, 10)"
+            />
+          </div>
         </div>
-        <div class="error-message" v-if="errorsContain('commonError')">
-          Произошла ошибка. Повторите попытку позднее.
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="email" class="form-name">E-mail *</label><br />
+            <input
+              id="email"
+              name="email"
+              class="form-control"
+              :disabled="isLoading"
+              type="text"
+              v-model.trim="form.email"
+              :class="{ 'is-invalid': submitted && $v.form.email.$error }"
+            />
+
+            <p
+              v-if="submitted && !$v.form.email.required"
+              class="invalid-feedback"
+            >
+              Данное поле обязательно
+            </p>
+            <p
+              v-if="submitted && !$v.form.email.email"
+              class="invalid-feedback"
+            >
+              Некорректный email
+            </p>
+          </div>
         </div>
-      </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="password" class="form-name">Пароль *</label><br />
+            <div style="position: relative">
+              <input
+                id="password"
+                name="password"
+                :disabled="isLoading"
+                :type="passShow ? 'text' : 'password'"
+                v-model="form.password"
+                class="form-control"
+                :class="{ 'is-invalid': submitted && $v.form.password.$error }"
+              />
+              <p
+                v-if="submitted && !$v.form.password.required"
+                class="invalid-feedback"
+              >
+                Данное поле обязательно
+              </p>
+              <p
+                v-if="submitted && !$v.form.password.minLength"
+                class="invalid-feedback"
+              >
+                Пароль должен содержать не менее 6 символов
+              </p>
+              <svg
+                v-if="!passShow"
+                @click="passShow = !passShow"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                style="cursor: pointer"
+                fill="currentColor"
+                :class="{
+                  'd-none':
+                    submitted &&
+                    (!$v.form.password.required || !$v.form.password.minLength),
+                }"
+                class="bi bi-eye my-icon-eye"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+                />
+                <path
+                  d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
+                />
+              </svg>
+              <svg
+                v-if="passShow"
+                @click="passShow = !passShow"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                style="cursor: pointer"
+                :class="{
+                  'd-none':
+                    submitted &&
+                    (!$v.form.password.required || !$v.form.password.minLength),
+                }"
+                class="bi bi-eye-slash my-icon-eye"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"
+                />
+                <path
+                  d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"
+                />
+                <path
+                  d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="confirmPassword" class="form-name"
+              >Повторите пароль *</label
+            ><br />
+            <div style="position: relative">
+              <input
+                class="form-control"
+                id="confirmPassword"
+                name="confirmPassword"
+                :disabled="isLoading"
+                :type="passShow2 ? 'text' : 'password'"
+                v-model="form.confirmPassword"
+                :class="{
+                  'is-invalid':
+                    submitted &&
+                    ($v.form.confirmPassword.$error || !passwordIsSame),
+                }"
+              />
+              <p
+                v-if="submitted && !$v.form.confirmPassword.required"
+                class="invalid-feedback"
+              >
+                Данное поле обязательно
+              </p>
+
+              <p
+                v-else-if="submitted && !passwordIsSame"
+                class="invalid-feedback"
+              >
+                Пароли не совпадают
+              </p>
+              <svg
+                v-if="!passShow2"
+                @click="passShow2 = !passShow2"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                style="cursor: pointer"
+                fill="currentColor"
+                :class="{
+                  'd-none':
+                    submitted &&
+                    (!$v.form.confirmPassword.required || !passwordIsSame),
+                }"
+                class="bi bi-eye my-icon-eye"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+                />
+                <path
+                  d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
+                />
+              </svg>
+              <svg
+                v-if="passShow2"
+                @click="passShow2 = !passShow2"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                style="cursor: pointer"
+                :class="{
+                  'd-none':
+                    submitted &&
+                    (!$v.form.confirmPassword.required || !passwordIsSame),
+                }"
+                class="bi bi-eye-slash my-icon-eye"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"
+                />
+                <path
+                  d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"
+                />
+                <path
+                  d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="personalData"
+                :disabled="isLoading"
+                v-model="form.personalData"
+                name="personalData"
+                :class="{
+                  'is-invalid': submitted && !$v.form.personalData.$model,
+                }"
+              />
+              <label class="form-check-label" for="personalData">
+                Согласен(на) на обработку персональных данных</label
+              >
+              <p
+                v-if="submitted && !$v.form.personalData.$model"
+                class="invalid-feedback"
+              >
+                Данное поле обязательно
+              </p>
+            </div>
+          </div>
+        </div>
+      </form>
+      <p v-if="errorsContain('emailAlreadyExists')" class="errors fs-2">
+        Пользователь с указанным email уже существует.
+      </p>
+      <p v-if="errorsContain('commonError')" class="errors fs-2">
+        Произошла ошибка. Повторите попытку позднее.
+      </p>
+
       <p>* - обязательное поле</p>
-      <button @click="onSignUp">Зарегистрироваться</button>
+      <div>
+        <button class="text-gradient to-block" @click="onSignUp">
+          Зарегистрироваться
+          <span class="text">Зарегистрироваться</span>
+        </button>
+      </div>
+      <br />
       <p>
         Есть аккаунт?
-        <router-link tag="a" :to="{ name: 'LogIn' }"
+        <router-link
+          tag="a"
+          class="text-decoration-none"
+          :to="{ name: 'LogIn' }"
           >Авторизируйся!</router-link
         >
       </p>
       <p>
-        <router-link tag="a" :to="{ name: 'SignUpEmployee' }"
+        <router-link
+          tag="a"
+          class="text-decoration-none"
+          :to="{ name: 'SignUpEmployee' }"
           >Зарегистрироваться как представитель образовательной организации или
           компании</router-link
         >
@@ -204,6 +357,9 @@ export default {
     isLoading() {
       return this.$store.state.isLoading;
     },
+    passwordIsSame() {
+      return this.form.password === this.form.confirmPassword;
+    },
   },
   validations: {
     form: {
@@ -227,9 +383,7 @@ export default {
       if (this.errors != null) return this.errors.includes(error);
       else return false;
     },
-    passwordIsSame() {
-      return this.form.password === this.form.confirmPassword;
-    },
+
     onLogin() {
       this.$store.commit("START_LOADING");
       this.$apollo
@@ -283,10 +437,9 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-        })
-        .finally(() => {
           this.$store.commit("STOP_LOADING");
-        });
+        })
+        .finally(() => {});
     },
     onSignUp() {
       this.submitted = true;
@@ -315,73 +468,22 @@ export default {
         .catch((error) => {
           console.log("error", error);
           this.errors = ["commonError"];
-        })
-        .finally(() => {
           this.$store.commit("STOP_LOADING");
-        });
+        })
+        .finally(() => {});
     },
   },
 };
 </script>
 
 <style lang="scss">
-input[type="checkbox"]:checked,
-input[type="checkbox"]:not(:checked) {
+.errors {
+  color: #dc3545;
+}
+
+div svg.my-icon-eye {
   position: absolute;
-  left: -9999px;
-}
-
-input[type="checkbox"]:checked + label,
-input[type="checkbox"]:not(:checked) + label {
-  display: inline-block;
-  position: relative;
-  padding-left: 28px;
-  line-height: 20px;
-}
-
-input[type="checkbox"]:checked + label:before,
-input[type="checkbox"]:not(:checked) + label:before {
-  content: "";
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  width: 18px;
-  height: 18px;
-  border: 1px solid rgb(118, 118, 118);
-  border-radius: 3px;
-  background-color: white;
-}
-
-input[type="checkbox"]:checked + label:after,
-input[type="checkbox"]:not(:checked) + label:after {
-  content: "";
-  position: absolute;
-  -webkit-transition: all 0.2s ease;
-  -moz-transition: all 0.2s ease;
-  -o-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-
-input[type="checkbox"]:checked + label:after,
-input[type="checkbox"]:not(:checked) + label:after {
-  left: 4px;
-  top: 5px;
-  width: 9px;
-  height: 4px;
-  border-left: 3px solid #13a2ff;
-  border-bottom: 3px solid #13a2ff;
-  -webkit-transform: rotate(-45deg);
-  -moz-transform: rotate(-45deg);
-  -o-transform: rotate(-45deg);
-  -ms-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-}
-
-input[type="checkbox"]:not(:checked) + label:after {
-  opacity: 0;
-}
-
-input[type="checkbox"]:checked + label:after {
-  opacity: 1;
+  right: 11px;
+  top: 11px;
 }
 </style>

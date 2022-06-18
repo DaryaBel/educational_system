@@ -2,9 +2,15 @@
   <div>
     <loader v-if="isLoading"></loader>
     <div v-else>
-      <h1>Вы действительно хотите удалить аккаунт?</h1>
-      <button @click="backToProfile()">Нет</button>
-      <button @click="deleteAccount()">Да</button>
+      <h2>Вы действительно хотите удалить аккаунт?</h2>
+      <br />
+      <button class="gradient to-block mr-4" @click="backToProfile()">
+        Нет
+      </button>
+      <button class="text-gradient to-block" @click="deleteAccount()">
+        Да
+        <span class="text">Да</span>
+      </button>
     </div>
   </div>
 </template>
@@ -35,7 +41,6 @@ export default {
           mutation: DELETE_USER,
           variables: {
             userId: this.userId,
-            p,
           },
         })
         .then(() => {
