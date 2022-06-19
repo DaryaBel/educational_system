@@ -1,19 +1,19 @@
 <template>
   <div style="width: 100% !important">
     <img
-      src="https://picsum.photos/200"
-      class="rounded img-fluid my-img"
+      :src="'http://localhost:8000/media/' + course.organization.logo"
+      class="rounded img-fluid my-img mb-4"
       alt=""
     /><br />
 
     <router-link
       tag="a"
-      class="text-decoration-none fs-2"
+      class="text-decoration-none fs-2 mb-2"
       :to="{ name: 'Course', params: { id: course.id } }"
       >{{ course.name }}</router-link
     >
 
-    <p class="mb-1">
+    <p class="mb-3">
       <span
         class="badge my-badge badge-secondary mr-2"
         v-for="subject in course.courseSubject"
@@ -72,6 +72,7 @@ export default {
 
 <style lang="scss">
 img.my-img {
+  border: 1px solid #dee2e6;
   width: 100% !important;
 }
 span.my-badge {

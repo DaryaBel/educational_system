@@ -28,6 +28,38 @@ export default {
 <style lang="scss">
 @import "@/scss/app.scss";
 
+@font-face {
+  font-family: "Inter", sans-serif;
+  src: local("Inter"),
+    url(./assets/fonts/Inter/Inter-Light.ttf) format("truetype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Inter", sans-serif;
+  src: local("Inter"),
+    url(./assets/fonts/Inter/Inter-Regular.ttf) format("truetype");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Raleway", sans-serif;
+  src: local("Raleway"),
+    url(./assets/fonts/Raleway/Raleway-Bold.ttf) format("truetype");
+  font-weight: bold;
+}
+
+* {
+  font-family: "Inter", sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Raleway", sans-serif;
+}
 .my-view {
   min-height: calc(100vh - 285px);
 }

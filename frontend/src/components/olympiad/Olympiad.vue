@@ -3,7 +3,12 @@
     <loader v-if="isLoading || olympiad == undefined"> </loader>
     <div v-else>
       <h1>{{ olympiad.name }}</h1>
-      <img class="rounded img-fluid" src="https://picsum.photos/200" alt="" />
+      <img
+        class="rounded img-fluid mb-4"
+        :src="'http://localhost:8000/media/' + olympiad.organization.logo"
+        alt=""
+        style="max-width: 400px; border: 1px solid #dee2e6"
+      />
 
       <p>
         <span

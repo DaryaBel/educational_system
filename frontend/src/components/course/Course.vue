@@ -3,8 +3,12 @@
     <loader v-if="isLoading || course == undefined"> </loader>
     <div v-else>
       <h1>{{ course.name }}</h1>
-      <img class="rounded img-fluid" src="https://picsum.photos/200" alt="" />
-
+      <img
+        class="rounded img-fluid mb-4"
+        :src="'http://localhost:8000/media/' + course.organization.logo"
+        alt=""
+        style="max-width: 400px; border: 1px solid #dee2e6"
+      />
       <p>
         <span
           class="badge my-badge badge-secondary mr-2"

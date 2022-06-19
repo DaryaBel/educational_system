@@ -37,6 +37,7 @@ export const COURSE = gql`
         id
         shortname
         kind
+        logo
       }
     }
   }
@@ -83,6 +84,7 @@ export const EMPLOYEE = gql`
       id
       organization {
         id
+        logo
         fullname
       }
       position
@@ -147,6 +149,7 @@ export const PUBLISHED_COURSES = gql`
       name
       description
       organization {
+        logo
         id
         fullname
         shortname
@@ -174,6 +177,7 @@ export const PUBLISHED_OLYMPIADS = gql`
       name
       description
       organization {
+        logo
         id
         fullname
         shortname
@@ -201,6 +205,7 @@ export const SUBJECTS = gql`
 export const SHORT_LIST_ORGANIZATIONS = gql`
   {
     organizations {
+      logo
       id
       fullname
       shortname
@@ -224,6 +229,7 @@ export const STUDENT_COURSES = gql`
       name
       description
       organization {
+        logo
         id
         fullname
         shortname
@@ -248,6 +254,7 @@ export const STUDENT_OLYMPIADS = gql`
       description
       resultPublished
       organization {
+        logo
         id
         fullname
         shortname
@@ -280,6 +287,7 @@ export const OLYMPIAD = gql`
       name
       description
       organization {
+        logo
         id
         kind
         fullname
