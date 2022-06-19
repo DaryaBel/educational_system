@@ -24,9 +24,9 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = ['last_login', 'registered_at']
 
 
-# class StudentSubjectInline(admin.StackedInline):
-#     model = StudentSubject
-#     extra = 0
+class StudentSubjectInline(admin.StackedInline):
+    model = StudentSubject
+    extra = 0
     
 class EmployeeAdmin(admin.ModelAdmin):
     """Сотрудники"""
@@ -48,7 +48,7 @@ class StudentAdmin(admin.ModelAdmin):
     """Школьники"""
     list_display = ('__str__', 'birthdate',)
     search_fields = ('user', 'patronymic',)
-    # inlines = [StudentSubjectInline]
+    inlines = [StudentSubjectInline]
 
 class SubjectAdmin(admin.ModelAdmin):
     """Предметы"""

@@ -3,24 +3,26 @@
     <loader v-if="courseStudents == undefined"></loader>
     <div v-else>
       <h1>Записавшиеся на курс</h1>
-      <div>
-        <input
-          placeholder="Поиск по ФИО и email"
-          name="search"
-          id="search"
-          :disabled="courseStudents == undefined"
-          type="text"
-          v-model.trim="findString"
-        />
+      <div class="row mb-3">
+        <div class="col-lg-4 mb-2 d-flex align-items-center">
+          <input
+            class="form-control"
+            placeholder="Поиск по ФИО и email"
+            name="search"
+            id="search"
+            :disabled="courseStudents == undefined"
+            type="text"
+            v-model.trim="findString"
+          />
+        </div>
       </div>
-
       <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
-        <table v-else>
+        <table class="table" v-else>
           <tr>
-            <th>ФИО</th>
-            <th>Дата рождения</th>
-            <th>Email</th>
+            <th scope="col">ФИО</th>
+            <th scope="col">Дата рождения</th>
+            <th scope="col">Email</th>
           </tr>
           <tr v-for="student in filterItems" :key="student.id">
             <td>
