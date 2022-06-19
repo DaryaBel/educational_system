@@ -3,15 +3,17 @@
     <loader v-if="isLoading || olympiad == undefined"> </loader>
     <div v-else>
       <h1>{{ olympiad.name }}</h1>
+      <img class="rounded img-fluid" src="https://picsum.photos/200" alt="" />
+
       <p>
         <span
+          class="badge my-badge badge-secondary mr-2"
           v-for="subject in olympiad.olympiadSubject"
           :key="subject.subject.id"
         >
           {{ subject.subject.name }}
         </span>
       </p>
-      <img src="https://picsum.photos/200" alt="" />
       <p>{{ olympiad.description }}</p>
       <p>
         Организатор: {{ organizationType() }}
@@ -25,23 +27,43 @@
         Результаты олимпиады будут объявлены
         {{ formatDate(olympiad.dateResult) }}.
       </p>
+
       <div v-if="isStudent">
-        <button v-if="result == undefined" @click="toTakePart">
+        <button
+          v-if="result == undefined"
+          @click="toTakePart"
+          class="text-gradient to-block"
+        >
           Принять участие
+          <span class="text">Принять участие</span>
         </button>
+
         <div v-else>
-          <button v-if="result.status == 'TAKEPART'" @click="toBegin">
+          <button
+            v-if="result.status == 'TAKEPART'"
+            @click="toBegin"
+            class="gradient to-block mb-2 mr-2"
+          >
             Начать выполнение
           </button>
+
           <button
             @click="toCancelParticipation"
             v-if="result.status == 'TAKEPART'"
+            class="text-gradient to-block"
           >
             Отменить участие
+            <span class="text">Отменить участие</span>
           </button>
-          <button @click="toContinue" v-if="result.status == 'BEGIN'">
+
+          <button
+            @click="toContinue"
+            v-if="result.status == 'BEGIN'"
+            class="gradient to-block"
+          >
             Продолжить выполнение
           </button>
+
           <p
             v-if="
               result.status == 'SENT' ||
@@ -54,6 +76,7 @@
           <button
             @click="toGetResult"
             v-if="result.status == 'CHECKED' && olympiad.resultPublished"
+            class="gradient to-block"
           >
             Посмотреть результаты
           </button>
@@ -181,4 +204,9 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+span.my-badge {
+  padding: 4px 8px;
+  background: linear-gradient(132.33deg, #d24074 -0.67%, #6518b4 102.54%);
+}
+</style>

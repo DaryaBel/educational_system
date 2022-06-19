@@ -3,37 +3,52 @@
     <loader v-if="isLoading || organizationOlympiads == undefined"> </loader>
     <div v-else>
       <h1>Олимпиады организации</h1>
-      <button @click="onLink()">Добавить новую олимпиаду</button>
-      <div>
-        <input
-          placeholder="Поиск по названию и описанию"
-          name="search"
-          id="search"
-          :disabled="organizationOlympiads == undefined"
-          type="text"
-          v-model.trim="findString"
-        />
+      <button @click="onLink()" class="mb-3 text-gradient to-block">
+        Добавить новую олимпиаду
+        <span class="text">Добавить новую олимпиаду</span>
+      </button>
+      <div class="row mb-3">
+        <div class="col-lg-4 mb-2 d-flex align-items-center">
+          <input
+            placeholder="Поиск по названию и описанию"
+            name="search"
+            class="form-control"
+            id="search"
+            :disabled="organizationOlympiads == undefined"
+            type="text"
+            v-model.trim="findString"
+          />
+        </div>
+        <div class="col-lg-4 mb-2 d-flex align-items-center">
+          <span class="mr-2">Опубликована?</span>
+
+          <select
+            class="form-control"
+            name="published"
+            id="published"
+            v-model="published"
+          >
+            <option value="all">Все</option>
+            <option value="yes">Да</option>
+            <option value="no">Нет</option>
+          </select>
+        </div>
       </div>
-      <span>Опубликована?</span>
-      <select name="published" id="published" v-model="published">
-        <option value="all">Все</option>
-        <option value="yes">Да</option>
-        <option value="no">Нет</option>
-      </select>
       <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
-        <table v-else>
+        <table v-else class="table">
           <tr>
-            <th>Название</th>
-            <th>Предметы</th>
-            <th>Количество заданий</th>
-            <th>Опубликовано</th>
-            <th></th>
+            <th scope="col">Название</th>
+            <th scope="col">Предметы</th>
+            <th scope="col">Количество заданий</th>
+            <th scope="col">Опубликовано</th>
+            <th scope="col"></th>
           </tr>
           <tr v-for="olympiad in filterItems" :key="olympiad.id">
             <td>
               <router-link
                 tag="a"
+                class="text-decoration-none"
                 :to="{
                   name: 'OrganizationOlympiad',
                   params: { id: olympiad.id },
@@ -53,21 +68,26 @@
             <td>{{ olympiad.published ? "Да" : "Нет" }}</td>
             <td>
               <button
+                class="mb-2 btn-sm text-gradient"
                 @click="
+                  openModal();
                   modal = true;
                   modalId = olympiad.id;
                   modalName = olympiad.name;
                 "
               >
-                Удалить</button
+                Удалить
+                <span class="text">Удалить</span></button
               ><br />
               <button
+                class="gradient btn-sm"
                 v-if="!olympiad.published"
                 @click="toPublish(olympiad.id, true)"
               >
                 Опубликовать
               </button>
               <button
+                class="gradient btn-sm"
                 v-if="olympiad.published"
                 @click="toPublish(olympiad.id, false)"
               >
@@ -83,6 +103,7 @@
             modal = false;
             modalId = 0;
             modalName = '';
+            closeModal();
           "
           :olympiadId="modalId"
           :olympiadName="modalName"
@@ -116,7 +137,7 @@ export default {
   },
   components: {
     ModalDeleteOlympiad,
-    Loader
+    Loader,
   },
   data() {
     return {
@@ -174,6 +195,12 @@ export default {
   },
 
   methods: {
+    openModal() {
+      document.documentElement.style.overflow = "hidden";
+    },
+    closeModal() {
+      document.documentElement.style.overflow = "auto";
+    },
     toPublish(olympiadId, published) {
       this.$store.commit("START_LOADING");
 

@@ -11,7 +11,10 @@
         доступен для чтения по ссылке.
       </p>
 
-      <button @click="toStart()">Начать</button>
+      <button @click="toStart()" class="mt-2 text-gradient to-block">
+        Начать
+        <span class="text">Начать</span>
+      </button>
     </div>
   </div>
 </template>

@@ -67,6 +67,15 @@ button.text-gradient {
   -ms-transition: 0.8s;
   -o-transition: 0.8s;
   color: white;
+  &:disabled {
+    color: rgb(120, 120, 120);
+    &:hover {
+      color: rgb(120, 120, 120);
+    }
+    & .text {
+      display: none;
+    }
+  }
   & .text {
     text-align: center;
     font-weight: normal;
@@ -137,6 +146,13 @@ button.gradient {
     #11d6e2 91.04%,
     #10d7e2 97.48%
   );
+  &:disabled {
+    opacity: 0.5;
+    &:hover {
+      background-size: 200% auto;
+    }
+  }
+  opacity: 1;
   transition: 1s;
   -webkit-transition: 1s;
   -moz-transition: 1s;

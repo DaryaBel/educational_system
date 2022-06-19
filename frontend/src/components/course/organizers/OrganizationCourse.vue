@@ -76,7 +76,6 @@
           >
         </p>
         <p>Действия:</p>
-        <div class="row"></div>
         <button
           @click="
             modal = true;

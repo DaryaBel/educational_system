@@ -12,42 +12,47 @@
     <div v-else>
       <div>
         <h1>Решение</h1>
-        <p>
+        <p class="font-weight-normal fs-2">
           {{ result.student.user.lastName }}
           {{ result.student.user.firstName }}
           {{ result.student.patronymic }}
         </p>
         <p v-if="result.score == undefined">
           Необходимое количество процентов для победы:
-          {{ olympiad.percentToWin }}%.
+          <span class="font-weight-normal">{{ olympiad.percentToWin }}%</span>.
         </p>
-        <p v-if="result.score != undefined">
+        <p class="font-weight-normal fs-2" v-if="result.score != undefined">
           Результат участника - {{ result.score }}/{{ totalScore() }}, что
           составляет {{ getPercent(result.score) }}%.
-          <span v-if="result.won">Победитель!</span>
-          <span v-else>Баллов для победы недостаточно.</span>
+          <span class="font-weight-normal" v-if="result.won">Победитель!</span>
+          <span class="font-weight-normal" v-else
+            >Баллов для победы недостаточно.</span
+          >
         </p>
-        <div v-for="task in sortedTasks" :key="task.id">
-          <h4>Задание {{ task.order }}.</h4>
+        <div class="mb-5" v-for="task in sortedTasks" :key="task.id">
+          <p class="fs-2 font-weight-normal">{{ task.order }} задание</p>
           <p>{{ task.task }}</p>
           <p>Максиальный балл: {{ task.maxScore }}</p>
           <div v-if="findAnswer(task.id) != undefined">
-            <p>Ответ:</p>
+            <p class="font-weight-normal">Ответ:</p>
             <p>
               {{ findAnswer(task.id).answer }}
             </p>
             <p v-if="findAnswer(task.id).score != undefined">
               Баллы: {{ findAnswer(task.id).score }}/{{ task.maxScore }}.
             </p>
-            <div v-else>
-              <label for="score">Количество баллов:</label><br />
-
+            <div v-else class="position-relative">
+              <label class="form-name mr-2" for="score"
+                >Количество баллов:</label
+              >
               <input
                 name="score"
                 id="score"
                 type="number"
+                class="form-control position-absolute"
                 min="1"
                 step="1"
+                style="max-width: 90px; top: -4px; left: 150px"
                 :max="task.maxScore"
                 v-model.trim="task.score"
                 @change="getScore(findAnswer(task.id).id, task.score)"
@@ -56,15 +61,13 @@
                     submittedForm && !isScoreValid(findAnswer(task.id)),
                 }"
               />
-              <div
+              <p
                 v-if="submittedForm && !isScoreValid(findAnswer(task.id))"
                 class="invalid-feedback"
               >
-                <span
-                  >Оцените решение баллами в диапазоне от 1 до
-                  {{ task.maxScore }}!</span
-                >
-              </div>
+                Оцените решение баллами в диапазоне от 1 до
+                {{ task.maxScore }}!
+              </p>
             </div>
           </div>
 
@@ -75,7 +78,7 @@
         </div>
 
         <div v-if="result.score == undefined">
-          <p v-if="areScoresValid">
+          <p class="font-weight-normal fs-2" v-if="areScoresValid">
             Итого: {{ totalLocalScore() }} б., что составляет
             {{ getPercent(totalLocalScore()) }}%.
             <span
@@ -83,7 +86,7 @@
               >Участник победил.</span
             >
           </p>
-          <button @click="saveScore()">Сохранить</button>
+          <button class="gradient" @click="saveScore()">Сохранить</button>
         </div>
       </div>
     </div>

@@ -3,9 +3,26 @@
     <loader v-if="isLoading || olympiad == undefined"></loader>
     <div v-else>
       <div v-if="!edit">
-        <h1>{{ olympiad.name }}</h1>
+        <div class="position-relative">
+          <h1 class="mb-3">{{ olympiad.name }}</h1>
+          <p
+            class="position-absolute"
+            style="font-size: 20px; top: -20px; right: 0"
+            v-if="olympiad.published"
+          >
+            <span class="badge badge-primary mr-2"> Опубликовано </span>
+          </p>
+          <p
+            class="position-absolute"
+            style="font-size: 20px; top: -20px; right: 0"
+            v-if="!olympiad.published"
+          >
+            <span class="badge badge-danger mr-2"> Не опубликовано </span>
+          </p>
+        </div>
         <p>
           <span
+            class="badge my-badge badge-secondary mr-2"
             v-for="subject in olympiad.olympiadSubject"
             :key="subject.subject.id"
           >
@@ -27,20 +44,28 @@
           {{ olympiad.percentToWin }}%.
         </p>
         <div>
-          <h4 v-if="olympiad.olympiadTask.length == 0">
+          <p class="fs-2" v-if="olympiad.olympiadTask.length == 0">
             К данной олимпиаде пока не добавлено заданий
-          </h4>
+          </p>
           <div v-else>
             <div v-for="task in sortedTasks" :key="task.id">
-              <h4>Задание {{ task.order }}.</h4>
+              <p class="fs-2">{{ task.order }} задание</p>
               <p>{{ task.task }}</p>
               <p>Максиальный балл: {{ task.maxScore }}</p>
             </div>
           </div>
         </div>
-        <p v-if="olympiad.published">Опубликовано</p>
-        <p v-if="!olympiad.published">Не опубликовано</p>
+        <p>
+          <a
+            @click="onLink"
+            style="cursor: pointer"
+            class="text-decoration-none"
+            >Посмотреть участников</a
+          >
+        </p>
+
         <button
+          class="text-gradient btn-sm mr-2"
           @click="
             modal = true;
             modalId = olympiad.id;
@@ -48,218 +73,337 @@
           "
         >
           Удалить
+          <span class="text">Удалить</span>
         </button>
-        <button v-if="!olympiad.published" @click="onEdit">
+
+        <button
+          class="gradient btn-sm mr-2"
+          v-if="!olympiad.published"
+          @click="onEdit"
+        >
           Отредактировать
         </button>
+
         <button
+          class="text-gradient btn-sm mr-2"
           v-if="!olympiad.published"
           @click="toPublish(olympiad.id, true)"
         >
           Опубликовать
+          <span class="text">Опубликовать</span>
         </button>
         <button
+          class="text-gradient btn-sm mr-2"
           v-if="olympiad.published"
           @click="toPublish(olympiad.id, false)"
         >
           Снять с публикации
+          <span class="text">Снять с публикации</span>
         </button>
-        <button @click="onLink">Посмотреть участников</button>
       </div>
       <div v-else>
         <h1>Редактирование олимпиады</h1>
         <div class="form-group">
-          <label for="name">Название *</label><br />
-          <input
-            id="name"
-            name="name"
-            type="text"
-            v-model.trim="form.name"
-            :class="{ 'is-invalid': submittedForm && $v.form.name.$error }"
-          />
-          <div
-            v-if="submittedForm && $v.form.name.$error"
-            class="invalid-feedback"
-          >
-            <span v-if="!$v.form.name.required">Данное поле обязательно</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="description">Описание </label><br />
-          <textarea
-            name="description"
-            id="description"
-            cols="30"
-            rows="10"
-            v-model.trim="form.description"
-            :class="{
-              'is-invalid': submittedForm && $v.form.description.$error,
-            }"
-          ></textarea>
-        </div>
-        <div class="form-group">
-          <label for="subjects">Предметы *</label><br />
-          <multiselect
-            :disabled="subjects == undefined"
-            v-model="form.subjects"
-            track-by="id"
-            label="name"
-            placeholder="Выберите школьные предметы"
-            :options="subjectsOption"
-            :showLabels="false"
-            :searchable="true"
-            :allow-empty="true"
-            :showPointer="false"
-            :multiple="true"
-            :close-on-select="false"
-            :clear-on-select="false"
-          >
-            <span slot="noResult">Не найдено</span>
-          </multiselect>
-          <div
-            v-if="submittedForm && $v.form.subjects.$error"
-            class="invalid-feedback"
-          >
-            <span v-if="!$v.form.subjects.required"
-              >Данное поле обязательно</span
-            >
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="dateEnd">Дата окончания приема ответов</label><br />
-          <input
-            id="dateEnd"
-            name="dateEnd"
-            type="date"
-            v-model="form.dateEnd"
-            :class="{ 'is-invalid': submittedForm && $v.form.dateEnd.$error }"
-          />
-        </div>
-        <div class="form-group">
-          <label for="dateResult">Дата оглашения результатов</label><br />
-          <input
-            id="dateResult"
-            name="dateResult"
-            type="date"
-            v-model="form.dateResult"
-            :class="{
-              'is-invalid': submittedForm && $v.form.dateResult.$error,
-            }"
-          />
-        </div>
-        <div class="form-group">
-          <label for="percentToWin">Необходимое количество % для победы *</label
-          ><br />
-          <input
-            name="percentToWin"
-            id="percentToWin"
-            type="number"
-            min="1"
-            max="100"
-            step="1"
-            v-model.trim="form.percentToWin"
-            :class="{
-              'is-invalid': submittedForm && $v.form.percentToWin.$error,
-            }"
-          />
-          <div
-            v-if="submittedForm && $v.form.percentToWin.$error"
-            class="invalid-feedback"
-          >
-            <span v-if="!$v.form.percentToWin.required"
-              >Данное поле обязательно</span
-            >
-            <span v-if="!$v.form.percentToWin.betweenValue"
-              >Число должно находиться в отрезке от 1 до 100</span
-            >
-          </div>
-        </div>
-        <div>
-          <h4>Задания</h4>
-          <div
-            v-for="(task, i) in sortedEditTasks"
-            :key="i"
-            :set="(v = $v.tasks.$each[i])"
-          >
-            <div class="form-group">
-              <label for="task">Текст задания *</label><br />
-              <textarea
-                name="task"
-                id="task"
-                cols="30"
-                rows="10"
-                v-model.trim="task.task"
-                :class="{
-                  'is-invalid': submittedForm && v.task.$error,
-                }"
-              ></textarea>
-
-              <div
-                v-if="submittedForm && v.task.$error"
-                class="invalid-feedback"
-              >
-                <span v-if="!v.task.required">Данное поле обязательно</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="maxScore">Максимальный балл *</label><br />
-              <input
-                name="maxScore"
-                id="maxScore"
-                type="number"
-                min="0"
-                max="100"
-                step="1"
-                v-model.trim="task.maxScore"
-                :class="{
-                  'is-invalid': submittedForm && v.maxScore.$error,
-                }"
-              />
-              <div
-                v-if="submittedForm && v.maxScore.$error"
-                class="invalid-feedback"
-              >
-                <span v-if="!v.maxScore.required">Данное поле обязательно</span>
-                <span v-if="!v.maxScore.betweenValue"
-                  >Число должно находиться в отрезке от 1 до 100</span
+          <form>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="form-name" for="name">Название *</label><br />
+                <input
+                  id="name"
+                  name="name"
+                  class="form-control"
+                  type="text"
+                  v-model.trim="form.name"
+                  :class="{
+                    'is-invalid': submittedForm && $v.form.name.$error,
+                  }"
+                />
+                <p
+                  v-if="submittedForm && !$v.form.name.required"
+                  class="invalid-feedback"
                 >
+                  Данное поле обязательно
+                </p>
               </div>
             </div>
-            <button
-              v-if="tasks.length != 1"
-              :disabled="task.order == 1"
-              @click="toUp(task.order)"
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="form-name" for="description">Описание </label
+                ><br />
+                <textarea
+                  name="description"
+                  id="description"
+                  cols="30"
+                  class="form-control"
+                  rows="10"
+                  v-model.trim="form.description"
+                  :class="{
+                    'is-invalid': submittedForm && $v.form.description.$error,
+                  }"
+                ></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="form-name" for="subjects">Предметы *</label><br />
+                <multiselect
+                  :disabled="subjects == undefined"
+                  v-model="form.subjects"
+                  track-by="id"
+                  label="name"
+                  placeholder="Выберите школьные предметы"
+                  :options="subjectsOption"
+                  :showLabels="false"
+                  :searchable="true"
+                  :allow-empty="true"
+                  :showPointer="false"
+                  :multiple="true"
+                  :close-on-select="false"
+                  :clear-on-select="false"
+                >
+                  <span slot="noResult">Не найдено</span>
+                </multiselect>
+                <div class="is-invalid"></div>
+                <p
+                  v-if="submittedForm && !$v.form.subjects.required"
+                  class="invalid-feedback"
+                >
+                  Данное поле обязательно
+                </p>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="form-name" for="dateEnd"
+                  >Дата окончания приема ответов</label
+                ><br />
+                <input
+                  id="dateEnd"
+                  name="dateEnd"
+                  class="form-control"
+                  type="date"
+                  v-model="form.dateEnd"
+                  :class="{
+                    'is-invalid': submittedForm && $v.form.dateEnd.$error,
+                  }"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="form-name" for="dateResult"
+                  >Дата оглашения результатов</label
+                ><br />
+                <input
+                  class="form-control"
+                  id="dateResult"
+                  name="dateResult"
+                  type="date"
+                  v-model="form.dateResult"
+                  :class="{
+                    'is-invalid': submittedForm && $v.form.dateResult.$error,
+                  }"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="form-name" for="percentToWin"
+                  >Необходимое количество % для победы *</label
+                ><br />
+                <input
+                  class="form-control"
+                  name="percentToWin"
+                  id="percentToWin"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  v-model.trim="form.percentToWin"
+                  :class="{
+                    'is-invalid': submittedForm && $v.form.percentToWin.$error,
+                  }"
+                />
+                <p
+                  v-if="submittedForm && !$v.form.percentToWin.required"
+                  class="invalid-feedback"
+                >
+                  Данное поле обязательно
+                </p>
+                <p
+                  v-if="submittedForm && !$v.form.percentToWin.betweenValue"
+                  class="invalid-feedback"
+                >
+                  Число должно находиться в отрезке от 1 до 100
+                </p>
+              </div>
+            </div>
+          </form>
+          <div>
+            <p class="fs-2 font-weight-normal">Задания</p>
+            <div
+              v-for="(task, i) in sortedEditTasks"
+              :key="i"
+              :set="(v = $v.tasks.$each[i])"
             >
-              Вверх
-            </button>
+              <div class="form-row">
+                <div class="form-group col-md-6 position-relative">
+                  <label class="form-name" for="task">Текст задания *</label
+                  ><br />
+                  <textarea
+                    class="form-control"
+                    name="task"
+                    id="task"
+                    cols="30"
+                    rows="10"
+                    v-model.trim="task.task"
+                    :class="{
+                      'is-invalid': submittedForm && v.task.$error,
+                    }"
+                  ></textarea>
+                  <p
+                    v-if="submittedForm && !v.task.required"
+                    class="invalid-feedback"
+                  >
+                    Данное поле обязательно
+                  </p>
+                  <div
+                    class="position-absolute d-flex flex-column"
+                    style="top: 30px; right: -45px"
+                  >
+                    <button
+                      class="mb-2 gradient"
+                      v-if="tasks.length != 1"
+                      :disabled="task.order == 1"
+                      @click="toUp(task.order)"
+                      style="padding: 5px 10px"
+                      aria-label="arrow-up"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrow-up"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      class="mb-2 gradient"
+                      v-if="tasks.length != 1"
+                      :disabled="task.order == tasks.length"
+                      @click="toDown(task.order)"
+                      style="padding: 5px 10px"
+                      aria-label="arrow-down"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrow-down"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      class="gradient"
+                      v-if="tasks.length != 1"
+                      @click="deleteFromLocalTasks(task.order)"
+                      style="padding: 5px 10px"
+                      aria-label="trash3"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-trash3"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label class="form-name" for="maxScore"
+                    >Максимальный балл *</label
+                  ><br />
+                  <input
+                    class="form-control"
+                    name="maxScore"
+                    id="maxScore"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    v-model.trim="task.maxScore"
+                    :class="{
+                      'is-invalid': submittedForm && v.maxScore.$error,
+                    }"
+                  />
+                  <p
+                    v-if="submittedForm && !v.maxScore.required"
+                    class="invalid-feedback"
+                  >
+                    Данное поле обязательно
+                  </p>
+                  <p
+                    v-if="submittedForm && !v.maxScore.betweenValue"
+                    class="invalid-feedback"
+                  >
+                    Число должно находиться в отрезке от 1 до 100
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <button
-              v-if="tasks.length != 1"
-              :disabled="task.order == tasks.length"
-              @click="toDown(task.order)"
+              class="gradient"
+              @click="
+                tasks.push({
+                  task: undefined,
+                  maxScore: undefined,
+                  order: tasks.length + 1,
+                })
+              "
+              style="padding: 5px 10px"
+              aria-label="plus"
             >
-              Вниз
-            </button>
-            <button
-              v-if="tasks.length != 1"
-              @click="deleteFromLocalTasks(task.order)"
-            >
-              Удалить
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-plus"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
             </button>
           </div>
-          <button
-            @click="
-              tasks.push({
-                task: undefined,
-                maxScore: undefined,
-                order: tasks.length + 1,
-              })
-            "
-          >
-            Добавить
-          </button>
         </div>
-        <p>* - обязательное поле</p>
-        <button @click="onEdit">Сохранить</button>
+        <p class="mt-2">* - обязательное поле</p>
+        <button class="text-gradient to-block" @click="onEdit">
+          Сохранить
+          <span class="text">Сохранить</span>
+        </button>
       </div>
       <modal-delete-olympiad
         v-if="modal"
@@ -312,7 +456,7 @@ export default {
   components: {
     Multiselect,
     ModalDeleteOlympiad,
-    Loader
+    Loader,
   },
   data() {
     return {

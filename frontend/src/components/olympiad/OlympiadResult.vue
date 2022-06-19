@@ -11,7 +11,7 @@
     </loader>
     <div v-else>
       <h1>Результаты</h1>
-      <p v-if="result.won">Победитель!</p>
+      <p class="font-weight-normal fs-2" v-if="result.won">Победитель!</p>
       <p>
         Ваш результат составляет {{ result.score }}/{{ totalScore() }}, что
         составляет {{ getPercent(result.score) }}%.
@@ -23,12 +23,12 @@
       </p>
 
       <div v-for="task in sortedTasks" :key="task.id">
-        <h4>Задание {{ task.order }}.</h4>
+        <p class="font-weight-normal">{{ task.order }} задание</p>
         <p>{{ task.task }}</p>
-        <p v-if="findAnswer(task.id) != undefined">
+        <p class="font-weight-normal" v-if="findAnswer(task.id) != undefined">
           Баллы: {{ findAnswer(task.id).score }}/{{ task.maxScore }}.
         </p>
-        <p v-else>Баллы: 0/{{ task.maxScore }}.</p>
+        <p class="font-weight-normal" v-else>Баллы: 0/{{ task.maxScore }}.</p>
         <p>Ответ:</p>
         <p v-if="findAnswer(task.id) != undefined">
           {{ findAnswer(task.id).answer }}

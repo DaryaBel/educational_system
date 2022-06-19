@@ -3,7 +3,7 @@
     <loader v-if="isLoading || studentCourses == undefined"></loader>
     <div v-else>
       <h1>Мои курсы</h1>
-      <div class="row mb-5">
+      <div class="row mb-3">
         <div class="col-lg-4 mb-2 d-flex align-items-center">
           <input
             placeholder="Поиск по названию и описанию"
@@ -75,8 +75,12 @@
         </div>
       </div>
 
-      <div class="mb-5">
-        <div v-for="course in filterItems" :key="course.id">
+      <div class="row">
+        <div
+          class="col-md-6 mb-5"
+          v-for="course in filterItems"
+          :key="course.id"
+        >
           <course-element
             :course="course"
             :canDelete="true"

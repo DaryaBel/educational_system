@@ -1,13 +1,14 @@
 <template>
   <div>
-    <h1>Задание {{ task.order }}</h1>
+    <p class="fs-2 font-weight-normal">{{ task.order }} задание</p>
     <p>
       {{ task.task }}
     </p>
-    <h3>Ответ</h3>
     <br />
     <form>
       <textarea
+        class="form-control"
+        style="width: 65%"
         v-model.trim="answer"
         @change="$emit('answer', { answer: answer, id: task.id })"
         placeholder="Текст ответа"

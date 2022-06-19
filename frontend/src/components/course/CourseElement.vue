@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-6 mr-4 p-0" style="width: 100% !important">
+  <div style="width: 100% !important">
     <img
       src="https://picsum.photos/200"
       class="rounded img-fluid my-img"

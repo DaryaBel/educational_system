@@ -10,24 +10,32 @@
     >
     </loader>
     <div v-else>
-      <h1>{{ olympiad.name }}</h1>
-      <p>
-        Выполнено {{ answers.length }} из
-        {{ olympiad.olympiadTask.length }}
-      </p>
-      <div>
-        <button
-          v-for="task in sortedTasks"
-          @click="chosenTaskOrder = task.order"
-          :key="task.id"
-          :class="{
-            'is-ready': isTaskReady(task.id),
-          }"
-        >
-          {{ task.order }}
-        </button>
+      <div class="position-relative">
+        <h1>{{ olympiad.name }}</h1>
+        <div class="position-absolute my-task-counter">
+          <p>
+            Выполнено {{ answers.length }} из
+            {{ olympiad.olympiadTask.length }}
+          </p>
+          <button
+            v-for="task in sortedTasks"
+            @click="chosenTaskOrder = task.order"
+            :key="task.id"
+            class="number mr-3 mb-3"
+            :class="{
+              'is-ready': isTaskReady(task.id),
+            }"
+          >
+            {{ task.order }}
+          </button>
+          <br />
+          <button class="text-gradient" @click="modal = true">
+            Отправить работу
+            <span class="text">Отправить работу</span>
+          </button>
+        </div>
       </div>
-      <button @click="modal = true">Отправить работу</button>
+
       <div v-if="olympiad.olympiadTask != undefined">
         <task
           v-bind:task="chosenTaskObject"
@@ -37,13 +45,20 @@
           @answer="saveAnswer($event)"
         ></task>
         <div>
-          <button :disabled="chosenTaskOrder == 1" @click="chosenTaskOrder--">
-            Назад</button
+          <button
+            class="text-gradient btn-sm mr-2"
+            :disabled="chosenTaskOrder == 1"
+            @click="chosenTaskOrder--"
+          >
+            Назад
+            <span class="text">Назад</span></button
           ><button
+            class="text-gradient btn-sm mr-2"
             :disabled="chosenTaskOrder == olympiad.olympiadTask.length"
             @click="chosenTaskOrder++"
           >
             Вперед
+            <span class="text">Вперед</span>
           </button>
         </div>
       </div>
@@ -230,7 +245,43 @@ export default {
 </script>
 
 <style lang="scss">
-.is-ready {
-  background-color: aquamarine;
+.my-task-counter {
+  top: 120px;
+  right: 0;
+  padding: 20px 15px;
+  width: 280px;
+  min-height: 100px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  & button.number {
+    color: #004e93;
+    padding: 5px 14px !important;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+
+    border-radius: 4px;
+    &.is-ready {
+      color: white;
+      background: linear-gradient(
+        51.06deg,
+        #9358f7 0.87%,
+        #9259f7 7.31%,
+        #8e5df6 13.75%,
+        #8862f5 20.19%,
+        #806bf4 26.63%,
+        #7575f2 33.07%,
+        #6882f0 39.51%,
+        #5990ee 45.95%,
+        #4a9feb 52.39%,
+        #3bade9 58.84%,
+        #2ebae7 65.28%,
+        #23c4e5 71.72%,
+        #1bcde4 78.16%,
+        #15d2e3 84.6%,
+        #11d6e2 91.04%,
+        #10d7e2 97.48%
+      );
+    }
+  }
 }
 </style>

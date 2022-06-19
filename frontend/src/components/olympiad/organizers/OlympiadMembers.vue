@@ -3,42 +3,53 @@
     <loader v-if="isLoading || results == undefined"></loader>
     <div v-else>
       <h1>Участники олимпиады</h1>
-      <div>
-        <input
-          placeholder="Поиск по ФИО и email"
-          name="search"
-          id="search"
-          :disabled="results == undefined"
-          type="text"
-          v-model.trim="findString"
-        />
+      <div class="row mb-3">
+        <div class="col-lg-4 mb-2 d-flex align-items-center">
+          <input
+            class="form-control"
+            placeholder="Поиск по ФИО и email"
+            name="search"
+            id="search"
+            :disabled="results == undefined"
+            type="text"
+            v-model.trim="findString"
+          />
+        </div>
+        <div class="col-lg-3 mb-2 d-flex align-items-center">
+          <multiselect
+            :disabled="results == undefined"
+            v-model="findStatus"
+            track-by="status"
+            label="name"
+            placeholder="Cтатус"
+            :options="statusOption"
+            :showLabels="false"
+            :searchable="false"
+            :allow-empty="true"
+            :showPointer="false"
+            :multiple="true"
+            :close-on-select="false"
+            :clear-on-select="false"
+          >
+            <span slot="noResult">Не найдено</span>
+          </multiselect>
+        </div>
+        <div class="col-lg-3 mb-2 d-flex align-items-center">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="winner"
+              :disabled="results == undefined"
+              v-model="won"
+              name="winner"
+            />
+            <label class="form-check-label" for="winner">
+              Только победители</label
+            >
+          </div>
+        </div>
       </div>
-      <multiselect
-        :disabled="results == undefined"
-        v-model="findStatus"
-        track-by="status"
-        label="name"
-        placeholder="Выберите статус:"
-        :options="statusOption"
-        :showLabels="false"
-        :searchable="false"
-        :allow-empty="true"
-        :showPointer="false"
-        :multiple="true"
-        :close-on-select="false"
-        :clear-on-select="false"
-      >
-        <span slot="noResult">Не найдено</span>
-      </multiselect>
-      <input
-        type="checkbox"
-        class="custom-checkbox"
-        id="winner"
-        :disabled="results == undefined"
-        v-model="won"
-        name="winner"
-      />
-      <label for="winner">Только победители</label>
       <div>
         <p v-if="filterItems.length == 0">Не найдено</p>
         <div v-else>
@@ -49,6 +60,7 @@
             >опубликованы для школьников.
           </p>
           <button
+            class="text-gradient to-block mb-4"
             v-if="
               !results[0].olympiad.resultPublished &&
               countNotCheckedResults != null &&
@@ -57,18 +69,22 @@
             @click="modal = true"
           >
             Опубликовать результаты
+
+            <span class="text"> Опубликовать результаты </span>
           </button>
-          <table>
+
+          <table class="table">
             <tr>
-              <th>ФИО</th>
-              <th>Дата рождения</th>
-              <th>Email</th>
-              <th>Статус</th>
+              <th scope="col">ФИО</th>
+              <th scope="col">Дата рождения</th>
+              <th scope="col">Email</th>
+              <th scope="col">Статус</th>
             </tr>
             <tr v-for="student in filterItems" :key="student.id">
               <td>
                 <router-link
                   tag="a"
+                  class="text-decoration-none"
                   :to="{
                     name: 'StudentAnswers',
                     params: {
