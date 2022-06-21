@@ -418,6 +418,7 @@ export const RESULT_WITH_ANSWERS = gql`
       student {
         id
         user {
+          id
           lastName
           firstName
         }

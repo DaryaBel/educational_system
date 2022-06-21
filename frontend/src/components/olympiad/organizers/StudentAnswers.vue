@@ -52,7 +52,7 @@
                 class="form-control position-absolute"
                 min="1"
                 step="1"
-                style="max-width: 90px; top: -4px; left: 150px"
+                style="max-width: 90px; top: -4px; left: 175px"
                 :max="task.maxScore"
                 v-model.trim="task.score"
                 @change="getScore(findAnswer(task.id).id, task.score)"

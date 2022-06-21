@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="fs-2 font-weight-normal">{{ task.order }} задание</p>
-    <p>
+    <p style="width: 65%">
       {{ task.task }}
     </p>
     <br />

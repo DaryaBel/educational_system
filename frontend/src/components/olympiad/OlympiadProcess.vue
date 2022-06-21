@@ -29,9 +29,13 @@
             {{ task.order }}
           </button>
           <br />
-          <button class="text-gradient" @click="modal = true">
+          <button
+            class="text-gradient"
+            style="font-size: 16px"
+            @click="modal = true"
+          >
             Отправить работу
-            <span class="text">Отправить работу</span>
+            <span style="font-size: 16px" class="text">Отправить работу</span>
           </button>
         </div>
       </div>

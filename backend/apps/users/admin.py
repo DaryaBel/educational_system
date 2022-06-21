@@ -50,14 +50,14 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ('user', 'patronymic',)
     inlines = [StudentSubjectInline]
 
-class SubjectAdmin(admin.ModelAdmin):
-    """Предметы"""
-    list_display = ('__str__',)
-    search_fields = ('name',)
+# class SubjectAdmin(admin.ModelAdmin):
+#     """Предметы"""
+#     list_display = ('__str__',)
+#     search_fields = ('name',)
 
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Student, StudentAdmin)
-admin.site.register(Subject, SubjectAdmin)
+# admin.site.register(Subject, SubjectAdmin)
 
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
